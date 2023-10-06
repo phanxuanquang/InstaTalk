@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+@section customHead {
+    <link rel="stylesheet" href="~/css/home_friendhub.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+}
+
+<div class="modal fade" id="ModalJoinRoom" tabindex="-1" aria-labelledby="ModalJoinRoomTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalJoinRoomTitle">Join your mate's room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form_join_mate_room">
+                    <div class="input-group border rounded-end mb-3 div-friendhub-custom">
+                        <input id="input-room-mate-id" class="form-control border-0 col-11 input-custom" type="text" placeholder="Room ID or URL">
+                        <span class="input-group-append col-1 d-flex justify-content-end">
+                            <button id="btn-icon-clear" class="bg-white border-0 py-2 pe-0 ps-0 d-flex justify-content-center btn-custom" type="button">
+                                <span class="material-icons text-center" id="icon_clear" onclick="clearText()">
+                                    clear
+                                </span>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="input-group border rounded-end mt-3 div-friendhub-custom">
+                        <input id="input-pass-mate-room" class="form-control border-0 col-11 input-custom" type="password" placeholder="Password">
+                        <span class="input-group-append col-1 d-flex justify-content-end input-custom">
+                            <button id="btn-icon-visibility" class="bg-white border-start-0 border rounded-end py-2 pe-0 ps-0 d-flex justify-content-center btn-custom" type="button">
+                                <span class="material-icons" id="icon_pass_off" onclick="changeIcon()">
+                                    visibility_off
+                                </span>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" form="form_join_mate_room">Join</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
+    <div class="d-flex flex-column justify-content-center align-items-center text-center p-4 col-10">
+        <form id="homepage_form d-flex flex-column">
+            <div>
+                <img id="homepage_logo" src="../logo.png" alt="logo">
+            </div>
+            <h1 class="mb-4">Welcome to InstaMeet</h1>
+            <input id="input_display_name" type="text" class="form-control col-12 p-2 mt-4 mb-4" placeholder="Your display name">
+            <button type="submit" class="btn btn-primary col-5 m-2">Create a Room</button>
+            <button type="button" class="btn btn-primary col-5 m-2" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">Join a Room</button>
+        </form>
+    </div>
+</div>
+
+@section script {
+    <script src="~/js/home_friendhub.js" asp-append-version="true"></script>
+}

@@ -1,8 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section customHead {
+    <link rel="stylesheet" href="~/css/home_index.css" asp-append-version="true" />
+}
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
+    <div class="d-flex flex-column justify-content-center align-items-center div-custom text-center p-4 col-10">
+        <h1 class="fw-bold p-2">Meet and talk with?</h1>
+        <button type="button" class="col-11 w-100 btn btn-primary fw-bold" onclick="location.href='@Url.Action("FriendHub","Home")'">Friends</button>
+        <button class="col-11 btn btn-primary fw-bold">Strangers</button>
+    </div>
 </div>

@@ -18,7 +18,7 @@ namespace InstaTalk.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult FriendHub()
         {
             return View();
         }
