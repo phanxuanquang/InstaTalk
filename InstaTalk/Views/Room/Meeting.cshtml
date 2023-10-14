@@ -12,7 +12,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalMeetingRoomTitle">Create your own room</h5>
+                <h5 class="modal-title" id="ModalMeetingRoomTitle">Welcome to your own room!</h5>
                 <button id="btn_icon_clear_modal_meeting" class="bg-white py-2 ps-0 d-flex justify-content-center" type="button" onclick="hiddenModal()" style="border:none;">
                     <span class="material-icons" id="icon_close_modal_meeting">
                         clear
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="w-100 text-center">
-                    <button type="button" class="btn btn-primary me-2" onclick="showModalConfig()">Security Configuaration</button>
+                    <button type="button" class="btn btn-primary me-2" onclick="showModalConfig()">Security Configuration</button>
                 </div>
             </div>
         </div>
@@ -44,15 +44,15 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="ModalSecurityConfigTitle">Room's Security Configuaration</h5>
+                <h5 class="modal-title" id="ModalSecurityConfigTitle">Room's Security Configuration</h5>
                 <button id="btn-icon-visibility" class="bg-white py-2 ps-0 d-flex justify-content-center" type="button" onclick="hiddenModalConfig()" style="border:none;">
                     <span class="material-icons" id="icon_close_modal_join_room">
                         clear
                     </span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="input-group mb-3">
+            <div class="modal-body"> 
+                <div class="input-group mb-3" style="display: block;">
                     <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
                         <input type="password" id="input_pass_config" class="form-control border-0" />
                         <label id="lb_input_pass_config" class="form-label" for="input-room-mate-id">Set password for your room</label>
@@ -64,7 +64,13 @@
                             </button>
                         </span>
                     </div>
+                    <div class="custom-control custom-checkbox" style="margin: 0.5rem 0.5rem 1rem 1rem">
+                        <input type="checkbox" class="custom-control-input" id="defaultChecked2" checked>
+                        <label class="custom-control-label" for="defaultChecked2">Accept attendees automatically</label>
+                    </div>
+                    
                 </div>
+                
                 <div class="w-100 text-center">
                     <button type="button" class="btn btn-primary me-2">Save Change</button>
                 </div>
@@ -154,7 +160,7 @@
     </div>
     <div id="div_right_meeting" class="col-3 d-flex flex-column align-items-center border border-2 rounded-3">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2">
-            <h5 class="modal-title col-11" id="ModalJoinRoomTitle">Join your mate's room</h5>
+            <h5 class="modal-title col-11" id="ModalJoinRoomTitle">Chat Area</h5>
             <button id="btn-icon-visibility" class="col-1 bg-white border-0 d-flex flex-column align-items-center justify-content-center" type="button" onclick="closeChat()">
                 <span class="material-icons" id="icon_close_modal_join_room">
                     clear
