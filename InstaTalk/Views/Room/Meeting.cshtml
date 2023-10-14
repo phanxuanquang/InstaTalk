@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "Room";
+}
+
+@section customHead {
+    <link rel="stylesheet" href="~/css/room_meeting.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+}
+
+<div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalMeetingRoomTitle">Create your own room</h5>
+                <button id="btn_icon_clear_modal_meeting" class="bg-white py-2 ps-0 d-flex justify-content-center" type="button" onclick="hiddenModal()" style="border:none;">
+                    <span class="material-icons" id="icon_close_modal_meeting">
+                        clear
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
+                        <input type="text" id="input-room-mate-id" class="form-control border-0" readonly value="https://instatalk.com/room/12345" />
+                        <span class="input-group-append col-1 d-flex justify-content-end input-custom">
+                            <button id="btn_icon_visibility_modal_config" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
+                                <span class="material-icons" id="icon_copy_url">
+                                    content_copy
+                                </span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="w-100 text-center">
+                    <button type="button" class="btn btn-primary me-2" onclick="showModalConfig()">Security Configuaration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ModalSecurityConfig" tabindex="-1" aria-labelledby="ModalSecurityConfigTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalSecurityConfigTitle">Room's Security Configuaration</h5>
+                <button id="btn-icon-visibility" class="bg-white py-2 ps-0 d-flex justify-content-center" type="button" onclick="hiddenModalConfig()" style="border:none;">
+                    <span class="material-icons" id="icon_close_modal_join_room">
+                        clear
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
+                        <input type="password" id="input_pass_config" class="form-control border-0" />
+                        <label id="lb_input_pass_config" class="form-label" for="input-room-mate-id">Set password for your room</label>
+                        <span class="input-group-append col-1 d-flex justify-content-end input-custom">
+                            <button id="btn-icon-visibility" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
+                                <span class="material-icons" id="icon_pass_config" onclick="changeConfigPassIcon()">
+                                    visibility_off
+                                </span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+                <div class="w-100 text-center">
+                    <button type="button" class="btn btn-primary me-2">Save Change</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="d-flex align-items-center justify-content-center gap-2 h-100">
+    <div id="div_left_meeting" class="col-8 border border-2 rounded-3">
+        <div id="div_left_video_meeting" class="row row-cols-2 justify-content-center" style="margin:0;padding:0;">
+            <div class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
+                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
+                    </div>
+                </div>
+            </div>
+            <div class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
+                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
+                    </div>
+                </div>
+            </div>
+            <div class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
+                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
+                    </div>
+                </div>
+            </div>
+            <div class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
+                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
+                    </div>
+                </div>
+            </div>
+            <div class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
+                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
+                    </div>
+                </div>
+            </div>
+            <div class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
+                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="div_footer_right_meeting" class="p-2 d-flex align-items-center justify-content-center">
+            <span id="time_meeting" class="me-2">
+                00:00:00
+            </span>
+            |
+            <span id="id_room_meeting" class="ms-2">
+                12345
+            </span>
+            <div id="div_control_meeting" class="d-flex col-10 pb-2 align-items-center justify-content-center">
+                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;" onclick="changeMicState()">
+                    <span class="material-icons" id="icon_mic_meeting">
+                        mic
+                    </span>
+                </button>
+                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;" onclick="changeCamState()">
+                    <span class="material-icons" id="icon_cam_meeting">
+                        videocam
+                    </span>
+                </button>
+                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;">
+                    <span class="material-icons" id="icon_end_meeting">
+                        call_end
+                    </span>
+                </button>
+                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;" onclick="openChat()">
+                    <span class="material-icons" id="icon_chat_meeting">
+                        chat
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="div_right_meeting" class="col-3 d-flex flex-column align-items-center border border-2 rounded-3">
+        <div id="div_header_right_meeting" class="w-100 d-flex p-2">
+            <h5 class="modal-title col-11" id="ModalJoinRoomTitle">Join your mate's room</h5>
+            <button id="btn-icon-visibility" class="col-1 bg-white border-0 d-flex flex-column align-items-center justify-content-center" type="button" onclick="closeChat()">
+                <span class="material-icons" id="icon_close_modal_join_room">
+                    clear
+                </span>
+            </button>
+        </div>
+        <div id="div_chat_right_meeting" class="w-100 h-100">
+            <div id="div_check_chat_enable" class="w-100 d-flex p-2 px-3">
+                <p class="col-11">Enable Chat Area</p>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+                </div>
+            </div>
+        </div>
+        <div id="div_footer_right_meeting" class="w-100 d-flex p-4">
+            <button id="btn_attach_file" class="bg-white py-2 d-flex justify-content-center" type="button">
+                <span class="material-icons" id="icon_clear_id">
+                    attach_file
+                </span>
+            </button>
+            <div class="form-outline d-flex">
+                <input type="text" id="input_chat_meeting" class="form-control border-0" />
+                <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting">Your message</label>
+                <button id="btn_icon_send" class="bg-white py-2 d-flex justify-content-center" type="button">
+                    <span class="material-icons" id="icon_clear_id">
+                        send
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section script {
+    <script src="~/js/meeting.js" asp-append-version="true"></script>
+}

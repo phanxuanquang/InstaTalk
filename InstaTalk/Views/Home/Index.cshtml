@@ -2,14 +2,22 @@
     ViewData["Title"] = "Home";
 }
 
-@section customHead {
-    <link rel="stylesheet" href="~/css/home_index.css" asp-append-version="true" />
-}
-
-<div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
-    <div class="d-flex flex-column justify-content-center align-items-center div-custom text-center p-4 col-10">
-        <h1 class="fw-bold p-2">Meet and talk with?</h1>
-        <button type="button" class="col-11 w-100 btn btn-primary fw-bold" onclick="location.href='@Url.Action("FriendHub","Home")'">Friends</button>
-        <button class="col-11 btn btn-primary fw-bold">Strangers</button>
+<div class="modal fade" id="HomeModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <h1 class="m-4 mb-2">Meet and talk with?</h1>
+            <div class="modal-body">
+                <button class="btn btn-primary my-2 w-100" onclick="location.href='@Url.Action("FriendHub", "Home")'">Friends</button>
+                <button class="btn btn-primary my-2 w-100">Strangers</button>
+            </div>
+        </div>
     </div>
 </div>
+
+@section script {
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#HomeModal').modal('show');
+        });
+    </script>
+}

@@ -15,5 +15,8 @@ function changeIcon() {
 
 function clearText() {
     var input = document.getElementById("input-room-mate-id");
-    input.value = "";
+    var label = document.getElementById("lb-input-room-mate-id");
+    input.value = '';
+    input.focus();
+    input.blur();
 }
