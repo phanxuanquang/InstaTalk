@@ -1,8 +1,23 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="modal fade" id="HomeModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center" style="padding: 0px 1rem 0px 1rem">
+            <h1 class="m-4 mb-2">Meet and talk with?</h1>
+            <div class="modal-body">
+                <button class="btn btn-primary my-2 w-100"  onclick="location.href='@Url.Action("FriendHub", "Home")'">Friends</button>
+                <button class="btn btn-primary my-2 w-100">Strangers</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section script {
+    <script type="text/javascript">
+        $(window).on('load', function () {
+            $('#HomeModal').modal('show');
+        });
+    </script>
+}
