@@ -71,3 +71,29 @@ function showModalConfig() {
     $('#ModalMeetingRoom').modal('hide');
     $('#ModalSecurityConfig').modal('show');
 }
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let timerInterval;
+
+function updateTimer() {
+    seconds++;
+    if (seconds == 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes == 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+
+    const formattedTime =
+        `${hours.toString().padStart(2, '0')}:
+                 ${minutes.toString().padStart(2, '0')}:
+                 ${seconds.toString().padStart(2, '0')}`;
+
+    document.getElementById('time_meeting').textContent = formattedTime;
+}
+
+// Start the timer
+timerInterval = setInterval(updateTimer, 1000); // Update every second (1000 milliseconds)

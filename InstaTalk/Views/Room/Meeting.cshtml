@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Drawing;
+@{
     ViewData["Title"] = "Room";
 }
 
@@ -8,7 +9,7 @@
           rel="stylesheet">
 }
 
-<div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" aria-hidden="true">
+<div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -22,7 +23,9 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
-                        <input type="text" id="input-room-mate-id" class="form-control border-0" readonly value="https://instatalk.com/room/12345" />
+                        <input type="text" id="link_meeting" class="form-control border-0 p-3 pb-2" readonly value="https://instatalk.com/room/12345" style="background-color:white;"/>
+                        <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" style="color:red;">Your mates can join via below URL</label>
+                    </div>
                         <span class="input-group-append col-1 d-flex justify-content-end input-custom">
                             <button id="btn_icon_visibility_modal_config" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
                                 <span class="material-icons" id="icon_copy_url">
@@ -30,11 +33,10 @@
                                 </span>
                             </button>
                         </span>
-                    </div>
                 </div>
-                <div class="w-100 text-center">
+            </div>
+            <div class="w-100 text-center mb-3">
                     <button type="button" class="btn btn-primary me-2" onclick="showModalConfig()">Security Configuration</button>
-                </div>
             </div>
         </div>
     </div>
@@ -57,7 +59,7 @@
                         <input type="password" id="input_pass_config" class="form-control border-0" />
                         <label id="lb_input_pass_config" class="form-label" for="input-room-mate-id">Set password for your room</label>
                         <span class="input-group-append col-1 d-flex justify-content-end input-custom">
-                            <button id="btn-icon-visibility" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
+                            <button id="btn-icon-visibility" class="bg-white py-2 pe-2 ps-0 d-flex justify-content-center" type="button" style="border:none;">
                                 <span class="material-icons" id="icon_pass_config" onclick="changeConfigPassIcon()">
                                     visibility_off
                                 </span>
@@ -83,48 +85,19 @@
 <div class="d-flex align-items-center justify-content-center gap-2 h-100">
     <div id="div_left_meeting" class="col-8 border border-2 rounded-3">
         <div id="div_left_video_meeting" class="row row-cols-2 justify-content-center" style="margin:0;padding:0;">
-            <div class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
-                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
+            @for (int i = 0; i < 6; i++)
+            {
+                Random rnd = new Random();
+
+                Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
+                <div class="user-card d-flex align-items-center justify-content-center">
+                    <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;border-radius:0.5rem;">
+                        <div style="width:75px;height:75px;background-color:rgb(@randomColor.R, @randomColor.G, @randomColor.B);color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                            OK
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
-                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
-                    </div>
-                </div>
-            </div>
-            <div class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
-                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
-                    </div>
-                </div>
-            </div>
-            <div class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
-                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
-                    </div>
-                </div>
-            </div>
-            <div class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
-                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
-                    </div>
-                </div>
-            </div>
-            <div class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;">
-                    <div style="width:75px;height:75px;background-color:red;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
-                    </div>
-                </div>
-            </div>
+            }
         </div>
         <div id="div_footer_right_meeting" class="p-2 d-flex align-items-center justify-content-center">
             <span id="time_meeting" class="me-2">
