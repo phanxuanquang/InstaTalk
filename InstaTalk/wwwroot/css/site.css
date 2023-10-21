@@ -122,14 +122,16 @@ h2 {
         transition: .5s;
         margin: 0rem 01rem 0rem 1rem;
         letter-spacing: 4px;
-        width: 12rem
+        border-radius: 5px 5px 0px 0px;
+        width: 12rem;
+        background: linear-gradient(to bottom, rgba(5, 5, 6, .5), rgba(13, 13, 14, 1));
     }
 
     .login-box a:hover {
         background: #03f40f;
         color: #fff;
         border-radius: 5px;
-        box-shadow: 0 0 5px #03f40f, 0 0 25px #03f40f, 0 0 50px #03f40f, 0 0 100px #03f40f;
+        box-shadow: 0 0 1px #03f40f, 0 0 10px #03f40f, 0 0 10px #03f40f, 0 0 50px #03f40f;
     }
 
     .login-box a span {
@@ -305,3 +307,13 @@ h2 {
         .textInputWrapper:focus-within .textInput::placeholder {
             opacity: 0;
         }
+
+rounded-circle {
+    
+    
+}
+.rounded-circle:hover {
+    box-shadow: 0 0 1px #03f40f, 0 0 2px red, 0 0 10px red, 0 0 30px red;
+    border: none;
+    transition: .2s ease;
+}
