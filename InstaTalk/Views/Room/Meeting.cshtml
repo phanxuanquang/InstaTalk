@@ -84,7 +84,7 @@
 
 <div class="d-flex align-items-center justify-content-center gap-2 h-100">
     <div id="div_left_meeting" class="col-8 border border-2 rounded-3">
-        <div id="div_left_video_meeting" class="row row-cols-2 justify-content-center" style="margin:0;padding:0;">
+        <div id="div_left_video_meeting" class="row row-cols-2 justify-content-center" style="margin:0;padding:0;height:90%;">
             @for (int i = 0; i < 6; i++)
             {
                 Random rnd = new Random();
@@ -99,7 +99,10 @@
                 </div>
             }
         </div>
-        <div id="div_footer_right_meeting" class="p-2 d-flex align-items-center justify-content-center">
+        <div id="div_share_screen" style="display:none;">
+
+        </div>
+        <div id="div_footer_left_meeting" class="p-2 d-flex align-items-center justify-content-center" style="height:10%;">
             <span id="time_meeting" class="me-2">
                 00:00:00
             </span>

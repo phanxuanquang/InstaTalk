@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Stranger";
+}
+
+@section customHead {
+    <link rel="stylesheet" href="~/css/stranger_waiting.css" asp-append-version="true" />
+}
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center w-100">
+    <div class="d-flex flex-column justify-content-center align-items-center text-center p-4 col-10">
+        <div class="loader mb-2" style="color:red;width:80px;"></div>
+        <h1><span>He</span> is coming to you. Let's wait...</h1><br />
+        <h1><span>His</span> name is <span id="stranger_display_name"></span></h1>
+    </div>
+</div>
+
+@section script {
+    <script asp-append-version="true">
+        document.addEventListener('DOMContentLoaded', function () {
+            var timer = setTimeout(function () {
+                var win = window.open('@Url.Action("Success", "Stranger")', '_self');
+                if (win) {
+                    win.focus();
+                } else {
+                    alert('Please allow popups for this website, and then refresh this page.');
+                }
+            }, 3200);
+        }, false);
+    </script>
+}

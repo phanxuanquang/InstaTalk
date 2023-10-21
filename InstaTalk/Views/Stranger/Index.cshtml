@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Stranger";
+}
+
+<div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
+    <div class="d-flex flex-column justify-content-center align-items-center text-center p-4 col-10">
+        <div style="max-width:450px;">
+            <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo">
+        </div>
+        <h1 class="mb-4">Welcome to InstaMeet</h1>
+        <form id="homepage_form" class="w-100" method="post" action="@Url.Action("FindOut", "Stranger")">
+            <div class="form-outline m-auto mb-3" style="max-width:450px;">
+                <input type="text" id="stranger_display_name" class="form-control" />
+                <label class="form-label" for="stranger_display_name">Your display name</label>
+            </div>
+            <div class="m-auto d-flex" style="max-width:450px;">
+                <select class="form-select mb-3 me-1" aria-label=".form-select-lg example" style="width:49%;">
+                    <option selected>Your gender</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+                <select class="form-select mb-3 ms-1" aria-label=".form-select-lg example" style="width:49%;">
+                    <option selected>Your age</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+            <div class="m-auto mb-3" style="max-width:450px;">
+                <select class="form-select mb-3" aria-label=".form-select-lg example">
+                    <option selected>Your come from</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary me-2" style="max-width: 162px;">Next</button>
+        </form>
+    </div>
+</div>
