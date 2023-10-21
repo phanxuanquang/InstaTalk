@@ -62,11 +62,19 @@
             <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo">
             <form id="homepage_form" class="w-100" method="post" action="@Url.Action("Meeting", "Room")">
                 <center>
-                    <div class="textInputWrapper">
+                    <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
                         <input placeholder="Your display name" type="text" class="textInput">
                     </div> 
-                    <button type="submit" class="btn btn-primary me-2" style="max-width: 162px;">Create a Room</button>
-                    <button type="button" class="btn btn-primary ms-2" style="max-width: 162px;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">Join a Room</button> 
+                    @* <button type="submit" class="btn btn-primary me-2" style="max-width: 162px;">Create a Room</button>
+                    <button type="button" class="btn btn-primary ms-2" style="max-width: 162px;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">Join a Room</button>  *@
+                    <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;">
+                        Create a Room
+                        <span></span>
+                    </a>
+                    <a class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
+                        Join a Room
+                        <span></span>
+                    </a>
                 </center>
                 
             </form>
