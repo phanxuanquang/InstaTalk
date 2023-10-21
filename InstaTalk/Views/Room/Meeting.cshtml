@@ -9,6 +9,9 @@
           rel="stylesheet">
 }
 
+<video id="videoPlayer" width="200"></video>
+<video id="videoPlayer2" width="200"></video>
+
 <div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -23,20 +26,20 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
-                        <input type="text" id="link_meeting" class="form-control border-0 p-3 pb-2" readonly value="https://instatalk.com/room/12345" style="background-color:white;"/>
+                        <input type="text" id="link_meeting" class="form-control border-0 p-3 pb-2" readonly value="https://instatalk.com/room/12345" style="background-color:white;" />
                         <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" style="color:red;">Your mates can join via below URL</label>
                     </div>
-                        <span class="input-group-append col-1 d-flex justify-content-end input-custom">
-                            <button id="btn_icon_visibility_modal_config" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
-                                <span class="material-icons" id="icon_copy_url">
-                                    content_copy
-                                </span>
-                            </button>
-                        </span>
+                    <span class="input-group-append col-1 d-flex justify-content-end input-custom">
+                        <button id="btn_icon_visibility_modal_config" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
+                            <span class="material-icons" id="icon_copy_url">
+                                content_copy
+                            </span>
+                        </button>
+                    </span>
                 </div>
             </div>
             <div class="w-100 text-center mb-3">
-                    <button type="button" class="btn btn-primary me-2" onclick="showModalConfig()">Security Configuration</button>
+                <button type="button" class="btn btn-primary me-2" onclick="showModalConfig()">Security Configuration</button>
             </div>
         </div>
     </div>
@@ -53,7 +56,7 @@
                     </span>
                 </button>
             </div>
-            <div class="modal-body"> 
+            <div class="modal-body">
                 <div class="input-group mb-3" style="display: block;">
                     <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
                         <input type="password" id="input_pass_config" class="form-control border-0" />
@@ -70,9 +73,9 @@
                         <input type="checkbox" class="custom-control-input" id="defaultChecked2" checked>
                         <label class="custom-control-label" for="defaultChecked2">Accept attendees automatically</label>
                     </div>
-                    
+
                 </div>
-                
+
                 <div class="w-100 text-center">
                     <button type="button" class="btn btn-primary me-2">Save Change</button>
                 </div>
@@ -100,7 +103,6 @@
             }
         </div>
         <div id="div_share_screen" style="display:none;">
-
         </div>
         <div id="div_footer_left_meeting" class="p-2 d-flex align-items-center justify-content-center" style="height:10%;">
             <span id="time_meeting" class="me-2">
@@ -169,5 +171,7 @@
 </div>
 
 @section script {
+    <script type="text/javascript" src="~/lib/microsoft-signalr/signalr.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/lib/peerjs/peerjs.js" asp-append-version="true"></script>
     <script src="~/js/meeting.js" asp-append-version="true"></script>
 }

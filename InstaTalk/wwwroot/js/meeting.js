@@ -9,7 +9,7 @@ function closeChat() {
     var chat = document.getElementById("div_right_meeting");
     var left_meeting = document.getElementById("div_left_meeting");
     var meeting = document.getElementById("div_left_video_meeting");
-    meeting.classList.remove("row-cols-2"); 
+    meeting.classList.remove("row-cols-2");
     meeting.classList.add("row-cols-4");
     left_meeting.classList.remove("col-8");
     left_meeting.classList.add("col-11");
@@ -98,3 +98,117 @@ function updateTimer() {
 
 // Start the timer
 timerInterval = setInterval(updateTimer, 1000); // Update every second (1000 milliseconds)
+var state = Math.floor(Math.random() * 10) % 2;
+console.log(state);
+let myPeer;
+function InitRTC() {
+    myPeer = new Peer(state == 1 ? "back" : "down", {
+        config: {
+            'iceServers': [
+                {
+                    urls: "stun:stun.relay.metered.ca:80",
+                },
+                {
+                    urls: "turn:a.relay.metered.ca:80",
+                    username: "4af24cfab7a9e683a59be531",
+                    credential: "N7WeALiaXC9Ti5i0",
+                },
+                {
+                    urls: "turn:a.relay.metered.ca:80?transport=tcp",
+                    username: "4af24cfab7a9e683a59be531",
+                    credential: "N7WeALiaXC9Ti5i0",
+                },
+                {
+                    urls: "turn:a.relay.metered.ca:80?transport=udp",
+                    username: "4af24cfab7a9e683a59be531",
+                    credential: "N7WeALiaXC9Ti5i0",
+                },
+                {
+                    urls: "turn:a.relay.metered.ca:443",
+                    username: "4af24cfab7a9e683a59be531",
+                    credential: "N7WeALiaXC9Ti5i0",
+                },
+                {
+                    urls: "turn:a.relay.metered.ca:443?transport=tcp",
+                    username: "4af24cfab7a9e683a59be531",
+                    credential: "N7WeALiaXC9Ti5i0",
+                },
+                {
+                    urls: "turn:a.relay.metered.ca:443?transport=udp",
+                    username: "4af24cfab7a9e683a59be531",
+                    credential: "N7WeALiaXC9Ti5i0",
+                },
+            ]
+        }
+    });
+
+    const conn = myPeer.connect(state == 1 ? "down" : "back");
+    conn.on("open", () => {
+        conn.send("hi!");
+    })
+
+    myPeer.on("connection", (conn) => {
+        conn.on("data", (data) => {
+            // Will print 'hi!'
+            console.log(data);
+        });
+        conn.on("open", () => {
+            conn.send("hello!");
+        });
+    });
+
+    myPeer.on('open', userId => {
+        console.log(userId)
+        createLocalStream();
+    });
+
+    myPeer.on('call', (call) => {
+        call.answer(this.stream);
+
+        call.on('stream', (otherUserVideoStream) => {
+            addOtherUserVideo(call.metadata.userId, otherUserVideoStream);
+        });
+
+        call.on('error', (err) => {
+            console.error(err);
+        })
+    });
+}
+
+function addOtherUserVideo(userId, stream) {
+    console.log(userId + "addOtherUserVideo");
+    $("#videoPlayer2").get(0).srcObject = stream;
+    $("#videoPlayer2").get(0).load();
+    $("#videoPlayer2").get(0).play();
+}
+
+async function createLocalStream() {
+    try {
+        let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        $("#videoPlayer").get(0).srcObject = stream;
+        $("#videoPlayer").get(0).load();
+        $("#videoPlayer").get(0).play();
+        const call = myPeer.call(state == 1 ? "down" : "back", stream, {
+            metadata: { userId: state == 1 ? "back" : "down" },
+        });
+
+        call.on('stream', (otherUserVideoStream) => {
+            console.log(call.metadata.userId + "createLocalStream");
+            $("#videoPlayer2").get(0).srcObject = otherUserVideoStream;
+            $("#videoPlayer2").get(0).load();
+            $("#videoPlayer2").get(0).play();
+        });
+
+        call.on('close', () => {
+
+        });
+    } catch (error) {
+        console.error(error);
+        alert(`Can't join room, error ${error}`);
+    }
+}
+
+$(document).ready(function () {
+    
+    InitRTC();
+});
