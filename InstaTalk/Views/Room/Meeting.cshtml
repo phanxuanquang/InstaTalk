@@ -111,22 +111,22 @@
                 12345
             </span>
             <div id="div_control_meeting" class="d-flex col-10 pb-2 align-items-center justify-content-center">
-                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;" onclick="changeMicState()">
+                <button id="btn_mic_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;border-style:solid" onclick="changeMicState()">
                     <span class="material-icons" id="icon_mic_meeting">
                         mic
                     </span>
                 </button>
-                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;" onclick="changeCamState()">
+                <button id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;border-style:solid" onclick="changeCamState()">
                     <span class="material-icons" id="icon_cam_meeting">
                         videocam
                     </span>
                 </button>
-                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;">
+                <button id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-danger" type="button" style="width:40px;height:40px;border-style:none">
                     <span class="material-icons" id="icon_end_meeting">
                         call_end
                     </span>
                 </button>
-                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;" onclick="openChat()">
+                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;border-style:solid" onclick="openChat()">
                     <span class="material-icons" id="icon_chat_meeting">
                         chat
                     </span>
@@ -137,7 +137,7 @@
     <div id="div_right_meeting" class="col-3 d-flex flex-column align-items-center border border-2 rounded-3">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2">
             <h5 class="modal-title col-11" id="ModalJoinRoomTitle">Chat Area</h5>
-            <button id="btn-icon-visibility" class="col-1 bg-white border-0 d-flex flex-column align-items-center justify-content-center" type="button" onclick="closeChat()">
+            <button id="btn-icon-visibility" class="col-1 border-0 d-flex flex-column align-items-center justify-content-center" type="button" onclick="closeChat()">
                 <span class="material-icons" id="icon_close_modal_join_room">
                     clear
                 </span>
