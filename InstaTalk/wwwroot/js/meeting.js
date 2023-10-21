@@ -209,6 +209,5 @@ async function createLocalStream() {
 }
 
 $(document).ready(function () {
-    
     InitRTC();
 });

@@ -2,3 +2,9 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+function CallToast(message) {
+    let toast = document.getElementById("template-toast")
+    let content = document.getElementById("content-toast")
+    content.innerHTML = message
+    new bootstrap.Toast(toast).show()
+}
