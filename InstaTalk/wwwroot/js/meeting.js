@@ -29,6 +29,7 @@ function openChat() {
 }
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
+    icon.style.transition = "transform 0.5s ease";
     if (isMicClicked) {
         icon.innerHTML = "mic_off";
         isMicClicked = false;
