@@ -1,4 +1,4 @@
-**© 2023 University of Information Technology / COVIDealer Project**
+**© 2023 University of Information Technology / InstaTalk Project**
 ------------
 ![InstaTalk_logo](https://raw.githubusercontent.com/phanxuanquang/InstaTalk/development/InstaTalk/wwwroot/asset/image/logo.png)
 Introducing InstaTalk, the cutting-edge platform that redefines instant, anonymous connections. InstaTalk empowers you to effortlessly create or join online meeting rooms, and dive into spontaneous video calls with strangers, all without the need for any accounts. But here's the magic: InstaTalk's ingenious match-making algorithm ensures you connect with strangers who are a perfect match for your preferences. Experience the thrill of unbounded, account-free interactions with friends and strangers alike.
@@ -7,6 +7,13 @@ InstaTalk is majorly designed and developed to cater to a diverse range of indiv
 
 **Expected released date:** January 31th, 2024
 ____________________________
+## 0. Our team:
+| NO. | NAME | RESPONSIBILITY |
+| --- | --- | --- |
+| 1 | [Phan Xuan Quang](https://github.com/phanxuanquang "Phan Xuân Quang") | Product Design, Frontend Development |
+| 2 | [Tran Van Thiet](https://github.com/MiMi-Yup "Trần Văn Thiệt") | Backend Development |
+| 3 | [Nguyen Hoang Phuc](https://github.com/phucnh20521768 "Nguyễn Hoàng Phúc") | Frontend Development |
+| 4 | [Din Hien Dung](https://github.com/dung-ovl "Dín Hiền Dũng") | DevOps |
 ## 1. Main objectives:
 * **Maximize Convenience:** Provide a platform that's effortlessly accessible and does not requires any accounts, making it easier than ever to connect with friends and strangers.
 * **Enhance Connections:** Empower users to forge new friendships and strengthen existing ones through seamless online interactions.
