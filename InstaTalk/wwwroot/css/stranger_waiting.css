@@ -1,0 +1,35 @@
+﻿.loader {
+    width: 150px; /* control the size */
+    aspect-ratio: 1;
+    display: grid;
+    -webkit-mask: conic-gradient(from 15deg, #0003,#000);
+    mask: conic-gradient(from 15deg, #0003,#000);
+    animation: load 1s steps(12) infinite;
+}
+
+    .loader,
+    .loader:before,
+    .loader:after {
+        background: radial-gradient(circle closest-side,currentColor 90%,#0000 98%) 50% -150%/20% 80% repeat-y, radial-gradient(circle closest-side,currentColor 90%,#0000 98%) -150% 50%/80% 20% repeat-x;
+    }
+
+        .loader:before,
+        .loader:after {
+            content: "";
+            grid-area: 1/1;
+            transform: rotate(30deg);
+        }
+
+        .loader:after {
+            transform: rotate(60deg);
+        }
+
+@keyframes load {
+    from {
+        transform: rotate(0turn)
+    }
+
+    to {
+        transform: rotate(1turn)
+    }
+}

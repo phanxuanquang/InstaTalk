@@ -29,22 +29,30 @@ function openChat() {
 }
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
+    var btn = document.getElementById("btn_mic_meeting");
+    icon.style.transition = "transform 0.5s ease";
     if (isMicClicked) {
         icon.innerHTML = "mic_off";
         isMicClicked = false;
+        btn.classList.add("btn-danger");
     } else {
         icon.innerHTML = "mic";
         isMicClicked = true;
+        btn.classList.remove("btn-danger");
     }
 }
 function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
+    var btn = document.getElementById("btn_cam_meeting");
+    icon.style.transition = "transform 0.5s ease";
     if (isCamClicked) {
         icon.innerHTML = "videocam_off";
         isCamClicked = false;
+        btn.classList.add("btn-danger");
     } else {
         icon.innerHTML = "videocam";
         isCamClicked = true;
+        btn.classList.remove("btn-danger");
     }
 }
 
@@ -71,3 +79,29 @@ function showModalConfig() {
     $('#ModalMeetingRoom').modal('hide');
     $('#ModalSecurityConfig').modal('show');
 }
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let timerInterval;
+
+function updateTimer() {
+    seconds++;
+    if (seconds == 60) {
+        seconds = 0;
+        minutes++;
+        if (minutes == 60) {
+            minutes = 0;
+            hours++;
+        }
+    }
+
+    const formattedTime =
+        `${hours.toString().padStart(2, '0')}:
+                 ${minutes.toString().padStart(2, '0')}:
+                 ${seconds.toString().padStart(2, '0')}`;
+
+    document.getElementById('time_meeting').textContent = formattedTime;
+}
+
+// Start the timer
+timerInterval = setInterval(updateTimer, 1000); // Update every second (1000 milliseconds)
