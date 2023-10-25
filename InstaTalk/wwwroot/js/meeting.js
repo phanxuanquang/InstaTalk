@@ -30,29 +30,35 @@ function openChat() {
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
     var btn = document.getElementById("btn_mic_meeting");
-    icon.style.transition = "transform 0.5s ease";
+    btn.style.transition = "transform 0.5 ease";
+    btn.style.transform = "transform 0.5s ease";
     if (isMicClicked) {
         icon.innerHTML = "mic_off";
         isMicClicked = false;
         btn.classList.add("btn-danger");
+        btn.classList.remove("btn-light");
     } else {
         icon.innerHTML = "mic";
         isMicClicked = true;
         btn.classList.remove("btn-danger");
+        btn.classList.add("btn-light");
+
     }
 }
 function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
     var btn = document.getElementById("btn_cam_meeting");
-    icon.style.transition = "transform 0.5s ease";
+    icon.style.transition = "transform 0.5 ease";
     if (isCamClicked) {
         icon.innerHTML = "videocam_off";
         isCamClicked = false;
         btn.classList.add("btn-danger");
+        btn.classList.remove("btn-light");
     } else {
         icon.innerHTML = "videocam";
         isCamClicked = true;
         btn.classList.remove("btn-danger");
+        btn.classList.add("btn-light");
     }
 }
 

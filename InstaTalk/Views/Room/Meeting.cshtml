@@ -52,6 +52,7 @@
                         clear
                     </span>
                 </button>
+
             </div>
             <div class="modal-body"> 
                 <div class="input-group mb-3" style="display: block;">
@@ -111,59 +112,76 @@
                 12345
             </span>
             <div id="div_control_meeting" class="d-flex col-10 pb-2 align-items-center justify-content-center">
-                <button id="btn_mic_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;border-style:solid" onclick="changeMicState()">
+                <button id="btn_mic_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid" onclick="changeMicState()">
                     <span class="material-icons" id="icon_mic_meeting">
                         mic
                     </span>
                 </button>
-                <button id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;border-style:solid" onclick="changeCamState()">
+                <button id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid" onclick="changeCamState()">
                     <span class="material-icons" id="icon_cam_meeting">
                         videocam
                     </span>
                 </button>
-                <button id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-danger" type="button" style="width:40px;height:40px;border-style:none">
-                    <span class="material-icons" id="icon_end_meeting">
-                        call_end
-                    </span>
-                </button>
-                <button id="btn-icon-visibility" class="col-1 bg-white rounded-circle d-flex flex-column align-items-center justify-content-center mx-2" type="button" style="width:40px;height:40px;border-style:solid" onclick="openChat()">
+                <button id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid" onclick="openChat()">
                     <span class="material-icons" id="icon_chat_meeting">
                         chat
                     </span>
                 </button>
+                <button class="Btn mx-2">
+
+                    <div class="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
+
+                    <div class="text">LEAVE</div>
+                </button>
             </div>
         </div>
     </div>
-    <div id="div_right_meeting" class="col-3 d-flex flex-column align-items-center border border-2 rounded-3">
+    <div id="div_right_meeting" class="col-3 d-flex flex-column align-items-center border border-2 rounded-3 bg-light">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2">
-            <h5 class="modal-title col-11" id="ModalJoinRoomTitle">Chat Area</h5>
-            <button id="btn-icon-visibility" class="col-1 border-0 d-flex flex-column align-items-center justify-content-center" type="button" onclick="closeChat()">
-                <span class="material-icons" id="icon_close_modal_join_room">
-                    clear
+            <div class="checkbox-wrapper-35 col-11 bg-light py-2">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch">
+                <label for="switch">
+                    <span class="switch-x-text">Chat Area is </span>
+                    <span class="switch-x-toggletext">
+                        <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Off</span>
+                        <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>On</span>
+                    </span>
+                </label>
+            </div>
+            <button id="btn_icon_send" class="bg-white py-2 d-flex justify-content-center p-1" type="button" onclick="closeChat()">
+                <span class="material-icons" id="icon_clear_id">
+                    close
                 </span>
             </button>
         </div>
         <div id="div_chat_right_meeting" class="w-100 h-100">
-            <div id="div_check_chat_enable" class="w-100 d-flex p-2 px-3">
-                <p class="col-11">Enable Chat Area</p>
-                <input type="checkbox" class="theme-checkbox" id="flexSwitchCheckDefault">
-            </div>
+            @* <div class="checkbox-wrapper-35">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch">
+                <label for="switch">
+                    <span class="switch-x-text">Chat Area is </span>
+                    <span class="switch-x-toggletext">
+                        <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Off</span>
+                        <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>On</span>
+                    </span>
+                </label>
+            </div> *@
+
         </div>
-        <div id="div_footer_right_meeting" class="w-100 d-flex p-4">
+        <div id="div_footer_right_meeting" class="w-100 d-flex p-3">
             <button id="btn_attach_file" class="bg-white py-2 d-flex justify-content-center" type="button">
-                <span class="material-icons" id="icon_clear_id">
+                <span class="material-icons" id="icon_clear_id" onclick="document.getElementById('fileInput').click();">
                     attach_file
                 </span>
             </button>
             <div class="form-outline d-flex">
                 <input type="text" id="input_chat_meeting" class="form-control border-0" />
-                <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting">Your message</label>
-                <button id="btn_icon_send" class="bg-white py-2 d-flex justify-content-center" type="button">
-                    <span class="material-icons" id="icon_clear_id">
-                        send
-                    </span>
-                </button>
+                <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
             </div>
+            <button id="btn_icon_send" class="bg-white py-2 d-flex justify-content-center" style="color:var(--primary-color);" type="button">
+                <span class="material-icons" id="icon_clear_id">
+                    send
+                </span>
+            </button>
         </div>
     </div>
 </div>
