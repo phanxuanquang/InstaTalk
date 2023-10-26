@@ -4,6 +4,8 @@ var isVisibile = true;
 
 $(window).on('load', function () {
     $('#ModalMeetingRoom').modal('show');
+    changeMicState();
+    changeCamState();
 });
 function closeChat() {
     var chat = document.getElementById("div_right_meeting");
@@ -68,19 +70,7 @@ function hiddenModal() {
 function hiddenModalConfig() {
     $('#ModalSecurityConfig').modal('hide');
 }
-function changeConfigPassIcon() {
-    var icon = document.getElementById("icon_pass_config");
-    var input = document.getElementById("input_pass_config");
-    if (isVisibile) {
-        icon.innerHTML = "visibility_off";
-        input.type = "password";
-        isVisibile = false;
-    } else {
-        icon.innerHTML = "visibility";
-        input.type = "text";
-        isVisibile = true;
-    }
-}
+
 function showModalConfig() {
     $('#ModalMeetingRoom').modal('hide');
     $('#ModalSecurityConfig').modal('show');
@@ -118,7 +108,14 @@ function setCopyState(){
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
-
+var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+    return new bootstrap.Popover(popoverTriggerEl)
+})
+var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+var toastList = toastElList.map(function (toastEl) {
+    return new bootstrap.Toast(toastEl, option)
+})
 function openFileSelector() {
     // Get the file input element by its ID
     var fileInput = document.getElementById("file-input");

@@ -61,15 +61,15 @@
             <div class="modal-body"> 
                 <div class="input-group" style="display: block;">
                     <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
-                        <input type="password" id="input_pass_config" class="form-control border-0" />
-                        <label id="lb_input_pass_config" class="form-label" for="input-room-mate-id">Set password for your room</label>
-                        <span class="input-group-append col-1 d-flex justify-content-end input-custom">
+                        <input type="password" id="input_pass_config" class="form-control border-1" />
+                        <label id="lb_input_pass_config" class="form-label" for="input-room-mate-id" style="color:darkgray">Set password for your room</label>
+                        @* <span class="input-group-append col-1 d-flex justify-content-end input-custom">
                             <button id="btn-icon-visibility" class="bg-white py-2 pe-2 ps-0 d-flex justify-content-center" type="button" style="border:none;">
                                 <span class="material-icons" id="icon_pass_config" onclick="changeConfigPassIcon()">
                                     visibility_off
                                 </span>
                             </button>
-                        </span>
+                        </span> *@
                     </div>
                     <div class="form-check m-3 mt-2">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
@@ -128,11 +128,6 @@
                         videocam
                     </span>
                 </button>
-                <button data-toggle="tooltip" data-placement="top" title="Security Configuration" id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" data-bs-toggle="modal" data-bs-target="#ModalSecurityConfig">
-                    <span class="material-icons btn-ove" id="icon_cam_meeting">
-                        settings
-                    </span>
-                </button>
                 <button data-toggle="tooltip" data-placement="top" title="Chat Area" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
                     <span class="material-icons" id="icon_chat_meeting">
                         forum
@@ -141,6 +136,11 @@
                 <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
                     <span class="material-icons" id="icon_chat_meeting">
                         people_alt
+                    </span>
+                </button>
+                <button data-toggle="tooltip" data-placement="top" title="Security Configuration" id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" data-bs-toggle="modal" data-bs-target="#ModalSecurityConfig">
+                    <span class="material-icons btn-ove" id="icon_cam_meeting">
+                        settings
                     </span>
                 </button>
                 <button data-toggle="tooltip" data-placement="top" title="Leave The Room" class="Btn mx-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -179,7 +179,7 @@
             </button>
             <input type="file" id="file-input" style="display: none;">
             <div class="form-outline d-flex">
-                <input type="text" id="input_chat_meeting" class="form-control border-0" />
+                <input type="text" id="input_chat_meeting" class="form-control border-0"/>
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
             </div>
             <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="button">
