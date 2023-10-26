@@ -90,6 +90,8 @@ let minutes = 0;
 let hours = 0;
 let timerInterval;
 
+// Start the timer
+timerInterval = setInterval(updateTimer, 1000); // Update every second (1000 milliseconds)
 function updateTimer() {
     seconds++;
     if (seconds == 60) {
@@ -108,6 +110,33 @@ function updateTimer() {
 
     document.getElementById('time_meeting').textContent = formattedTime;
 }
+function setCopyState(){
+    var icon = document.getElementById("icon_copy_url");
+    icon.innerHTML = "done";
+}
 
-// Start the timer
-timerInterval = setInterval(updateTimer, 1000); // Update every second (1000 milliseconds)
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+
+function openFileSelector() {
+    // Get the file input element by its ID
+    var fileInput = document.getElementById("file-input");
+
+    // Trigger a click event on the file input
+    fileInput.click();
+}
+
+function toggleComponents() {
+    var checkbox = document.getElementById("switch");
+
+    var parentDiv = document.getElementById("div_right_meeting");
+
+    var formElements = parentDiv.querySelectorAll("select, textarea, button");
+
+    var disable = !checkbox.checked;
+
+    formElements.forEach(function (element) {
+        element.disabled = disable;
+    });
+}

@@ -83,7 +83,7 @@ h2 {
         background: linear-gradient(90deg, transparent, #03f40f);
         animation: btn-anim1 2s linear infinite;
     }
- 
+
 .custom-btn {
     position: relative;
     display: inline-block;
