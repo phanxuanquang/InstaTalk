@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InstaTalk.Models;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace InstaTalk.Controllers
 {
@@ -13,9 +15,14 @@ namespace InstaTalk.Controllers
             return View();
         }
 
-        public IActionResult Meeting()
+        public async Task<IActionResult> Meeting(int roomId)
         {
-            return View();
+            var content = HttpContext.Session.GetString("sessionRoom");
+            if (string.IsNullOrEmpty(content))
+                return RedirectToAction("Index");
+
+            var model = JsonConvert.DeserializeObject<RoomInfo>(content);
+            return View(model);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿@using System.Drawing;
+﻿@model RoomInfo
+
+@using System.Drawing;
 @{
     ViewData["Title"] = "Room";
 }
@@ -171,7 +173,17 @@
 </div>
 
 @section script {
+    <script>
+        var ObjClient = {};
+        ObjClient.Room = @Html.Raw(Json.Serialize(Model.Room));
+        ObjClient.User = @Html.Raw(Json.Serialize(Model.User));
+    </script>
     <script type="text/javascript" src="~/lib/microsoft-signalr/signalr.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/lib/peerjs/peerjs.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/utility-stream-service.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/presence-service.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/message-count-stream-service.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/mute-cam-mic-service.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/chat-hub.js" asp-append-version="true"></script>
     <script src="~/js/meeting.js" asp-append-version="true"></script>
 }

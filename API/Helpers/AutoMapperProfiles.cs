@@ -12,7 +12,8 @@ namespace API.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<AppUser, MemberDto>();
+            CreateMap<AppUser, MemberDto>()
+                .ForMember(s => s.Id, options => options.MapFrom(t => t.Id.ToString().ToLower()));
 
             CreateMap<RegisterDto, AppUser>();
 

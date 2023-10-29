@@ -103,13 +103,27 @@ function updateTimer() {
     document.getElementById('time_meeting').textContent = formattedTime;
 }
 
-// Start the timer
-timerInterval = setInterval(updateTimer, 1000); // Update every second (1000 milliseconds)
-var state = Math.floor(Math.random() * 10) % 2;
-console.log(state);
-let myPeer;
+// Create an instance of the ChatHubService
+const chatService = new ChatHubService(muteCamMicService, messageCountService);
+
+// Usage:
+const user = { token: 'your_user_token' };
+const roomId = 'your_room_id';
+
+chatService.createHubConnection(ObjClient.User, ObjClient.Room.roomId);
+
+const presenceService = new PresenceService(utility);
+
+presenceService.createHubConnection(ObjClient.User);
+
+var myPeer;
+var subscriptions = new Subscription();
+var stream;
+var videos = [];
+const localView = document.getElementById("videoPlayer");
+
 function InitRTC() {
-    myPeer = new Peer(state == 1 ? "back" : "down", {
+    myPeer = new Peer(ObjClient.User.userId, {
         config: {
             'iceServers': [
                 {
@@ -149,11 +163,6 @@ function InitRTC() {
         }
     });
 
-    const conn = myPeer.connect(state == 1 ? "down" : "back");
-    conn.on("open", () => {
-        conn.send("hi!");
-    })
-
     myPeer.on("connection", (conn) => {
         conn.on("data", (data) => {
             // Will print 'hi!'
@@ -170,7 +179,7 @@ function InitRTC() {
     });
 
     myPeer.on('call', (call) => {
-        call.answer(this.stream);
+        call.answer(stream);
 
         call.on('stream', (otherUserVideoStream) => {
             addOtherUserVideo(call.metadata.userId, otherUserVideoStream);
@@ -180,35 +189,126 @@ function InitRTC() {
             console.error(err);
         })
     });
+
+    this.subscriptions.add(
+        chatService.oneOnlineUser$.subscribe(member => {
+            if (ObjClient.User.userId !== member.id) {
+                // Let some time for new peers to be able to answer
+                setTimeout(() => {
+                    const call = myPeer.call(member.id, stream, {
+                        metadata: {
+                            userId: {
+                                id: ObjClient.User.userId,
+                                displayName: ObjClient.User.displayName,
+                                lastActive: ObjClient.User.lastActive,
+                            }
+                        },
+                    });
+                    call.on('stream', (otherUserVideoStream) => {
+                        this.addOtherUserVideo(member, otherUserVideoStream);
+                    });
+
+                    call.on('close', () => {
+                        videos = videos.filter((video) => video.user.id !== member.id);
+                        //xoa user nao offline tren man hinh hien thi cua current user
+                        this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
+                    });
+                }, 1000);
+            }
+        })
+    );
+
+    this.subscriptions.add(chatService.oneOfflineUser$.subscribe(member => {
+        videos = videos.filter(video => video.user.id !== member.id);
+        //xoa user nao offline tren man hinh hien thi current user
+        this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
+    }));
+
+    this.subscriptions.add(
+        chatService.messagesThread$.subscribe(messages => {
+            this.messageInGroup = messages;
+        })
+    );
+
+    //hien thi so tin nhan chua doc
+    this.subscriptions.add(
+        messageCountService.messageCount$.subscribe(value => {
+            this.messageCount = value;
+        })
+    );
+
+    /*// bat che do share 1 man hinh len, nhan tu chatHub
+    this.subscriptions.add(
+        this.shareScreenService.shareScreen$.subscribe(val => {
+            if (val) {//true = share screen
+                this.statusScreen = eMeet.SHARESCREEN
+                this.enableShareScreen = false;
+                localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+            } else {// false = stop share
+                this.statusScreen = eMeet.NONE
+                this.enableShareScreen = true;
+                localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+            }
+        })
+    )
+
+    // bat dau share stream toi user vao sau cung tu user xuat phat stream
+    this.subscriptions.add(this.shareScreenService.lastShareScreen$.subscribe(val => {
+        if (val.isShare) {//true = share screen        
+            chatService.shareScreenToUser(Number.parseInt(this.roomId), val.id, true)
+            setTimeout(() => {
+                const call = this.shareScreenPeer.call('share_' + val.id, this.shareScreenStream);
+            }, 1000)
+        }
+    }))*/
+
+    this.subscriptions.add(utility.kickedOutUser$.subscribe(val => {
+        this.isMeeting = false
+        this.accountService.logout()
+        this.toastr.info('You have been locked by admin')
+        this.router.navigateByUrl('/login')
+    }))
+
+    /*this.subscriptions.add(this.shareScreenService.userIsSharing$.subscribe(val => {
+        this.userIsSharing = val
+    }))*/
 }
 
-function addOtherUserVideo(userId, stream) {
+/*function addOtherUserVideo(userId, stream) {
     console.log(userId + "addOtherUserVideo");
     $("#videoPlayer2").get(0).srcObject = stream;
     $("#videoPlayer2").get(0).load();
     $("#videoPlayer2").get(0).play();
+}*/
+
+function addOtherUserVideo(user, stream) {
+    const alreadyExisting = videos.some(video => video.user.id === user.id);
+    if (alreadyExisting) {
+        console.log(videos, user);
+        return;
+    }
+
+    videos.push({
+        muted: false,
+        srcObject: stream,
+        user: user
+    });
+
+    if (videos.length <= this.maxUserDisplay) {
+        this.tempvideos.push({
+            muted: false,
+            srcObject: stream,
+            user: user
+        })
+    }
 }
 
 async function createLocalStream() {
     try {
-        let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        $("#videoPlayer").get(0).srcObject = stream;
-        $("#videoPlayer").get(0).load();
-        $("#videoPlayer").get(0).play();
-        const call = myPeer.call(state == 1 ? "down" : "back", stream, {
-            metadata: { userId: state == 1 ? "back" : "down" },
-        });
-
-        call.on('stream', (otherUserVideoStream) => {
-            console.log(call.metadata.userId + "createLocalStream");
-            $("#videoPlayer2").get(0).srcObject = otherUserVideoStream;
-            $("#videoPlayer2").get(0).load();
-            $("#videoPlayer2").get(0).play();
-        });
-
-        call.on('close', () => {
-
-        });
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localView.srcObject = stream;
+        localView.load();
+        localView.play();
     } catch (error) {
         console.error(error);
         alert(`Can't join room, error ${error}`);

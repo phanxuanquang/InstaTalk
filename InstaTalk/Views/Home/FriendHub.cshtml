@@ -1,4 +1,6 @@
-﻿@{
+﻿@model CreateRoomModel
+
+@{
     ViewData["Title"] = "Home";
 }
 
@@ -60,17 +62,37 @@
     <div class="d-flex flex-column justify-content-center align-items-center text-center p-4 col-10">
         <div style="max-width:550px;">
             <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo">
-            <form id="homepage_form" class="w-100" method="post" action="@Url.Action("Meeting", "Room")">
+            <form id="homepage_form" class="w-100" method="post">
                 <center>
-                    <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
+                    @* <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
                         <input placeholder="Your display name" type="text" class="textInput">
-                    </div> 
+                    </div>  *@
+                    <div class="form-group textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
+                        <label asp-for="@Model.DisplayName"></label>
+                        <input class="form-control" asp-for="@Model.DisplayName" />
+                        <span asp-validation-for="@Model.DisplayName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
+                        <label asp-for="@Model.RoomName"></label>
+                        <input class="form-control" asp-for="@Model.RoomName" />
+                        <span asp-validation-for="@Model.RoomName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
+                        <label asp-for="@Model.SecurityCode"></label>
+                        <input class="form-control" asp-for="@Model.SecurityCode" />
+                        <span asp-validation-for="@Model.SecurityCode" class="text-danger"></span>
+                    </div>  
                     @* <button type="submit" class="btn btn-primary me-2" style="max-width: 162px;">Create a Room</button>
                     <button type="button" class="btn btn-primary ms-2" style="max-width: 162px;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">Join a Room</button>  *@
-                    <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;">
+                    @* <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;">
                         Create a Room
                         <span></span>
-                    </a>
+                    </a> *@
+                    <div class="form-group">
+                        <button class="btn btn-danger" asp-action="CreateRoom" asp-controller="Home" type="submit">Create a room</button>
+                    </div>
                     <a class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
                         Join a Room
                         <span></span>
