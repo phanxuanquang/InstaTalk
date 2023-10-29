@@ -2,32 +2,17 @@
     ViewData["Title"] = "Home";
 }
 
-@* <div class="modal fade" id="HomeModal">
-    <div class="modal-dialog modal-dialog-centered")">
-        <div class="modal-content text-center" style="padding: 0px 1rem 0px 1rem">
-            <h1 class="m-4 mb-2">Meet and talk with?</h1>
-            <div class="modal-body">
-                <button class="btn btn-primary my-2 w-100"  onclick="location.href='@Url.Action("FriendHub", "Home")'">Friends</button>
-                <button class="btn btn-primary my-2 w-100" onclick="location.href='@Url.Action("Index", "Stranger")'">Strangers</button>
-            </div>
-        </div>
-    </div>
-</div> *@
-<div class="login-box">
+<div class="entry-box">
     <h2 class="popup-header">You want to meet?</h2>
-    <div style="padding: 40px">
-        <form>
-            <center>
-                <a href="#" onclick="location.href='@Url.Action("FriendHub", "Home")'">
-                    FRIENDS
-                    <span></span>
-                </a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
-                    STRANGERS
-                    <span></span>
-                </a>
-            </center>
-        </form>
+    <div style="padding: 30px; align-content: center">
+        <a class="custom-btn" href="#" onclick="location.href='@Url.Action("FriendHub", "Home")'">
+            FRIENDS
+            <span></span>
+        </a>
+        <a class="custom-btn" href="#" onclick="location.href='@Url.Action("Index", "Stranger")'">
+            STRANGER
+            <span></span>
+        </a>
     </div>
 </div>
 
