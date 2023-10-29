@@ -15,6 +15,7 @@ function closeChat() {
     meeting.classList.add("row-cols-4");
     left_meeting.classList.remove("col-8");
     left_meeting.classList.add("col-11");
+    chat.style.transition = "display 1s ease";
     chat.classList.remove("d-flex");
     chat.style.display = "none";
 }
@@ -27,13 +28,14 @@ function openChat() {
     left_meeting.classList.remove("col-11");
     left_meeting.classList.add("col-8");
     left_meeting.classList.remove();
+    chat.style.transition = "display 0.5 ease";
     chat.classList.add("d-flex");
 }
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
     var btn = document.getElementById("btn_mic_meeting");
-    btn.style.transition = "transform 0.5 ease";
-    btn.style.transform = "transform 0.5s ease";
+    icon.style.transition = "transform 0.5s ease"
+    icon.style.transform = "transform 0.5s ease";
     if (isMicClicked) {
         icon.innerHTML = "mic_off";
         isMicClicked = false;
@@ -51,6 +53,7 @@ function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
     var btn = document.getElementById("btn_cam_meeting");
     icon.style.transition = "transform 0.5 ease";
+    icon.style.transform = "transform 0.5s ease";
     if (isCamClicked) {
         icon.innerHTML = "videocam_off";
         isCamClicked = false;
