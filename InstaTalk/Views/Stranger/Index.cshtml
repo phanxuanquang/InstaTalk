@@ -3,15 +3,15 @@
 }
 
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
-    <div style="max-width:550px;">
+    <div style="max-width:550px; display:block; text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 0px 0px 20px 0px">
-        <form id="homepage_form" class="w-100" method="post" action="@Url.Action("FindOut", "Stranger")">
+        <form id="homepage_form" style="width:95%;display:inline-block;margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("FindOut", "Stranger")">
             <div class="textInputWrapper" style="margin: 0px 0px 20px 0px">
                 <input placeholder="Your display name" type="text" class="textInput">
             </div>
-            <div class="m-auto d-flex">
-                <div class="btn-group shadow-0 mb-3 me-1" style="width:49%;" aria-label=".form-select-lg example">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
+            <div class="m-auto d-flex gap-2">
+                <div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
+                    <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
                         Your gender
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
@@ -23,8 +23,8 @@
                         <li><a class="dropdown-item" href="#">Others</a></li>
                     </ul>
                 </div>
-                <div class="btn-group shadow-0 mb-3 me-1" style="width:49%;" aria-label=".form-select-lg example">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
+                <div class="btn-group shadow-0 mb-3 ms-1" style="width:100%;" aria-label=".form-select-lg example">
+                    <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
                         Your age
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
@@ -37,7 +37,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
+            <div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
                 <button type="button"
                         class="btn btn-secondary dropdown-toggle"
                         data-mdb-toggle="dropdown"

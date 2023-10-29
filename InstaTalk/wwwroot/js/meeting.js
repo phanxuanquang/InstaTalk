@@ -1,35 +1,83 @@
 ﻿var isMicClicked = true;
 var isCamClicked = true;
 var isVisibile = true;
+var isExpanded = true;
 
 $(window).on('load', function () {
     $('#ModalMeetingRoom').modal('show');
     changeMicState();
     changeCamState();
 });
+
+function expand() {
+    var sideBar = document.getElementById("side_bar_control");
+    var btnExpand = document.getElementById("btn-icon-expand");
+    
+    if (isExpanded) {
+        sideBar.classList.add("side_bar_control");
+        sideBar.style.display = "block";
+        isExpanded = false;
+        btnExpand.style.transform = "rotate(180deg)";
+        btnExpand.style.transition = "transform 0.5s ease"; 
+    }
+    else {
+        sideBar.classList.remove("side_bar_control");
+        sideBar.style.display = "none";
+        isExpanded = true;
+        btnExpand.style.transform = "rotate(360deg)";
+        btnExpand.style.transition = "transform 0.5s ease"; 
+    }
+}
+
+//function minimize() {
+//    var sideBar = document.getElementById("side_bar_control");
+//    var btnExpand = document.getElementById("btn-icon-expand");
+//    btnExpand.style.display = "flex";
+//    sideBar.classList.remove("side_bar_control");
+//    sideBar.style.display = "none";
+//}
+
 function closeChat() {
-    var chat = document.getElementById("div_right_meeting");
-    var left_meeting = document.getElementById("div_left_meeting");
-    var meeting = document.getElementById("div_left_video_meeting");
-    meeting.classList.remove("row-cols-2"); 
-    meeting.classList.add("row-cols-4");
-    left_meeting.classList.remove("col-8");
-    left_meeting.classList.add("col-11");
-    chat.style.transition = "display 1s ease";
-    chat.classList.remove("d-flex");
-    chat.style.display = "none";
+    var windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var chat = document.getElementById("div_right_meeting");
+        var left_meeting = document.getElementById("div_left_meeting");
+        var meeting = document.getElementById("div_left_video_meeting");
+        left_meeting.classList.remove("col-8");
+        left_meeting.classList.add("col-11");
+        chat.classList.remove("d-flex");
+        chat.classList.remove("col-11");
+        chat.style.display = "none";
+    }
+    else {
+        var chat = document.getElementById("div_right_meeting");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.style.display = "block"; 
+       left_meeting.classList.remove("col-8");
+        left_meeting.classList.add("col-11");
+        chat.classList.remove("d-flex");
+        chat.classList.remove("col-11");
+        chat.style.display = "none";
+    }
 }
 function openChat() {
-    var chat = document.getElementById("div_right_meeting");
-    var left_meeting = document.getElementById("div_left_meeting");
-    var meeting = document.getElementById("div_left_video_meeting");
-    meeting.classList.remove("row-cols-4");
-    meeting.classList.add("row-cols-2");
-    left_meeting.classList.remove("col-11");
-    left_meeting.classList.add("col-8");
-    left_meeting.classList.remove();
-    chat.style.transition = "display 0.5 ease";
-    chat.classList.add("d-flex");
+    var windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var chat = document.getElementById("div_right_meeting");
+        var left_meeting = document.getElementById("div_left_meeting");
+        var meeting = document.getElementById("div_left_video_meeting");
+        left_meeting.classList.remove("col-11");
+        left_meeting.classList.add("col-8");
+        left_meeting.classList.remove();
+        chat.classList.add("d-flex");
+    }
+    else {
+        var chat = document.getElementById("div_right_meeting");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.style.display = "none";
+        chat.classList.add("d-flex");
+        chat.classList.add("col-11");
+    }
 }
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
