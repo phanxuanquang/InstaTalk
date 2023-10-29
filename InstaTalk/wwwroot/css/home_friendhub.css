@@ -1,14 +1,17 @@
 ﻿
 
-@media (max-width: 770px) {
-    button {
+@media (max-width: 720px) {
+    .custom-btn {
+        margin: 0 !important;
         width: 70% !important;
     }
 }
 
-@media (max-width: 400px) {
-    button {
+@media (max-width: 450px) {
+    .custom-btn {
+        margin: 0 !important;
         width: 90% !important;
+        letter-spacing: 2px !important;
     }
 }
 
