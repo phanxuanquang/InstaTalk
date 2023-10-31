@@ -33,6 +33,9 @@ namespace InstaTalk.Controllers
                 return RedirectToAction("Index", "Home");
 
             var model = JsonConvert.DeserializeObject<RoomInfo>(content);
+
+            ViewBag.API = new { API = _configuration.GetValue<string>("APIUrl") };
+
             return View(model);
         }
     }

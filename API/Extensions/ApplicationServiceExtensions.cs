@@ -27,7 +27,7 @@ namespace API.Extensions
             services.AddDbContext<DataContext>(options =>
             {
                 //Install-Package Microsoft.EntityFrameworkCore.SqlServer || options.UseSqlServer
-                options.UseSqlServer(config.GetConnectionString(true ? "DevConnection" : "DefaultConnection"));
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
             return services;
         }

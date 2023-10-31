@@ -1,6 +1,6 @@
 ﻿class ChatHubService {
     constructor(muteCamMicService, messageCountService) {
-        this.hubUrl = `${ObjClient.HostHub}hubs/`;
+        this.hubUrl = `${ObjClient.HostHub.api}hubs/`;
         this.hubConnection = null;
 
         this.oneOnlineUserSource = new Subject();
