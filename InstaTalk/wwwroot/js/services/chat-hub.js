@@ -24,11 +24,7 @@
             .withAutomaticReconnect()
             .build();
 
-        this.hubConnection.start()
-            .then(() => {
-                this.subscribeToHubEvents();
-            })
-            .catch(err => console.log(err));
+        this.hubConnection.start().catch(err => console.log(err));
 
         this.hubConnection.on('NewMessage', message => {
             if (this.messageCountService.activeTabChat) {

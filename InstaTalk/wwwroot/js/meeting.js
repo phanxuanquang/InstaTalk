@@ -107,8 +107,6 @@ function updateTimer() {
 const chatService = new ChatHubService(muteCamMicService, messageCountService);
 
 // Usage:
-const user = { token: 'your_user_token' };
-const roomId = 'your_room_id';
 
 chatService.createHubConnection(ObjClient.User, ObjClient.Room.roomId);
 
@@ -120,7 +118,40 @@ var myPeer;
 var subscriptions = new Subscription();
 var stream;
 var videos = [];
+
+var videoSource = new Subject();
+var videoObs$ = videoSource.asObservable();
+
+var tempvideos = [];
 const localView = document.getElementById("videoPlayer");
+
+videoObs$.subscribe((val) => {
+    console.log(val);
+    var views = $("#videos").children();
+
+    let transform = val.map(item => item.user.id);
+    let transform2 = [];
+    for (let i = 0; i < views.length; i++) 
+        transform2.push(views[i].id);
+
+    let removeVideos = views.filter((view) => !transform.includes(view.id))
+    for (let i = 0; i < removeVideos.length; i++)
+        removeVideos[i].remove();
+
+        let newVideos = val.filter(item => !transform2.includes(item.user.id))
+            .map(item => {
+                var newVideo = document.createElement("video");
+                newVideo.id = item.user.id;
+                newVideo.srcObject = item.srcObject;
+                newVideo.setAttribute("muted", "demo")
+                newVideo.load();
+                newVideo.play();
+                return newVideo
+            });
+
+        if (newVideos && newVideos.length > 0)
+            $("#videos").append(newVideos);
+    });
 
 function InitRTC() {
     myPeer = new Peer(ObjClient.User.userId, {
@@ -212,6 +243,8 @@ function InitRTC() {
                         videos = videos.filter((video) => video.user.id !== member.id);
                         //xoa user nao offline tren man hinh hien thi cua current user
                         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
+
+                        videoSource.next(videos);
                     });
                 }, 1000);
             }
@@ -222,6 +255,7 @@ function InitRTC() {
         videos = videos.filter(video => video.user.id !== member.id);
         //xoa user nao offline tren man hinh hien thi current user
         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
+        videoSource.next(videos);
     }));
 
     this.subscriptions.add(
@@ -280,7 +314,6 @@ function InitRTC() {
     $("#videoPlayer2").get(0).load();
     $("#videoPlayer2").get(0).play();
 }*/
-
 function addOtherUserVideo(user, stream) {
     const alreadyExisting = videos.some(video => video.user.id === user.id);
     if (alreadyExisting) {
@@ -294,6 +327,8 @@ function addOtherUserVideo(user, stream) {
         user: user
     });
 
+    videoSource.next(videos);
+
     if (videos.length <= this.maxUserDisplay) {
         this.tempvideos.push({
             muted: false,
@@ -301,6 +336,7 @@ function addOtherUserVideo(user, stream) {
             user: user
         })
     }
+    tempvideos.forEach(video => { var newDiv = document.createElement("video"); newDiv.srcObject = video.srcObject; newDiv.load(); newDiv.play(); })
 }
 
 async function createLocalStream() {
@@ -310,6 +346,10 @@ async function createLocalStream() {
         localView.load();
         localView.play();
     } catch (error) {
+        stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        localView.srcObject = stream;
+        localView.load();
+        localView.play();
         console.error(error);
         alert(`Can't join room, error ${error}`);
     }

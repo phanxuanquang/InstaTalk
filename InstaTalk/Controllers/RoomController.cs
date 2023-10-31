@@ -6,20 +6,21 @@ namespace InstaTalk.Controllers
 {
     public class RoomController : Controller
     {
-        public IActionResult Index(int id)
+        public IActionResult Index(int roomId)
         {
-            if (id == 1)
-            {
+            var content = HttpContext.Session.GetString("sessionRoom");
+            if (string.IsNullOrEmpty(content))
                 return RedirectToAction("Index", "Home");
-            }
-            return View();
+
+            var model = JsonConvert.DeserializeObject<RoomInfo>(content);
+            return View(model);
         }
 
         public async Task<IActionResult> Meeting(int roomId)
         {
             var content = HttpContext.Session.GetString("sessionRoom");
             if (string.IsNullOrEmpty(content))
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
 
             var model = JsonConvert.DeserializeObject<RoomInfo>(content);
             return View(model);
