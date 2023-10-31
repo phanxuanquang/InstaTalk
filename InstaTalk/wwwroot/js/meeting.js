@@ -129,29 +129,30 @@ videoObs$.subscribe((val) => {
     console.log(val);
     var views = $("#videos").children();
 
-    let transform = val.map(item => item.user.id);
-    let transform2 = [];
-    for (let i = 0; i < views.length; i++) 
-        transform2.push(views[i].id);
+    let mapUserIDs = val.map(item => item.user.id);
+    let userViewed = [];
 
-    let removeVideos = views.filter((view) => !transform.includes(view.id))
-    for (let i = 0; i < removeVideos.length; i++)
-        removeVideos[i].remove();
+    for (let i = 0; i < views.length; i++)
+        userViewed.push(views[i].id);
 
-        let newVideos = val.filter(item => !transform2.includes(item.user.id))
-            .map(item => {
-                var newVideo = document.createElement("video");
-                newVideo.id = item.user.id;
-                newVideo.srcObject = item.srcObject;
-                newVideo.setAttribute("muted", "demo")
-                newVideo.load();
-                newVideo.play();
-                return newVideo
-            });
+    for (let i = 0; i < views.length; i++)
+        if (!mapUserIDs.includes(views[i].id))
+            views[i].remove();
 
-        if (newVideos && newVideos.length > 0)
-            $("#videos").append(newVideos);
-    });
+    let newVideos = val.filter(item => !userViewed.includes(item.user.id))
+        .map(item => {
+            var newVideo = document.createElement("video");
+            newVideo.id = item.user.id;
+            newVideo.srcObject = item.srcObject;
+            newVideo.setAttribute("muted", '');
+            newVideo.load();
+            newVideo.play();
+            return newVideo
+        });
+
+    if (newVideos && newVideos.length > 0)
+        $("#videos").append(newVideos);
+});
 
 function InitRTC() {
     myPeer = new Peer(ObjClient.User.userId, {
