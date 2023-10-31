@@ -179,6 +179,7 @@
         var ObjClient = {};
         ObjClient.Room = @Html.Raw(Json.Serialize(Model.Room));
         ObjClient.User = @Html.Raw(Json.Serialize(Model.User));
+        ObjClient.HostHub = @Html.Raw(ViewBag.API);
     </script>
     <script type="text/javascript" src="~/lib/microsoft-signalr/signalr.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/lib/peerjs/peerjs.js" asp-append-version="true"></script>

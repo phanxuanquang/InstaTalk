@@ -1,6 +1,6 @@
 ﻿class PresenceService {
     constructor(utility) {
-        this.hubUrl = 'https://localhost:7127/hubs/';
+        this.hubUrl = `${ObjClient.HostHub}hubs/`;
         this.hubConnection = null;
         this.onlineUsersSource = new BehaviorSubject([]);
         this.onlineUsers$ = this.onlineUsersSource.asObservable();

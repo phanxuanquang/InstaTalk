@@ -6,6 +6,13 @@ namespace InstaTalk.Controllers
 {
     public class RoomController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public RoomController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public IActionResult Index(int roomId)
         {
             var content = HttpContext.Session.GetString("sessionRoom");
@@ -13,6 +20,9 @@ namespace InstaTalk.Controllers
                 return RedirectToAction("Index", "Home");
 
             var model = JsonConvert.DeserializeObject<RoomInfo>(content);
+
+            ViewBag.API = _configuration.GetValue<string>("APIUrl");
+
             return View(model);
         }
 
