@@ -7,4 +7,4 @@
 		alert('Please allow popups for this website, and then refresh this page.');
 				}
 	        }, 3200);
-	}, false);
+}, false);

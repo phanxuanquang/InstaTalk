@@ -22,8 +22,11 @@ namespace InstaTalk.Controllers
             return View();
         }
 
-        public IActionResult FriendHub(CreateRoomModel obj)
+        public IActionResult FriendHub(RoomViewModel obj)
         {
+            obj = new RoomViewModel();
+            obj.JoinRoom = new JoinRoomModel();
+            obj.CreateRoom = new CreateRoomModel();
             return View(obj);
         }
 
@@ -34,13 +37,15 @@ namespace InstaTalk.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateRoom(CreateRoomModel obj)
+        public async Task<IActionResult> CreateRoom(RoomViewModel obj)
         {
-            if (ModelState.IsValid)
+            /*if (ModelState.IsValid)
             {
+                */
                 using (var client = _httpClientFactory.CreateClient("API"))
                 {
-                    var response = await client.PostAsJsonAsync("/api/Room/add-room", obj);
+                    var model = obj.CreateRoom;
+                    var response = await client.PostAsJsonAsync("/api/Room/add-room", model);
                     if (response.IsSuccessStatusCode)
                     {
                         using (var content = response.Content)
@@ -52,7 +57,28 @@ namespace InstaTalk.Controllers
                         }
                     }
                 }
+            /*}*/
+            return RedirectToAction("FriendHub", obj);
+        }
+
+        public async Task<IActionResult> JoinRoom(RoomViewModel obj)
+        {
+            using (var client = _httpClientFactory.CreateClient("API"))
+            {
+                var model = obj.JoinRoom;
+                var response = await client.PostAsJsonAsync("/api/Room/join-room", model);
+                if (response.IsSuccessStatusCode)
+                {
+                    using (var content = response.Content)
+                    {
+                        var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
+                        HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
+                        HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
+                        return RedirectToAction("Meeting", "Room", responseContent?.Room?.RoomId);
+                    }
+                }
             }
+
             return RedirectToAction("FriendHub", obj);
         }
     }

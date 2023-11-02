@@ -1,6 +1,6 @@
 ﻿class ChatHubService {
     constructor(muteCamMicService, messageCountService) {
-        this.hubUrl = 'https://localhost:7127/hubs/';
+        this.hubUrl = `${ObjClient.HostHub.api}hubs/`;
         this.hubConnection = null;
 
         this.oneOnlineUserSource = new Subject();
@@ -24,11 +24,7 @@
             .withAutomaticReconnect()
             .build();
 
-        this.hubConnection.start()
-            .then(() => {
-                this.subscribeToHubEvents();
-            })
-            .catch(err => console.log(err));
+        this.hubConnection.start().catch(err => console.log(err));
 
         this.hubConnection.on('NewMessage', message => {
             if (this.messageCountService.activeTabChat) {

@@ -1,11 +1,9 @@
-﻿@media (max-width: 435px) {
-    button {
-        margin: 0.5rem 0 !important;
+﻿@media (max-width: 620px) {
+    .entry-box {
+        width:auto !important;
+        text-align: center;
     }
-}
-
-@media (min-width: 435px) {
-    button {
-        margin: 0.5rem !important;
+    h2 {
+        font-size: 1.5rem !important;
     }
 }

@@ -29,7 +29,7 @@ namespace API.Extensions
         {
             services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString(isDevelopment ? "DevConnection" : "DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
         }
 
