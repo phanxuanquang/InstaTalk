@@ -13,7 +13,7 @@
 
 @media (max-width: 1260px) {
     #div_left_video_meeting {
-        height: 90% !important;
+        height: 85% !important;
     }
     #div_footer_left_meeting {
         flex-direction: column !important;
