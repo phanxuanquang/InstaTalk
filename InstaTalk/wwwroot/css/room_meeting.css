@@ -1,5 +1,5 @@
 ﻿
-@media (max-width: 1200px) {
+/*@media (max-width: 1200px) {
     .user-card {
         width: 33.33333333333333% !important;
     }
@@ -9,7 +9,7 @@
     .user-card {
         width: 50% !important;
     }
-}
+}*/
 
 @media (max-width: 1260px) {
     #div_left_video_meeting {

@@ -12,10 +12,10 @@
 }
 
 
-<video id="videoPlayer" width="200"></video>
+@* <video id="videoPlayer" width="200"></video>
 <div id="videos">
 </div>
-
+ *@
 <div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -98,20 +98,21 @@
 
 <div class="d-flex align-items-center justify-content-center gap-1 h-100">
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
-        <div id="div_left_video_meeting" class="row row-cols-4 justify-content-center" style="margin:0;padding:0;height:90%;">
-            @for (int i = 0; i < 6; i++)
-            {
-                Random rnd = new Random();
-
-                Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-                <div class="user-card d-flex align-items-center justify-content-center">
-                    <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;border-radius:0.5rem;">
-                        <div style="width:75px;height:75px;background-color:rgb(@randomColor.R, @randomColor.G, @randomColor.B);color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                            OK
-                        </div>
+        <div id="div_left_video_meeting" class="row row-cols-1 justify-content-center" style="margin:0;padding:0;height:90%;">
+               @*  Random rnd = new Random();
+                Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)); *@
+            @* <div id="user_video" class="user-card d-flex align-items-center justify-content-center">
+                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;border-radius:0.5rem;">
+                    <div style="width:75px;height:75px;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
+                        OK
                     </div>
                 </div>
-            }
+            </div> *@
+            
+                <div id="container_user_video" class="w-100 d-flex flex-column align-items-center justify-content-center">
+                    <video id="user_video" class="container-fluid mb-2" style="width:100%;height:auto;object-fit:cover;">
+                    </video>
+                </div>
         </div>
         <div id="div_share_screen" style="display:none;">
         </div>

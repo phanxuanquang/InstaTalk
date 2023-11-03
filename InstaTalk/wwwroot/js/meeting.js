@@ -162,9 +162,9 @@ var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
     return new bootstrap.Popover(popoverTriggerEl)
 })
 var toastElList = [].slice.call(document.querySelectorAll('.toast'))
-var toastList = toastElList.map(function (toastEl) {
-    return new bootstrap.Toast(toastEl, option)
-})
+//var toastList = toastElList.map(function (toastEl) {
+//    return new bootstrap.Toast(toastEl, option)
+//})
 function openFileSelector() {
     // Get the file input element by its ID
     var fileInput = document.getElementById("file-input");
@@ -193,11 +193,11 @@ var videoSource = new Subject();
 var videoObs$ = videoSource.asObservable();
 
 var tempvideos = [];
-const localView = document.getElementById("videoPlayer");
+const localView = document.getElementById("user_video");
 
 videoObs$.subscribe((val) => {
     console.log(val);
-    var views = $("#videos").children();
+    var views = $("#div_left_video_meeting").children();
 
     let mapUserIDs = val.map(item => item.user.id);
     let userViewed = [];
@@ -206,22 +206,41 @@ videoObs$.subscribe((val) => {
         userViewed.push(views[i].id);
 
     for (let i = 0; i < views.length; i++)
-        if (!mapUserIDs.includes(views[i].id))
+        if (!mapUserIDs.includes(views[i].id) && views[i].id !== "div_user_video")
             views[i].remove();
 
     let newVideos = val.filter(item => !userViewed.includes(item.user.id))
         .map(item => {
-            var newVideo = document.createElement("video");
-            newVideo.id = item.user.id;
+            var newVideo = localView.cloneNode(true);
+            var parent = document.getElementById("div_user_video");
+            var parentlv2 = document.getElementById("container_user_video");
+            var x = parent.cloneNode(true);
+            x.innerHTML = '';
+            var y = parentlv2.cloneNode(true);
+            y.innerHTML = '';
+            x.id = item.user.id;
             newVideo.srcObject = item.srcObject;
             newVideo.setAttribute("muted", '');
             newVideo.load();
             newVideo.play();
-            return newVideo
+            y.append(newVideo);
+            x.append(y);
+            return x;
         });
 
-    if (newVideos && newVideos.length > 0)
-        $("#videos").append(newVideos);
+    if (newVideos && newVideos.length > 0) {
+        $("#div_left_video_meeting").append(newVideos);
+    }
+
+    var currentViews = $("#div_left_video_meeting").children();
+    var widthBase;
+    if (currentViews.length <= 4)
+        widthBase = 100 / currentViews.length;
+    else
+        widthBase = 100 / 4;
+    for (let i = 0; i < currentViews.length; i++) {
+        currentViews[i].style.width = widthBase + "%";
+    }
 });
 
 function InitRTC() {
