@@ -297,14 +297,15 @@ videoObs$.subscribe((val) => {
 });
 
 shareScreenObs$.subscribe(event => {
+    let shareView = document.getElementById("share-video");
+    shareView.pause();
+
     shareScreenStream = event;
     shareScreenStream.getVideoTracks()[0].addEventListener('ended', () => {
         chatService.shareScreen(ObjClient.Room.roomId, false);
         isSharingScreenSource.next(false);
-        localStorage.setItem('share-screen', JSON.stringify(enableShareScreen));
     });
-
-    let shareView = document.getElementById("share-video");
+    
     if (shareScreenStream && shareScreenStream.active) {
         shareView.srcObject = shareScreenStream;
         shareView.muted = true;
