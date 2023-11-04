@@ -298,6 +298,11 @@ videoObs$.subscribe((val) => {
 
 shareScreenObs$.subscribe(event => {
     this.shareScreenStream = event;
+    this.shareScreenStream.getVideoTracks()[0].addEventListener('ended', () => {
+        chatService.shareScreen(ObjClient.Room.roomId, false);
+        isSharingScreenSource.next(false);
+        localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+    });
 
     let shareView = document.getElementById("share-video");
     if (this.shareScreenStream && this.shareScreenStream.active) {
@@ -535,12 +540,6 @@ async function shareScreen() {
         this.videos.forEach(v => {
             const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream);
         })
-
-        mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
-            this.chatService.shareScreen(ObjClient.Room.roomId, false);
-            this.isSharingScreenSource.next(false);
-            localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
-        });
     } catch (e) {
         console.log(e);
         alert(e)
