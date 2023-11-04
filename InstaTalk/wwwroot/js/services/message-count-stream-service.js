@@ -23,7 +23,7 @@
     }
 }
 
-// Usage:
+/*// Usage:
 const messageCountService = new MessageCountStreamService();
 
 // Set values and subscribe to observables as needed
@@ -41,4 +41,4 @@ messageCountService.messageCount$.subscribe((value) => {
 
 messageCountService.activeTabChat$.subscribe((value) => {
     console.log('Active Tab Chat:', value);
-});
+});*/

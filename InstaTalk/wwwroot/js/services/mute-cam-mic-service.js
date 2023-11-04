@@ -1,17 +1,22 @@
 ﻿class MuteCamMicService {
     constructor() {
         this.muteMicro = null;
-        this.muteCamera = null;
         this.muteMicroSource = new Subject();
         this.muteMicro$ = this.muteMicroSource.asObservable();
+
+        this.muteCamera = null;
         this.muteCameraSource = new Subject();
         this.muteCamera$ = this.muteCameraSource.asObservable();
+
         this.shareScreenSource = new Subject();
         this.shareScreen$ = this.shareScreenSource.asObservable();
+
         this.lastShareScreenSource = new Subject();
         this.lastShareScreen$ = this.lastShareScreenSource.asObservable();
+
         this.shareScreenToLastUserSource = new Subject();
         this.shareScreenToLastUser$ = this.shareScreenToLastUserSource.asObservable();
+
         this.userIsSharingSource = new Subject();
         this.userIsSharing$ = this.userIsSharingSource.asObservable();
     }
@@ -51,13 +56,13 @@
     }
 }
 
-const muteCamMicService = new MuteCamMicService();
+/*const muteCamMicService = new MuteCamMicService();
 
 // Set values and subscribe to observables as needed
-muteCamMicService.Microphone = { /* your muteMicro value */ };
-muteCamMicService.Camera = { /* your muteCamera value */ };
+muteCamMicService.Microphone = { *//* your muteMicro value *//* };
+muteCamMicService.Camera = { *//* your muteCamera value *//* };
 muteCamMicService.ShareScreen = true; // or false
-muteCamMicService.LastShareScreen = { /* your lastShareScreen value */ };
+muteCamMicService.LastShareScreen = { *//* your lastShareScreen value *//* };
 muteCamMicService.ShareScreenToLastUser = true; // or false
 muteCamMicService.UserIsSharing = 'some_username';
 
@@ -79,4 +84,4 @@ muteCamMicService.shareScreenToLastUser$.subscribe((value) => {
 });
 muteCamMicService.userIsSharing$.subscribe((value) => {
     console.log('User Is Sharing:', value);
-});
+});*/

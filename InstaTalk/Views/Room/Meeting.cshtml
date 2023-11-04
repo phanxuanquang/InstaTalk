@@ -11,11 +11,6 @@
           rel="stylesheet">
 }
 
-
-@* <video id="videoPlayer" width="200"></video>
-<div id="videos">
-</div>
- *@
 <div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -95,6 +90,8 @@
     </div>
 </div>
 
+<video id="share-video" style="width: 300px"></video>
+
 
 <div class="d-flex align-items-center justify-content-center gap-1 h-100">
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
@@ -135,6 +132,11 @@
                 <button data-toggle="tooltip" data-placement="top" title="Camera" id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" onclick="changeCamState()">
                     <span class="material-icons" id="icon_cam_meeting">
                         videocam
+                    </span>
+                </button>
+                <button data-toggle="tooltip" data-placement="top" title="Share Screen" id="btn_sharing_screen" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-danger btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" onclick="shareScreen()">
+                    <span class="material-icons" id="icon_sharing_screen">
+                        mic_off
                     </span>
                 </button>
                 <button data-toggle="tooltip" data-placement="top" title="Chat Area" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
@@ -255,5 +257,6 @@
     <script type="text/javascript" src="~/js/services/message-count-stream-service.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/services/mute-cam-mic-service.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/services/chat-hub.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/config/webrtc-config.js" asp-append-version="true"></script>
     <script src="~/js/meeting.js" asp-append-version="true"></script>
 }
