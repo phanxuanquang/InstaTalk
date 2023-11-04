@@ -252,8 +252,8 @@ videoObs$.subscribe((val) => {
             var y = title.cloneNode(true);
             y.innerHTML = item.user.displayName;
             newVideo.srcObject = item.srcObject;
+            newVideo.muted = true;
             newVideo.id = item.user.id + "_video";
-            newVideo.setAttribute("muted", '');
             newVideo.load();
             newVideo.play();
             x.append(newVideo);
@@ -302,13 +302,13 @@ shareScreenObs$.subscribe(event => {
     let shareView = document.getElementById("share-video");
     if (this.shareScreenStream && this.shareScreenStream.active) {
         shareView.srcObject = this.shareScreenStream;
-        shareView.setAttribute("muted", '');
+        shareView.muted = true;
         shareView.load();
         shareView.play();
     }
     else {
         shareView.srcObject = undefined;
-        shareView.setAttribute("muted", '');
+        shareView.muted = true;
         shareView.load();
         shareView.pause();
     }
@@ -513,7 +513,7 @@ async function createLocalStream() {
 
     try {
         localView.srcObject = stream;
-        localView.setAttribute("muted", null);
+        localView.muted = true;
         localTitle.innerHTML = ObjClient.User.displayName;
         localView.muted = true;
         localView.load();
@@ -537,7 +537,7 @@ async function shareScreen() {
         })
 
         mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
-            this.chatHub.shareScreen(ObjClient.Room.roomId, false);
+            this.chatService.shareScreen(ObjClient.Room.roomId, false);
             this.isSharingScreenSource.next(false);
             localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
         });
