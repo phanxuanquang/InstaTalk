@@ -297,16 +297,16 @@ videoObs$.subscribe((val) => {
 });
 
 shareScreenObs$.subscribe(event => {
-    this.shareScreenStream = event;
-    this.shareScreenStream.getVideoTracks()[0].addEventListener('ended', () => {
+    shareScreenStream = event;
+    shareScreenStream.getVideoTracks()[0].addEventListener('ended', () => {
         chatService.shareScreen(ObjClient.Room.roomId, false);
         isSharingScreenSource.next(false);
-        localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+        localStorage.setItem('share-screen', JSON.stringify(enableShareScreen));
     });
 
     let shareView = document.getElementById("share-video");
-    if (this.shareScreenStream && this.shareScreenStream.active) {
-        shareView.srcObject = this.shareScreenStream;
+    if (shareScreenStream && shareScreenStream.active) {
+        shareView.srcObject = shareScreenStream;
         shareView.muted = true;
         shareView.load();
         shareView.play();
@@ -319,8 +319,10 @@ shareScreenObs$.subscribe(event => {
     }
 });
 
-muteCamMicService.muteCamera$.subscribe(event => {
-    console.log(event)
+muteCamMicService.muteMicro$.subscribe(event => {
+    let video = document.getElementById(event.userId + '_video')
+    if (video)
+        video.muted = event.mute;
 });
 
 muteCamMicService.muteCamera$.subscribe(event => {

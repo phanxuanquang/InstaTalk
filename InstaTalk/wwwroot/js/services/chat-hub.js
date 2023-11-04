@@ -53,12 +53,12 @@
             this.toastr.warning(user.displayName + ' has left room!')
         })
 
-        this.hubConnection.on('OnMuteMicro', ({ username, mute }) => {
-            this.muteCamMicService.Microphone = { username, mute }
+        this.hubConnection.on('OnMuteMicro', ({ userId, mute }) => {
+            this.muteCamMicService.Microphone = { userId, mute }
         })
 
-        this.hubConnection.on('OnMuteCamera', ({ username, mute }) => {
-            this.muteCamMicService.Camera = { username, mute }
+        this.hubConnection.on('OnMuteCamera', ({ userId, mute }) => {
+            this.muteCamMicService.Camera = { userId, mute }
         })
 
         this.hubConnection.on('OnShareScreen', (isShareScreen) => {
