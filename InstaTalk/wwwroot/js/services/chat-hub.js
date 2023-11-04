@@ -32,9 +32,11 @@
             } else {
                 this.messageCountService.MessageCount += 1
             }
-            this.messagesThread$.pipe(take(1)).subscribe(messages => {
+
+            this.messagesThreadSource.next([...this.messagesThreadSource.getValue(), message]);
+            /*this.messagesThread$.pipe(take(1)).subscribe(messages => {
                 this.messagesThreadSource.next([...messages, message])
-            })
+            })*/
         })
 
         this.hubConnection.on('UserOnlineInGroup', (user) => {

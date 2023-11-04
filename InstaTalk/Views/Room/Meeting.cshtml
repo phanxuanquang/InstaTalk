@@ -208,8 +208,12 @@
                 </span>
             </button>
         </div>
-        <div id="div_chat_right_meeting" class="w-100 h-100">
-
+        <div id="div_chat_right_meeting" class="w-100 h-100 d-flex flex-column-reverse">
+            <div id="my_chat_message" class="d-inline-flex justify-content-end bg-info p-1 m-1 rounded py-1">me chat</div>
+            <div id="other_chat_message" class="d-flex flex-column d-inline-flex p-1">
+                <p class="name h6">Quang</p>
+                <div class="message bg-dark rounded py-1">Tpro vjp</div>
+            </div>
         </div>
         <div id="div_footer_right_meeting" class="w-100 d-flex p-3">
             <button data-toggle="tooltip" data-placement="top" title="Attach a file" id="btn_attach_file" class="bg-transparent py-2 d-flex justify-content-center btn-ove" type="button" onclick="openFileSelector()">
@@ -218,15 +222,16 @@
                 </span>
             </button>
             <input type="file" id="file-input" style="display: none;">
-            <div class="form-outline d-flex">
+            <form class="form-outline d-flex" id="chat-input">
                 <input type="text" id="input_chat_meeting" class="form-control border-0"/>
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
-            </div>
-            <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="button">
-                <span class="material-icons" id="icon_clear_id">
-                    send
-                </span>
-            </button>
+                <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="submit">
+                    <span class="material-icons" id="icon_clear_id">
+                        send
+                    </span>
+                </button>
+            </form>
+
         </div>
     </div>
 </div>

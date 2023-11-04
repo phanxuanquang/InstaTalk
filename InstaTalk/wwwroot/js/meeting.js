@@ -398,7 +398,8 @@ function InitRTC() {
 
     this.subscriptions.add(
         chatService.messagesThread$.subscribe(messages => {
-            this.messageInGroup = messages;
+            chatMessageList = messages;
+            chatSource.next(chatMessageList);
         })
     );
 
@@ -406,6 +407,7 @@ function InitRTC() {
     this.subscriptions.add(
         messageCountService.messageCount$.subscribe(value => {
             this.messageCount = value;
+
         })
     );
     //#endregion
@@ -462,6 +464,19 @@ function InitRTC() {
         this.toastr.info('You have been locked by admin')
         this.router.navigateByUrl('/login')
     }))
+
+    /*this.subscriptions.add(this.shareScreenService.userIsSharing$.subscribe(val => {
+        this.userIsSharing = val
+    }))*/
+    chatForm.addEventListener("submit", function (event) {
+        // Prevent the default form submission behavior
+        event.preventDefault();
+
+        // Call the sendMessage function
+        sendMessage();
+    });
+
+
 }
 
 function addOtherUserVideo(user, stream) {
@@ -530,6 +545,52 @@ async function shareScreen() {
         alert(e)
     }
 }
+
+var chatMessageList = [];
+var chatSource = new Subject();
+var chatObs$ = chatSource.asObservable();
+
+
+
+
+var chatForm = document.getElementById("chat-input");
+
+// Create an input element for content
+var input = document.getElementById("input_chat_meeting");
+input.setAttribute("type", "text");
+input.setAttribute("name", "content");
+input.setAttribute("required", "true");
+
+var myChatClone = document.getElementById("my_chat_message")
+var myChatDisplay = document.getElementById("div_chat_right_meeting");
+
+// Define a function to send the message
+function sendMessage() {
+    // Get the content value from the input
+    var content = input.value;
+    // Use JSON.stringify to convert the content to a JSON string
+    var contentJSON = JSON.stringify(content);
+
+    // Send the message using the chatHub object
+    chatService.sendMessage(content).then(() => {
+        // Reset the form after sending the message
+        chatForm.reset();
+
+    });
+}
+
+chatObs$.subscribe((val) => {
+    while (myChatDisplay.firstChild) {
+        myChatDisplay.removeChild(myChatDisplay.lastChild);
+    }
+    for (let i = 0; i < val.length; i++) {
+        //Tao div message
+        var chat = myChatClone.cloneNode(true);
+        //createMessage(content);
+        chat.innerHTML = val[i].content;
+        myChatDisplay.append(chat);
+    }
+})
 
 $(document).ready(function () {
     InitRTC();
