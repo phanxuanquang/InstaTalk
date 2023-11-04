@@ -1,31 +1,63 @@
-﻿var isMicClicked = true;
-var isCamClicked = true;
+﻿var isMuted = true;
+var isStreamCam = false;
+
 var isVisibile = true;
 var isExpanded = true;
+let seconds = 0;
+let minutes = 0;
+let hours = 0;
+let timerInterval;
 
-$(window).on('load', function () {
-    $('#ModalMeetingRoom').modal('show');
-    changeMicState();
-    changeCamState();
-});
+const messageCountService = new MessageCountStreamService();
+const muteCamMicService = new MuteCamMicService();
+
+// Create an instance of the ChatHubService
+const chatService = new ChatHubService(muteCamMicService, messageCountService);
+
+// Usage:
+
+chatService.createHubConnection(ObjClient.User, ObjClient.Room.roomId);
+
+const presenceService = new PresenceService(utility);
+
+presenceService.createHubConnection(ObjClient.User);
+
+var myPeer; //for webcam
+var shareScreenPeer; //fo share screen
+var subscriptions = new Subscription();
+var stream;
+var videos = [];
+
+var videoSource = new Subject();
+var videoObs$ = videoSource.asObservable();
+
+var shareScreenStream;
+var shareScreenSource = new Subject();
+var shareScreenObs$ = shareScreenSource.asObservable();
+
+var isSharingScreenSource = new Subject();
+var isSharingScreen$ = isSharingScreenSource.asObservable();
+var tempvideos = [];
+const localView = document.getElementById("user_video");
+const localTitle = document.getElementById("title_video");
 
 function expand() {
     var sideBar = document.getElementById("side_bar_control");
     var btnExpand = document.getElementById("btn-icon-expand");
-    
+
     if (isExpanded) {
         sideBar.classList.add("side_bar_control");
         sideBar.style.display = "block";
         isExpanded = false;
         btnExpand.style.transform = "rotate(180deg)";
-        btnExpand.style.transition = "transform 0.5s ease"; 
+        btnExpand.style.transition = "transform 0.5s ease";
     }
     else {
         sideBar.classList.remove("side_bar_control");
         sideBar.style.display = "none";
         isExpanded = true;
         btnExpand.style.transform = "rotate(360deg)";
-        btnExpand.style.transition = "transform 0.5s ease"; 
+        btnExpand.style.transition = "transform 0.5s ease";
     }
 }
 
@@ -52,8 +84,8 @@ function closeChat() {
     else {
         var chat = document.getElementById("div_right_meeting");
         var left_meeting = document.getElementById("div_left_meeting");
-        left_meeting.style.display = "block"; 
-       left_meeting.classList.remove("col-8");
+        left_meeting.style.display = "block";
+        left_meeting.classList.remove("col-8");
         left_meeting.classList.add("col-11");
         chat.classList.remove("d-flex");
         chat.classList.remove("col-11");
@@ -84,35 +116,43 @@ function changeMicState() {
     var btn = document.getElementById("btn_mic_meeting");
     icon.style.transition = "transform 0.5s ease"
     icon.style.transform = "transform 0.5s ease";
-    if (isMicClicked) {
+    if (isMuted) {
         icon.innerHTML = "mic_off";
-        isMicClicked = false;
         btn.classList.add("btn-danger");
         btn.classList.remove("btn-light");
     } else {
         icon.innerHTML = "mic";
-        isMicClicked = true;
         btn.classList.remove("btn-danger");
         btn.classList.add("btn-light");
-
     }
+
+    if (stream)
+        stream.getAudioTracks()[0].enabled = !isMuted;
+    chatService.muteMicroPhone(isMuted);
+
+    isMuted = !isMuted;
 }
 function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
     var btn = document.getElementById("btn_cam_meeting");
     icon.style.transition = "transform 0.5 ease";
     icon.style.transform = "transform 0.5s ease";
-    if (isCamClicked) {
-        icon.innerHTML = "videocam_off";
-        isCamClicked = false;
-        btn.classList.add("btn-danger");
-        btn.classList.remove("btn-light");
-    } else {
+
+    if (isStreamCam) {
         icon.innerHTML = "videocam";
-        isCamClicked = true;
         btn.classList.remove("btn-danger");
         btn.classList.add("btn-light");
+    } else {
+        icon.innerHTML = "videocam_off";
+        btn.classList.add("btn-danger");
+        btn.classList.remove("btn-light");
     }
+
+    if (stream)
+        stream.getVideoTracks()[0].enabled = isStreamCam;
+    chatService.muteCamera(!isStreamCam);
+
+    isStreamCam = !isStreamCam;
 }
 
 function hiddenModal() {
@@ -126,10 +166,6 @@ function showModalConfig() {
     $('#ModalMeetingRoom').modal('hide');
     $('#ModalSecurityConfig').modal('show');
 }
-let seconds = 0;
-let minutes = 0;
-let hours = 0;
-let timerInterval;
 
 function updateTimer() {
     seconds++;
@@ -149,7 +185,7 @@ function updateTimer() {
 
     document.getElementById('time_meeting').textContent = formattedTime;
 }
-function setCopyState(){
+function setCopyState() {
     var icon = document.getElementById("icon_copy_url");
     icon.innerHTML = "done";
 }
@@ -173,28 +209,23 @@ function openFileSelector() {
     fileInput.click();
 }
 
-// Create an instance of the ChatHubService
-const chatService = new ChatHubService(muteCamMicService, messageCountService);
+this.isSharingScreen$.subscribe(event => {
+    var icon = document.getElementById("icon_sharing_screen");
+    var btn = document.getElementById("btn_sharing_screen");
+    icon.style.transition = "transform 0.5s ease"
+    icon.style.transform = "transform 0.5s ease";
 
-// Usage:
-
-chatService.createHubConnection(ObjClient.User, ObjClient.Room.roomId);
-
-const presenceService = new PresenceService(utility);
-
-presenceService.createHubConnection(ObjClient.User);
-
-var myPeer;
-var subscriptions = new Subscription();
-var stream;
-var videos = [];
-
-var videoSource = new Subject();
-var videoObs$ = videoSource.asObservable();
-
-var tempvideos = [];
-const localView = document.getElementById("user_video");
-const localTitle = document.getElementById("title_video");
+    if (event) {
+        icon.innerHTML = "mic";
+        btn.classList.remove("btn-danger");
+        btn.classList.add("btn-light");
+    }
+    else {
+        icon.innerHTML = "mic_off";
+        btn.classList.add("btn-danger");
+        btn.classList.remove("btn-light");
+    }
+});
 
 videoObs$.subscribe((val) => {
     console.log(val);
@@ -264,45 +295,40 @@ videoObs$.subscribe((val) => {
     }
 });
 
+shareScreenObs$.subscribe(event => {
+    this.shareScreenStream = event;
+
+    let shareView = document.getElementById("share-video");
+    if (this.shareScreenStream && this.shareScreenStream.active) {
+        shareView.srcObject = this.shareScreenStream;
+        shareView.setAttribute("muted", '');
+        shareView.load();
+        shareView.play();
+    }
+    else {
+        shareView.srcObject = undefined;
+        shareView.setAttribute("muted", '');
+        shareView.load();
+        shareView.pause();
+    }
+});
+
+muteCamMicService.muteCamera$.subscribe(event => {
+    console.log(event)
+});
+
+muteCamMicService.muteCamera$.subscribe(event => {
+    console.log(event);
+});
+
+muteCamMicService.shareScreen$.subscribe(event => {
+    console.log(event);
+});
+
 function InitRTC() {
+    //#region Init myPeer
     myPeer = new Peer(ObjClient.User.userId, {
-        config: {
-            'iceServers': [
-                {
-                    urls: "stun:stun.relay.metered.ca:80",
-                },
-                {
-                    urls: "turn:a.relay.metered.ca:80",
-                    username: "4af24cfab7a9e683a59be531",
-                    credential: "N7WeALiaXC9Ti5i0",
-                },
-                {
-                    urls: "turn:a.relay.metered.ca:80?transport=tcp",
-                    username: "4af24cfab7a9e683a59be531",
-                    credential: "N7WeALiaXC9Ti5i0",
-                },
-                {
-                    urls: "turn:a.relay.metered.ca:80?transport=udp",
-                    username: "4af24cfab7a9e683a59be531",
-                    credential: "N7WeALiaXC9Ti5i0",
-                },
-                {
-                    urls: "turn:a.relay.metered.ca:443",
-                    username: "4af24cfab7a9e683a59be531",
-                    credential: "N7WeALiaXC9Ti5i0",
-                },
-                {
-                    urls: "turn:a.relay.metered.ca:443?transport=tcp",
-                    username: "4af24cfab7a9e683a59be531",
-                    credential: "N7WeALiaXC9Ti5i0",
-                },
-                {
-                    urls: "turn:a.relay.metered.ca:443?transport=udp",
-                    username: "4af24cfab7a9e683a59be531",
-                    credential: "N7WeALiaXC9Ti5i0",
-                },
-            ]
-        }
+        config: config
     });
 
     myPeer.on("connection", (conn) => {
@@ -346,6 +372,7 @@ function InitRTC() {
                             }
                         },
                     });
+
                     call.on('stream', (otherUserVideoStream) => {
                         this.addOtherUserVideo(member, otherUserVideoStream);
                     });
@@ -381,31 +408,53 @@ function InitRTC() {
             this.messageCount = value;
         })
     );
+    //#endregion
 
-    /*// bat che do share 1 man hinh len, nhan tu chatHub
+    //#region Init shareScreenPeer
+    shareScreenPeer = new Peer('share_' + ObjClient.User.userId, {
+        config: config
+    })
+
+    shareScreenPeer.on('call', (call) => {
+        call.answer(this.shareScreenStream);
+        call.on('stream', (otherUserVideoStream) => {
+            this.shareScreenSource.next(otherUserVideoStream);
+        });
+
+        call.on('error', (err) => {
+            console.error(err);
+        })
+    });
+
+    // bat che do share 1 man hinh len, nhan tu chatHub
     this.subscriptions.add(
-        this.shareScreenService.shareScreen$.subscribe(val => {
+        muteCamMicService.shareScreen$.subscribe(val => {
             if (val) {//true = share screen
-                this.statusScreen = eMeet.SHARESCREEN
+                /*this.statusScreen = eMeet.SHARESCREEN
                 this.enableShareScreen = false;
-                localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+                localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));*/
             } else {// false = stop share
-                this.statusScreen = eMeet.NONE
+                /*this.statusScreen = eMeet.NONE
                 this.enableShareScreen = true;
-                localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+                localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));*/
             }
         })
     )
 
     // bat dau share stream toi user vao sau cung tu user xuat phat stream
-    this.subscriptions.add(this.shareScreenService.lastShareScreen$.subscribe(val => {
+    this.subscriptions.add(muteCamMicService.lastShareScreen$.subscribe(val => {
         if (val.isShare) {//true = share screen        
-            chatService.shareScreenToUser(Number.parseInt(this.roomId), val.id, true)
+            chatService.shareScreenToUser(ObjClient.Room.roomId, val.id, true)
             setTimeout(() => {
                 const call = this.shareScreenPeer.call('share_' + val.id, this.shareScreenStream);
             }, 1000)
         }
-    }))*/
+    }))
+
+    this.subscriptions.add(muteCamMicService.userIsSharing$.subscribe(val => {
+        this.userIsSharing = val
+    }))
+    //#endregion
 
     this.subscriptions.add(utility.kickedOutUser$.subscribe(val => {
         this.isMeeting = false
@@ -413,18 +462,8 @@ function InitRTC() {
         this.toastr.info('You have been locked by admin')
         this.router.navigateByUrl('/login')
     }))
-
-    /*this.subscriptions.add(this.shareScreenService.userIsSharing$.subscribe(val => {
-        this.userIsSharing = val
-    }))*/
 }
 
-/*function addOtherUserVideo(userId, stream) {
-    console.log(userId + "addOtherUserVideo");
-    $("#videoPlayer2").get(0).srcObject = stream;
-    $("#videoPlayer2").get(0).load();
-    $("#videoPlayer2").get(0).play();
-}*/
 function addOtherUserVideo(user, stream) {
     const alreadyExisting = videos.some(video => video.user.id === user.id);
     if (alreadyExisting) {
@@ -447,29 +486,56 @@ function addOtherUserVideo(user, stream) {
             user: user
         })
     }
-    tempvideos.forEach(video => { var newDiv = document.createElement("video"); newDiv.srcObject = video.srcObject; newDiv.load(); newDiv.play(); })
 }
 
 async function createLocalStream() {
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        localView.srcObject = stream;
-        localTitle.innerHTML = ObjClient.User.displayName;
-        localView.load();
-        localView.play();
     } catch (error) {
-        stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        stream = new webkitMediaStream();
+    }
+
+    try {
         localView.srcObject = stream;
+        localView.setAttribute("muted", null);
         localTitle.innerHTML = ObjClient.User.displayName;
         localView.load();
         localView.play();
+    }
+    catch (error) {
         console.error(error);
         alert(`Can't join room, error ${error}`);
     }
 }
 
+async function shareScreen() {
+    try {
+        let mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+        chatService.shareScreen(ObjClient.Room.roomId, true);
+        this.shareScreenSource.next(mediaStream);
+        this.isSharingScreenSource.next(true);
+
+        this.videos.forEach(v => {
+            const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream);
+        })
+
+        mediaStream.getVideoTracks()[0].addEventListener('ended', () => {
+            this.chatHub.shareScreen(ObjClient.Room.roomId, false);
+            this.isSharingScreenSource.next(false);
+            localStorage.setItem('share-screen', JSON.stringify(this.enableShareScreen));
+        });
+    } catch (e) {
+        console.log(e);
+        alert(e)
+    }
+}
+
 $(document).ready(function () {
     InitRTC();
+
+    $('#ModalMeetingRoom').modal('show');
+    changeMicState();
+    changeCamState();
 });
 function toggleComponents() {
     var checkbox = document.getElementById("switch");
