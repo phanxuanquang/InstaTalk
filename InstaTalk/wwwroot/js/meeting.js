@@ -444,9 +444,9 @@ function InitRTC() {
     // bat dau share stream toi user vao sau cung tu user xuat phat stream
     this.subscriptions.add(muteCamMicService.lastShareScreen$.subscribe(val => {
         if (val.isShare) {//true = share screen        
-            chatService.shareScreenToUser(ObjClient.Room.roomId, val.id, true)
+            chatService.shareScreenToUser(ObjClient.Room.roomId, val.userIdTo, true)
             setTimeout(() => {
-                const call = this.shareScreenPeer.call('share_' + val.id, this.shareScreenStream);
+                const call = this.shareScreenPeer.call('share_' + val.userIdTo, this.shareScreenStream);
             }, 1000)
         }
     }))
@@ -499,6 +499,7 @@ async function createLocalStream() {
         localView.srcObject = stream;
         localView.setAttribute("muted", null);
         localTitle.innerHTML = ObjClient.User.displayName;
+        localView.muted = true;
         localView.load();
         localView.play();
     }
