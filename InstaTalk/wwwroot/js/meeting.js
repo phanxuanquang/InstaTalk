@@ -253,6 +253,7 @@ videoObs$.subscribe((val) => {
             y.innerHTML = item.user.displayName;
             newVideo.srcObject = item.srcObject;
             newVideo.muted = true;
+            newVideo.id = item.user.id + "_video";
             newVideo.load();
             newVideo.play();
             x.append(newVideo);
