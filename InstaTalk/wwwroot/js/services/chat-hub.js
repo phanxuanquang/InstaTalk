@@ -65,8 +65,8 @@
             this.muteCamMicService.ShareScreen = isShareScreen
         })
 
-        this.hubConnection.on('OnShareScreenLastUser', ({ usernameTo, isShare }) => {
-            this.muteCamMicService.LastShareScreen = { username: usernameTo, isShare }
+        this.hubConnection.on('OnShareScreenLastUser', ({ userIdTo, isShare }) => {
+            this.muteCamMicService.LastShareScreen = { userIdTo: userIdTo, isShare }
         })
 
         this.hubConnection.on('OnUserIsSharing', currentUsername => {
