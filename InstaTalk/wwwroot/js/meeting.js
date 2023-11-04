@@ -194,6 +194,7 @@ var videoObs$ = videoSource.asObservable();
 
 var tempvideos = [];
 const localView = document.getElementById("user_video");
+const localTitle = document.getElementById("title_video");
 
 videoObs$.subscribe((val) => {
     console.log(val);
@@ -213,17 +214,17 @@ videoObs$.subscribe((val) => {
         .map(item => {
             var newVideo = localView.cloneNode(true);
             var parent = document.getElementById("div_user_video");
-            var parentlv2 = document.getElementById("container_user_video");
+            var title = document.getElementById("title_video");
             var x = parent.cloneNode(true);
             x.innerHTML = '';
-            var y = parentlv2.cloneNode(true);
-            y.innerHTML = '';
             x.id = item.user.id;
+            var y = title.cloneNode(true);
+            y.innerHTML = item.user.displayName;
             newVideo.srcObject = item.srcObject;
             newVideo.setAttribute("muted", '');
             newVideo.load();
             newVideo.play();
-            y.append(newVideo);
+            x.append(newVideo);
             x.append(y);
             return x;
         });
@@ -234,12 +235,32 @@ videoObs$.subscribe((val) => {
 
     var currentViews = $("#div_left_video_meeting").children();
     var widthBase;
-    if (currentViews.length <= 4)
-        widthBase = 100 / currentViews.length;
-    else
-        widthBase = 100 / 4;
+    var heightBase;
+    if (currentViews.length <= 4) {
+        widthBase = 2;
+        if (currentViews.length == 2)
+            heightBase = 100;
+        else
+            heightBase = 50;
+    }
+    else if (currentViews.length <= 9) {
+        widthBase = 3;
+        if (currentViews.length <= 6)
+            heightBase = 50;
+        else
+            heightBase = (100 / 3);
+    }
+    else if (currentViews.length <= 16) {
+        widthBase = 4;
+        if (currentViews.length <= 12)
+            heightBase = (100 / 3);
+        else
+            heightBase =25;
+    }
     for (let i = 0; i < currentViews.length; i++) {
-        currentViews[i].style.width = widthBase + "%";
+        var temp = document.getElementById("div_left_video_meeting");
+        temp.classList.add("row-cols-" + widthBase);
+        currentViews[i].style.height = heightBase + "%";
     }
 });
 
@@ -433,11 +454,13 @@ async function createLocalStream() {
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         localView.srcObject = stream;
+        localTitle.innerHTML = ObjClient.User.displayName;
         localView.load();
         localView.play();
     } catch (error) {
         stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
         localView.srcObject = stream;
+        localTitle.innerHTML = ObjClient.User.displayName;
         localView.load();
         localView.play();
         console.error(error);
