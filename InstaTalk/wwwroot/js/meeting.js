@@ -252,6 +252,7 @@ videoObs$.subscribe((val) => {
             var y = title.cloneNode(true);
             y.innerHTML = item.user.displayName;
             newVideo.srcObject = item.srcObject;
+            newVideo.id = item.user.id + "_video";
             newVideo.setAttribute("muted", '');
             newVideo.load();
             newVideo.play();
