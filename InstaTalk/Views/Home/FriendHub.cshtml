@@ -13,17 +13,17 @@
 <div class="modal fade" id="ModalJoinRoom" tabindex="-1" aria-labelledby="ModalJoinRoomTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="join-box modal-content">
-            <form id="form_join_room" method="post">
+            <form id="form_join_room" method="post" autocomplete="off">
                 <div class="user-box">
-                    <input type="text" name="JoinRoom.DisplayName" required />
+                    <input type="text" name="JoinRoom.DisplayName" required autocomplete="nope" />
                     <label>Your display name</label>
                 </div>
                 <div class="user-box">
-                    <input type="text" name="JoinRoom.RoomId" required />
+                    <input type="text" name="JoinRoom.RoomId" required autocomplete="nope" />
                     <label>Room ID or URL</label>
                 </div>
                 <div class="user-box">
-                    <input type="text" name="JoinRoom.SecurityCode" required />
+                    <input type="text" name="JoinRoom.SecurityCode" required autocomplete="nope" />
                     <label>Password</label>
                 </div>
                 <center>
@@ -41,7 +41,7 @@
             <form id="homepage_form" class="w-100" method="post">
                 <center>
                     <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
-                        <input id="input_display_name" placeholder="Your display name" type="text" name="CreateRoom.DisplayName"  class="textInput">
+                        <input id="input_display_name" placeholder="Your display name" type="text" name="CreateRoom.DisplayName" class="textInput" autocomplete="nope">
                     </div> 
                    @*  <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;" onclick="location.href='@Url.Action("Meeting","Room")';">
                         Create a Room

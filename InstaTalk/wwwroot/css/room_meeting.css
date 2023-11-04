@@ -11,6 +11,14 @@
     }
 }*/
 
+.video-text {
+    position: absolute;
+    z-index: 10;
+    top: 0.5rem;
+    color: white;
+    font-size: 14px;
+}
+
 @media (max-width: 1260px) {
     #div_left_video_meeting {
         height: 85% !important;
