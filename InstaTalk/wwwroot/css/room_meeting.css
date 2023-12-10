@@ -20,12 +20,6 @@
 }
 
 @media (max-width: 1260px) {
-    #div_left_video_meeting {
-        height: 85% !important;
-    }
-    #div_footer_left_meeting {
-        flex-direction: column !important;
-    }
     #div_control_meeting {
         width: 100% !important;
     }

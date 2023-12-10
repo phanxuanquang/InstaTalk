@@ -90,30 +90,39 @@
     </div>
 </div>
 
-<video id="share-video" style="width: 300px"></video>
+<div id="div_count_remainder" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%">
+    <div id="div_background_count_remainder" class="d-flex flex-column align-items-center justify-content-center" style="object-fit:cover;width:100%;height:100%;background-color:black;border-radius:0.5rem;">
+        <div id="count_remainder" style="width:75px;height:75px;color:white;background-color:red;" class="rounded-circle d-flex align-items-center justify-content-center">
+            
+        </div>
+    </div>
+</div>
 
 
 <div class="d-flex align-items-center justify-content-center gap-1 h-100">
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
-        <div id="div_left_video_meeting" class="row justify-content-center" style="margin:0;padding:0;height:90%;">
-               @*  Random rnd = new Random();
+        <div id="div_header_left_meeting" class="d-flex" style="margin:0;padding:0;height:90%;">
+            <div id="div_share_screen"  style="display:none;position:relative;object-fit:cover;">
+                <video id="share-video" style="object-fit:contain;width:100%;height:100%"></video>
+            </div>
+            <div id="div_left_video_meeting" class="w-100 justify-content-center" style="margin:0;padding:0;height:100%;">
+                @*  Random rnd = new Random();
                 Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)); *@
-            @* <div id="user_video" class="user-card d-flex align-items-center justify-content-center">
-                <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="background-color:black;border-radius:0.5rem;">
-                    <div style="width:75px;height:75px;color:white;" class="rounded-circle d-flex align-items-center justify-content-center">
-                        OK
+                <div id="div_user_video" style="position:relative;object-fit:cover;height:100%;" class="p-2">
+                    <video id="user_video" class="rounded-4 border-success" style="object-fit:cover;width:100%;height:100%">
+                    </video>
+                    <div id="title_video" class="video-text rounded bg-opacity-75 bg-dark" style="padding:0.4rem;">
+                        Hello
+                    </div>
+                    <div id="div_user_card" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%">
+                        <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="object-fit:cover;width:100%;height:100%;background-color:black;border-radius:0.5rem;">
+                            <div id="name_user_card" style="width:75px;height:75px;color:white;background-color:red;" class="rounded-circle d-flex align-items-center justify-content-center">
+                                OK
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div> *@
-            <div id="div_user_video" style="position:relative;object-fit:cover;height:100%;" class="p-2">
-                <video id="user_video" class="rounded-4 border-success" style="object-fit:cover;width:100%;height:100%">
-                </video>
-                <div id="title_video" class="video-text rounded bg-opacity-75 bg-dark" style="padding:0.4rem;">
-                    Hello
-                </div>
-            </div> 
-        </div>
-        <div id="div_share_screen" style="display:none;">
+            </div>
         </div>
         <div id="div_footer_left_meeting" class="text-light d-flex align-items-center justify-content-center" style="height:auto;">
             <div id="div_title_meeting">

@@ -1,6 +1,6 @@
 ﻿var isMuted = true;
 var isStreamCam = false;
-
+var isSharingScreen = false;
 var isVisibile = true;
 var isExpanded = true;
 let seconds = 0;
@@ -34,11 +34,13 @@ var videoObs$ = videoSource.asObservable();
 var shareScreenStream;
 var shareScreenSource = new Subject();
 var shareScreenObs$ = shareScreenSource.asObservable();
-
+var parent = document.getElementById("div_user_video");
+var userCard = document.getElementById("div_user_card");
 var isSharingScreenSource = new Subject();
 var isSharingScreen$ = isSharingScreenSource.asObservable();
 var tempvideos = [];
 const localView = document.getElementById("user_video");
+const localUserCard = document.getElementById("div_user_card");
 const localTitle = document.getElementById("title_video");
 
 function expand() {
@@ -135,6 +137,10 @@ function changeMicState() {
 function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
     var btn = document.getElementById("btn_cam_meeting");
+    var div_user_card = document.getElementById("div_user_card");
+    var user_video = document.getElementById("user_video");
+    var title_video = document.getElementById("title_video");
+    var name_user_card = document.getElementById("name_user_card");
     icon.style.transition = "transform 0.5 ease";
     icon.style.transform = "transform 0.5s ease";
 
@@ -142,10 +148,19 @@ function changeCamState() {
         icon.innerHTML = "videocam";
         btn.classList.remove("btn-danger");
         btn.classList.add("btn-light");
+        div_user_card.style.display = "none";
+        div_user_card.classList.remove("d-flex");
+        user_video.style.display = "block";
+        title_video.style.display = "block";
     } else {
         icon.innerHTML = "videocam_off";
         btn.classList.add("btn-danger");
         btn.classList.remove("btn-light");
+        div_user_card.style.display = "block";
+        div_user_card.classList.add("d-flex");
+        name_user_card.innerHTML = ObjClient.User.displayName;
+        user_video.style.display = "none";
+        title_video.style.display = "none";
     }
 
     if (stream)
@@ -180,8 +195,8 @@ function updateTimer() {
 
     const formattedTime =
         `${hours.toString().padStart(2, '0')}:
-                 ${minutes.toString().padStart(2, '0')}:
-                 ${seconds.toString().padStart(2, '0')}`;
+                ${minutes.toString().padStart(2, '0')}:
+                ${seconds.toString().padStart(2, '0')}`;
 
     document.getElementById('time_meeting').textContent = formattedTime;
 }
@@ -209,13 +224,132 @@ function openFileSelector() {
     fileInput.click();
 }
 
-this.isSharingScreen$.subscribe(event => {
+function addDivForUser(item) {
+    var newVideo = localView.cloneNode(true);
+    var title = document.getElementById("title_video");
+    var x = parent.cloneNode(true);
+    x.innerHTML = '';
+    x.id = item.user.id;
+    var y = title.cloneNode(true);
+    y.innerHTML = item.user.displayName;
+    var z = userCard.cloneNode(true);
+    z.classList.add("d-flex");
+    z.style.display = "block";
+    var name_user_card = z.querySelector('#name_user_card');
+    name_user_card.innerHTML = item.user.displayName.charAt(0).toUpperCase();
+    newVideo.srcObject = item.srcObject;
+    newVideo.muted = true;
+    newVideo.id = item.user.id + "_video";
+    newVideo.style.display = "none";
+    y.style.display = "none";
+    newVideo.load();
+    newVideo.play();
+    x.append(newVideo);
+    x.append(y);
+    x.append(z);
+    return x;
+}
+
+function arrangeUser(currentViews) {
+    let heightBase;
+    let widthBase;
+    let col;
+    if (currentViews.length == 1) {
+        heightBase = 100;
+        widthBase = 100;
+        col = 1;
+    }
+    else if (currentViews.length == 2) {
+        heightBase = 100;
+        widthBase = 50;
+        col = 2;
+    }
+    else if (currentViews.length <= 4) {
+        heightBase = 50;
+        widthBase = 50;
+        col = 2;
+    }
+    else if (currentViews.length <= 6) {
+        heightBase = 50;
+        widthBase = 100 / 3;
+        col = 3;
+    }
+    else if (currentViews.length <= 9) {
+        heightBase = 100 / 3;
+        widthBase = 100 / 3;
+        col = 3;
+    }
+    else {
+        heightBase = 100 / 4;
+        widthBase = 100 / 4;
+        col = 4;
+    }
+    let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
+    divLeftVideoMeeting.classList.add("row");
+    divLeftVideoMeeting.classList.add("row-cols-" + col);
+    for (let i = 0; i < currentViews.length; i++) {
+        currentViews[i].style.height = heightBase + "%";
+        currentViews[i].style.width = widthBase + "%";
+    }
+}
+
+function arrangeUserWhenShare(currentViews) {
+    let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
+    divLeftVideoMeeting.classList.remove("row");
+    console.log("arrangeUserWhenShare");
+    let heightBase;
+    let widthBase = 100;
+    switch (currentViews.length) {
+        case 1:
+            heightBase = 100;
+            break;
+        case 2:
+            heightBase = 50;
+            break;
+        case 3:
+            heightBase = 100 / 3;
+            break;
+        case 4:
+            heightBase = 25;
+            break;
+        default:
+            console.log("so luong user > 4");
+            heightBase = 25;
+            var x = parent.cloneNode(true);
+            x.innerHTML = '';
+            x.id = "parent_count_remainder";
+            let divCountRemainder = document.getElementById("div_count_remainder");
+            let _divCountRemainder = divCountRemainder.cloneNode(true);
+            let countRemainder = _divCountRemainder.querySelector("#count_remainder");
+            countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
+            _divCountRemainder.style.display = "block";
+            x.append(_divCountRemainder);
+            $("#div_left_video_meeting").append(x);
+            currentViews = $("#div_left_video_meeting").children();
+            for (let i = 0; i < 3; i++) {
+                currentViews[i].style.height = heightBase + "%";
+                currentViews[i].style.width = widthBase + "%";
+            }
+            for (let i = 3; i < currentViews.length - 1; i++) {
+                currentViews[i].style.display = "none";
+            }
+            currentViews[currentViews.length - 1].style.height = heightBase + "%";
+            return;
+
+    }
+    for (let i = 0; i < currentViews.length; i++) {
+        currentViews[i].style.height = heightBase + "%";
+        currentViews[i].style.width = widthBase + "%";
+    }
+}
+
+function changeShareScreenState() {
     var icon = document.getElementById("icon_sharing_screen");
     var btn = document.getElementById("btn_sharing_screen");
     icon.style.transition = "transform 0.5s ease"
     icon.style.transform = "transform 0.5s ease";
 
-    if (event) {
+    if (isSharingScreen) {
         icon.innerHTML = "mic";
         btn.classList.remove("btn-danger");
         btn.classList.add("btn-light");
@@ -225,12 +359,11 @@ this.isSharingScreen$.subscribe(event => {
         btn.classList.add("btn-danger");
         btn.classList.remove("btn-light");
     }
-});
+}
 
 videoObs$.subscribe((val) => {
     console.log(val);
     var views = $("#div_left_video_meeting").children();
-
     let mapUserIDs = val.map(item => item.user.id);
     let userViewed = [];
 
@@ -243,61 +376,29 @@ videoObs$.subscribe((val) => {
 
     let newVideos = val.filter(item => !userViewed.includes(item.user.id))
         .map(item => {
-            var newVideo = localView.cloneNode(true);
-            var parent = document.getElementById("div_user_video");
-            var title = document.getElementById("title_video");
-            var x = parent.cloneNode(true);
-            x.innerHTML = '';
-            x.id = item.user.id;
-            var y = title.cloneNode(true);
-            y.innerHTML = item.user.displayName;
-            newVideo.srcObject = item.srcObject;
-            newVideo.muted = true;
-            newVideo.id = item.user.id + "_video";
-            newVideo.load();
-            newVideo.play();
-            x.append(newVideo);
-            x.append(y);
-            return x;
+            console.log("vao addDiv");
+            console.log(item);
+            return addDivForUser(item);
         });
-
+    console.log("cai list video" + newVideos);
     if (newVideos && newVideos.length > 0) {
         $("#div_left_video_meeting").append(newVideos);
     }
-
-    var currentViews = $("#div_left_video_meeting").children();
-    var widthBase;
-    var heightBase;
-    if (currentViews.length <= 4) {
-        widthBase = 2;
-        if (currentViews.length == 2)
-            heightBase = 100;
-        else
-            heightBase = 50;
+    let currentViews = $("#div_left_video_meeting").children();
+    if (isSharingScreen) {
+        console.log("if access arrangeUserWhenShare");
+        arrangeUserWhenShare(currentViews);
     }
-    else if (currentViews.length <= 9) {
-        widthBase = 3;
-        if (currentViews.length <= 6)
-            heightBase = 50;
-        else
-            heightBase = (100 / 3);
-    }
-    else if (currentViews.length <= 16) {
-        widthBase = 4;
-        if (currentViews.length <= 12)
-            heightBase = (100 / 3);
-        else
-            heightBase =25;
-    }
-    for (let i = 0; i < currentViews.length; i++) {
-        var temp = document.getElementById("div_left_video_meeting");
-        temp.classList.add("row-cols-" + widthBase);
-        currentViews[i].style.height = heightBase + "%";
+    else {
+        arrangeUser(currentViews);
     }
 });
 
 shareScreenObs$.subscribe(event => {
     let shareView = document.getElementById("share-video");
+    let divShare = document.getElementById("div_share_screen");
+    let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
+    divShare.style.display = "none";
     shareView.pause();
 
     shareScreenStream = event;
@@ -305,18 +406,28 @@ shareScreenObs$.subscribe(event => {
         chatService.shareScreen(ObjClient.Room.roomId, false);
         isSharingScreenSource.next(false);
     });
-    
+
     if (shareScreenStream && shareScreenStream.active) {
         shareView.srcObject = shareScreenStream;
         shareView.muted = true;
+        divShare.style.display = "block";
+        divLeftVideoMeeting.classList.remove("w-100");
+        divLeftVideoMeeting.classList.add("flex-fill");
         shareView.load();
         shareView.play();
+        isSharingScreen = true;
+        console.log("thay doi isSharingScreen: " + isSharingScreen);
     }
     else {
         shareView.srcObject = undefined;
         shareView.muted = true;
+        divShare.style.display = "none";
         shareView.load();
         shareView.pause();
+        divLeftVideoMeeting.classList.add("w-100");
+        divLeftVideoMeeting.classList.remove("flex-fill");
+        isSharingScreen = false;
+        console.log("thay doi isSharingScreen: " + isSharingScreen);
     }
 });
 
@@ -327,11 +438,43 @@ muteCamMicService.muteMicro$.subscribe(event => {
 });
 
 muteCamMicService.muteCamera$.subscribe(event => {
+    let div_user_video = document.getElementById(event.userId);
+    let div_user_card = div_user_video.querySelector("#div_user_card");
+    let user_video = document.getElementById(event.userId + '_video')
+    console.log("Tim thay roi nha" + event.userId);
+    let title_video = div_user_video.querySelector("#title_video");
+    if (event.mute) {
+        div_user_card.style.display = "block";
+        div_user_card.classList.add("d-flex");
+        user_video.style.display = "none";
+        title_video.style.display = "none";
+    } else {
+        div_user_card.style.display = "none";
+        div_user_card.classList.remove("d-flex");
+        user_video.style.display = "block";
+        title_video.style.display = "block";
+    }
     console.log(event);
 });
 
 muteCamMicService.shareScreen$.subscribe(event => {
     console.log(event);
+    if (event) {
+        isSharingScreen = true;
+        let currentViews = $("#div_left_video_meeting").children();
+        arrangeUserWhenShare(currentViews);
+    }
+    else {
+        isSharingScreen = false;
+        changeShareScreenState();
+        let currentViews = $("#div_left_video_meeting").children();
+        let divShare = document.getElementById("div_share_screen");
+        divShare.style.display = "none";
+        let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
+        divLeftVideoMeeting.classList.add("w-100");
+        divLeftVideoMeeting.classList.remove("flex-fill");
+        arrangeUser(currentViews);
+    }
 });
 
 function InitRTC() {
@@ -543,6 +686,7 @@ async function shareScreen() {
         this.videos.forEach(v => {
             const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream);
         })
+        changeShareScreenState();
     } catch (e) {
         console.log(e);
         alert(e)
