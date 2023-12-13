@@ -108,19 +108,36 @@ namespace API.SignalR
             var displayName = Context.User.GetDisplayName();
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
 
+            if (group == null)
+                throw new HubException("group == null");
+
+            if (group.BlockedChat)
+                throw new HubException("Chat has been blocked by host");
+
+            var message = new MessageDto
+            {
+                SenderUserID = userId,
+                SenderDisplayName = displayName,
+                Content = createMessageDto.Content,
+                MessageSent = DateTime.UtcNow
+            };
+            //Luu message vao db
+            //code here
+            //send meaasge to group
+            await Clients.Group(group.RoomId.ToString()).SendAsync("NewMessage", message);
+        }
+
+        [Authorize(Roles ="Admin,Host")]
+        public async Task BlockedChat(bool block)
+        {
+            if (Context.User == null)
+                throw new HubException("401");
+
+            var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
+
             if (group != null)
             {
-                var message = new MessageDto
-                {
-                    SenderUserID = userId,
-                    SenderDisplayName = displayName,
-                    Content = createMessageDto.Content,
-                    MessageSent = DateTime.Now
-                };
-                //Luu message vao db
-                //code here
-                //send meaasge to group
-                await Clients.Group(group.RoomId.ToString()).SendAsync("NewMessage", message);
+                await _unitOfWork.RoomRepository.UpdateBlockChat(group.RoomId, block);
             }
         }
 

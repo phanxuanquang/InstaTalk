@@ -10,7 +10,7 @@ namespace API.Dtos
         public string UserName { get; set; }
         public string DisplayName { get; set; }
         public int CountMember { get; set; }
-
         public DateTime CreatedDate { get; set; }
+        public bool BlockedChat { get; set; } = false;
     }
 }
