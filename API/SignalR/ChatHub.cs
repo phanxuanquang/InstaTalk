@@ -127,8 +127,8 @@ namespace API.SignalR
             await Clients.Group(group.RoomId.ToString()).SendAsync("NewMessage", message);
         }
 
-        [Authorize(Roles ="Admin,Host")]
-        public async Task BlockedChat(bool block)
+        [Authorize(Roles = "Admin,Host")]
+        public async Task BlockChat(bool block)
         {
             if (Context.User == null)
                 throw new HubException("401");
@@ -138,6 +138,8 @@ namespace API.SignalR
             if (group != null)
             {
                 await _unitOfWork.RoomRepository.UpdateBlockChat(group.RoomId, block);
+
+                await Clients.Group(group.RoomId.ToString()).SendAsync("OnBlockChat", new { block });
             }
         }
 
