@@ -1,11 +1,8 @@
-﻿using System;
-
-namespace API.Dtos
+﻿namespace API.Dtos
 {
     public class UserConnectionInfo
     {
-        public UserConnectionInfo() { }
-        public UserConnectionInfo(Guid userId, string displayName, int roomId)
+        public UserConnectionInfo(Guid userId, string displayName, Guid roomId)
         {
             UserID = userId;
             DisplayName = displayName;
@@ -13,6 +10,6 @@ namespace API.Dtos
         }
         public Guid UserID { get; set; }
         public string DisplayName { get; set; }
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
     }
 }

@@ -10,7 +10,6 @@ namespace API.SignalR
     [Authorize]
     public class ChatHub : Hub
     {
-        //IMapper _mapper;
         IHubContext<PresenceHub> _presenceHub;
         PresenceTracker _presenceTracker;
         IUnitOfWork _unitOfWork;
@@ -28,31 +27,37 @@ namespace API.SignalR
         public override async Task OnConnectedAsync()
         {
             var httpContext = Context.GetHttpContext();
-            var roomId = httpContext.Request.Query["roomId"].ToString();
-            var roomIdInt = int.Parse(roomId);
+
+            if (!Guid.TryParse(httpContext?.Request.Query["roomId"].ToString(), out var roomId))
+                throw new HubException("Invalid query param");
+
+            if (Context.User == null)
+                throw new HubException("401");
+
             var userId = Context.User.GetUserId();
             var displayName = Context.User.GetDisplayName();
-            var userConnection = new UserConnectionInfo(userId, displayName, roomIdInt);
+
+            var userConnection = new UserConnectionInfo(userId, displayName, roomId);
 
             await _presenceTracker.UserConnected(userConnection, Context.ConnectionId);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);//khi user click vao room se join vao
-            await AddConnectionToGroup(roomIdInt); // luu db DbSet<Connection> de khi disconnect biet
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId.ToString());//khi user click vao room se join vao
+            await AddConnectionToGroup(roomId); // luu db DbSet<Connection> de khi disconnect biet
 
             //var usersOnline = await _unitOfWork.UserRepository.GetUsersOnlineAsync(currentUsers);
             var oneUserOnline = await _unitOfWork.UserRepository.GetMemberAsync(userId);
-            await Clients.Group(roomId).SendAsync("UserOnlineInGroup", oneUserOnline);
+            await Clients.Group(roomId.ToString()).SendAsync("UserOnlineInGroup", oneUserOnline);
 
-            var currentUsers = await _presenceTracker.GetOnlineUsers(roomIdInt);
-            await _unitOfWork.RoomRepository.UpdateCountMember(roomIdInt, currentUsers.Length);
+            var currentUsers = await _presenceTracker.GetOnlineUsers(roomId);
+            await _unitOfWork.RoomRepository.UpdateCountMember(roomId, currentUsers.Length);
             await _unitOfWork.Complete();
 
             var currentConnections = await _presenceTracker.GetConnectionsForUser(userConnection);
             await _presenceHub.Clients.AllExcept(currentConnections).SendAsync("CountMemberInGroup",
-                   new { roomId = roomIdInt, countMember = currentUsers.Length });
+                   new { roomId = roomId, countMember = currentUsers.Length });
 
             //share screen user vao sau cung
-            var userIsSharing = await _shareScreenTracker.GetUserIsSharing(roomIdInt);
+            var userIsSharing = await _shareScreenTracker.GetUserIsSharing(roomId);
             if (userIsSharing != null)
             {
                 var currentBeginConnectionsUser = await _presenceTracker.GetConnectionsForUser(userIsSharing);
@@ -64,9 +69,16 @@ namespace API.SignalR
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            if (Context.User == null)
+                throw new HubException("401");
+
             var userId = Context.User.GetUserId();
             var displayName = Context.User.GetDisplayName();
             var group = await RemoveConnectionFromGroup();
+
+            if (group == null)
+                throw new HubException("Room doesn't exists");
+
             var isOffline = await _presenceTracker.UserDisconnected(new UserConnectionInfo(userId, displayName, group.RoomId), Context.ConnectionId);
 
             await _shareScreenTracker.DisconnectedByUser(userId, group.RoomId);
@@ -89,6 +101,9 @@ namespace API.SignalR
 
         public async Task SendMessage(CreateMessageDto createMessageDto)
         {
+            if (Context.User == null)
+                throw new HubException("401");
+
             var userId = Context.User.GetUserId();
             var displayName = Context.User.GetDisplayName();
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
@@ -114,6 +129,9 @@ namespace API.SignalR
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
             if (group != null)
             {
+                if (Context.User == null)
+                    throw new HubException("401");
+
                 await Clients.Group(group.RoomId.ToString()).SendAsync("OnMuteMicro", new
                 {
                     userId = Context.User.GetUserId(),
@@ -131,6 +149,9 @@ namespace API.SignalR
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
             if (group != null)
             {
+                if (Context.User == null)
+                    throw new HubException("401");
+
                 await Clients.Group(group.RoomId.ToString()).SendAsync("OnMuteCamera", new
                 {
                     userId = Context.User.GetUserId(),
@@ -143,8 +164,11 @@ namespace API.SignalR
             }
         }
 
-        public async Task ShareScreen(int roomid, bool isShareScreen)
+        public async Task ShareScreen(Guid roomid, bool isShareScreen)
         {
+            if (Context.User == null)
+                throw new HubException("401");
+
             var userConnection = new UserConnectionInfo(Context.User.GetUserId(), Context.User.GetDisplayName(), roomid);
             if (isShareScreen)//true is doing share
             {
@@ -159,17 +183,21 @@ namespace API.SignalR
             //var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
         }
 
-        public async Task ShareScreenToUser(int roomid, Guid userId, bool isShare)
+        public async Task ShareScreenToUser(Guid roomid, Guid userId, bool isShare)
         {
             var currentBeginConnectionsUser = await _presenceTracker.GetConnectionsForUser(new UserConnectionInfo(userId, string.Empty, roomid));
             if (currentBeginConnectionsUser.Count > 0)
                 await Clients.Clients(currentBeginConnectionsUser).SendAsync("OnShareScreen", isShare);
         }
 
-        private async Task<Room> RemoveConnectionFromGroup()
+        private async Task<Room?> RemoveConnectionFromGroup()
         {
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
-            var connection = group.Connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+            var connection = group?.Connections.FirstOrDefault(x => x.ConnectionId == Context.ConnectionId);
+
+            if (connection == null)
+                throw new HubException("Room doesn't exists");
+
             _unitOfWork.RoomRepository.RemoveConnection(connection);
 
             if (await _unitOfWork.Complete()) return group;
@@ -177,8 +205,11 @@ namespace API.SignalR
             throw new HubException("Fail to remove connection from room");
         }
 
-        private async Task<Room> AddConnectionToGroup(int roomId)
+        private async Task<Room?> AddConnectionToGroup(Guid roomId)
         {
+            if (Context.User == null)
+                throw new HubException("401");
+
             var group = await _unitOfWork.RoomRepository.GetRoomById(roomId);
             var connection = new Connection(Context.ConnectionId, Context.User.GetUserId());
             if (group != null)

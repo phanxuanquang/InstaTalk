@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class init : Migration
+    public partial class update_roomId_guid : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -162,8 +162,7 @@ namespace API.Migrations
                 name: "Rooms",
                 columns: table => new
                 {
-                    RoomId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RoomName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SecurityCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CountMember = table.Column<int>(type: "int", nullable: false),
@@ -186,7 +185,7 @@ namespace API.Migrations
                 {
                     ConnectionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoomId = table.Column<int>(type: "int", nullable: true)
+                    RoomId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231029050146_init")]
-    partial class init
+    [Migration("20231213150101_add_column_created_date")]
+    partial class add_column_created_date
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -151,8 +151,8 @@ namespace API.Migrations
                     b.Property<string>("ConnectionId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("RoomId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("RoomId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserID")
                         .HasColumnType("uniqueidentifier");
@@ -166,14 +166,15 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Entities.Room", b =>
                 {
-                    b.Property<int>("RoomId")
+                    b.Property<Guid>("RoomId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"), 1L, 1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CountMember")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("RoomName")
                         .IsRequired()

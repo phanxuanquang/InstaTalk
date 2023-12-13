@@ -30,7 +30,6 @@ namespace API.Data
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
 
-            //Tbl User and Room: 1 user has many room (1-n)
             builder.Entity<Room>()
             .HasOne(s => s.AppUser)
             .WithMany(g => g.Rooms)

@@ -5,7 +5,7 @@ namespace API.Dtos
     public class JoinRoomDto
     {
         [Required]
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
 
         [Required]
         [StringLength(20, MinimumLength = 6)]
