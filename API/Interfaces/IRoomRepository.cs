@@ -16,5 +16,6 @@ namespace API.Interfaces
         Task<PagedList<RoomDto>> GetAllRoomAsync(RoomParams roomParams);
         Task<RoomDto?> GetRoomDtoById(Guid roomId);
         Task UpdateCountMember(Guid roomId, int count);
+        Task UpdateBlockChat(Guid roomId, bool block);
     }
 }

@@ -95,5 +95,14 @@ namespace API.Repository
                 room.CountMember = count;
             }
         }
+
+        public async Task UpdateBlockChat(Guid roomId, bool block)
+        {
+            var room = await _context.Rooms.FindAsync(roomId);
+            if (room != null)
+            {
+                room.BlockedChat = block;
+            }
+        }
     }
 }

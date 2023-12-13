@@ -23,6 +23,9 @@ namespace API.Entities
 
         public DateTime CreatedDate { get; set; }
 
+        [DefaultValue(false)]
+        public bool BlockedChat { get; set; }
+
         public ICollection<Connection> Connections { get; set; } = new List<Connection>();
     }
 
