@@ -144,6 +144,27 @@ namespace API.SignalR
             }
         }
 
+        [Authorize(Roles = "Admin,Host")]
+        public async Task MuteAllMicro(Guid userId, bool muteMicro)
+        {
+            var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
+            if (group != null)
+            {
+                if (!group.Connections.Any(item => item.UserID == userId))
+                    throw new HubException("user_id not in current group");
+
+                await Clients.Group(group.RoomId.ToString()).SendAsync("OnMuteAllMicro", new
+                {
+                    userId = userId,
+                    mute = muteMicro
+                });
+            }
+            else
+            {
+                throw new HubException("group == null");
+            }
+        }
+
         public async Task MuteCamera(bool muteCamera)
         {
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
