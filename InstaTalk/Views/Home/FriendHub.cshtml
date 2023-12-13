@@ -12,49 +12,24 @@
 
 <div class="modal fade" id="ModalJoinRoom" tabindex="-1" aria-labelledby="ModalJoinRoomTitle" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ModalJoinRoomTitle">Join your mate's room</h5>
-                <button id="btn-icon-visibility" class="bg-white py-2 ps-0 d-flex justify-content-center" type="button" data-bs-dismiss="modal" aria-label="Close" style="border:none;">
-                    <span class="material-icons" id="icon_close_modal_join_room">
-                        clear
-                    </span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="form_join_mate_room" method="post">
-                    <div class="input-group mb-3">
-                        <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
-                            <input asp-for="@Model.JoinRoom.RoomId" type="text" id="input-room-mate-id" class="form-control border-0" />
-                            <label asp-for="@Model.JoinRoom.RoomId" id="lb-input-room-mate-id" class="form-label" for="input-room-mate-id">Room ID or URL</label>
-                            <span asp-validation-for="@Model.JoinRoom.RoomId" class="input-group-append col-1 d-flex justify-content-end input-custom">
-                                
-                            </span>
-                            <button id="btn-icon-visibility" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
-                                <span class="material-icons" id="icon_clear_id" onclick="clearText()">
-                                    clear
-                                </span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
-                            <input asp-for="@Model.JoinRoom.SecurityCode" type="password" id="input-pass-mate-room" class="form-control border-0" />
-                            <label asp-for="@Model.JoinRoom.SecurityCode" class="form-label" for="input-pass-mate-room">Password</label>
-                            <span asp-validation-for="@Model.JoinRoom.SecurityCode" class="input-group-append col-1 d-flex justify-content-end input-custom">
-                                @*<button id="btn-icon-visibility" class="bg-white border-start-0 border rounded-end py-2 pe-2 ps-0 d-flex justify-content-center" type="button">
-                                    <span class="material-icons" id="icon_pass_off" onclick="changeIcon()">
-                                        visibility_off
-                                    </span>
-                                </button>*@
-                            </span>
-                        </div>
-                    </div>
-                    <div class="w-100 text-center">
-                        <button asp-action="JoinRoom" asp-controller="Home" type="submit" class="btn btn-primary me-2">Join</button>
-                    </div>
-                </form>
-            </div>
+        <div class="join-box modal-content">
+            <form id="form_join_room" method="post" autocomplete="off">
+                <div class="user-box">
+                    <input type="text" name="JoinRoom.DisplayName" required autocomplete="nope" />
+                    <label>Your display name</label>
+                </div>
+                <div class="user-box">
+                    <input type="text" name="JoinRoom.RoomId" required autocomplete="nope" />
+                    <label>Room ID or URL</label>
+                </div>
+                <div class="user-box">
+                    <input type="text" name="JoinRoom.SecurityCode" required autocomplete="nope" />
+                    <label>Password</label>
+                </div>
+                <center>
+                    <button type="submit" class="custom-btn" asp-action="JoinRoom" asp-controller="Home">Join</button>
+                </center>
+            </form>
         </div>
     </div>
 </div>
@@ -65,39 +40,26 @@
             <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo">
             <form id="homepage_form" class="w-100" method="post">
                 <center>
-                    @* <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
-                        <input placeholder="Your display name" type="text" class="textInput">
-                    </div>  *@
-                    <div class="form-group textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
-                        <label asp-for="@Model.CreateRoom.DisplayName"></label>
-                        <input class="form-control" asp-for="@Model.CreateRoom.DisplayName" />
-                        <span asp-validation-for="@Model.CreateRoom.DisplayName" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
-                        <label asp-for="@Model.CreateRoom.RoomName"></label>
-                        <input class="form-control" asp-for="@Model.CreateRoom.RoomName" />
-                        <span asp-validation-for="@Model.CreateRoom.RoomName" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
-                        <label asp-for="@Model.CreateRoom.SecurityCode"></label>
-                        <input class="form-control" asp-for="@Model.CreateRoom.SecurityCode" />
-                        <span asp-validation-for="@Model.CreateRoom.SecurityCode" class="text-danger"></span>
-                    </div>  
-                    @* <button type="submit" class="btn btn-primary me-2" style="max-width: 162px;">Create a Room</button>
-                    <button type="button" class="btn btn-primary ms-2" style="max-width: 162px;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">Join a Room</button>  *@
-                    @* <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;">
+                    <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
+                        <input id="input_display_name" placeholder="Your display name" type="text" name="CreateRoom.DisplayName" class="textInput" autocomplete="nope">
+                    </div> 
+                   @*  <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;" onclick="location.href='@Url.Action("Meeting","Room")';">
                         Create a Room
                         <span></span>
                     </a> *@
-                    <div class="form-group">
+                    <button type="submit" class="custom-btn me-2" style="font-size: 12px; width: 13rem;" asp-action="CreateRoom" asp-controller="Home">
+                        Create a Room
+                    </button>
+                    <button type="button" class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
+                        Join a Room
+                    </button>
+                   @*  <div class="form-group">
                         <button class="btn btn-danger" asp-action="CreateRoom" asp-controller="Home" type="submit">Create a room</button>
-                    </div>
-                    <a class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
+                    </div> *@
+                   @*  <a class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
                         Join a Room
                         <span></span>
-                    </a>
+                    </a> *@
                 </center>
                 
             </form>
@@ -106,7 +68,9 @@
     </div>
 </div>
 @section script {
-    <script src="~/js/home_friendhub.js" asp-append-version="true"></script>
+    <script src="~/js/home_friendhub.js" asp-append-version="true">
+        
+    </script>
 }
 
 

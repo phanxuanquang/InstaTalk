@@ -2,8 +2,6 @@
 using API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Threading.Tasks;
 
 namespace API.SignalR
 {
@@ -17,12 +15,12 @@ namespace API.SignalR
         }
         public override async Task OnConnectedAsync()
         {
-            var isOnline = await _tracker.UserConnected(new UserConnectionInfo(Context.User.GetUserId(), Context.User.GetDisplayName(), 0), Context.ConnectionId);
+            var isOnline = await _tracker.UserConnected(new UserConnectionInfo(Context.User.GetUserId(), Context.User.GetDisplayName(), Guid.Empty), Context.ConnectionId);
         }
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var isOffline = await _tracker.UserDisconnected(new UserConnectionInfo(Context.User.GetUserId(), Context.User.GetDisplayName(), 0), Context.ConnectionId);
+            var isOffline = await _tracker.UserDisconnected(new UserConnectionInfo(Context.User.GetUserId(), Context.User.GetDisplayName(), Guid.Empty), Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
     }

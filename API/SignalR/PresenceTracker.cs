@@ -1,8 +1,4 @@
 ﻿using API.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.SignalR
 {
@@ -16,8 +12,8 @@ namespace API.SignalR
             lock (OnlineUsers)
             {
                 var temp = OnlineUsers.FirstOrDefault(x => x.Key.UserID == user.UserID && x.Key.RoomId == user.RoomId);
-                
-                if(temp.Key == null)//chua co online
+
+                if (temp.Key == null)//chua co online
                 {
                     OnlineUsers.Add(user, new List<string> { connectionId });
                     isOnline = true;
@@ -37,10 +33,10 @@ namespace API.SignalR
             lock (OnlineUsers)
             {
                 var temp = OnlineUsers.FirstOrDefault(x => x.Key.UserID == user.UserID && x.Key.RoomId == user.RoomId);
-                if (temp.Key == null) 
+                if (temp.Key == null)
                     return Task.FromResult(isOffline);
 
-                OnlineUsers[temp.Key].Remove(connectionId);    
+                OnlineUsers[temp.Key].Remove(connectionId);
                 if (OnlineUsers[temp.Key].Count == 0)
                 {
                     OnlineUsers.Remove(temp.Key);
@@ -51,31 +47,31 @@ namespace API.SignalR
             return Task.FromResult(isOffline);
         }
 
-        public Task<UserConnectionInfo[]> GetOnlineUsers(int roomId)
+        public Task<UserConnectionInfo[]> GetOnlineUsers(Guid roomId)
         {
             UserConnectionInfo[] onlineUsers;
             lock (OnlineUsers)
             {
-                onlineUsers = OnlineUsers.Where(u=>u.Key.RoomId == roomId).Select(k => k.Key).ToArray();
+                onlineUsers = OnlineUsers.Where(u => u.Key.RoomId == roomId).Select(k => k.Key).ToArray();
             }
 
             return Task.FromResult(onlineUsers);
         }
 
-        public Task<List<string>> GetConnectionsForUser(UserConnectionInfo user)
+        public Task<List<string>?> GetConnectionsForUser(UserConnectionInfo user)
         {
-            List<string> connectionIds = new List<string>();
+            List<string>? connectionIds = new List<string>();
             lock (OnlineUsers)
-            {                
+            {
                 var temp = OnlineUsers.SingleOrDefault(x => x.Key.UserID == user.UserID && x.Key.RoomId == user.RoomId);
-                if(temp.Key != null)
+                if (temp.Key != null)
                 {
                     connectionIds = OnlineUsers.GetValueOrDefault(temp.Key);
-                }       
+                }
             }
             return Task.FromResult(connectionIds);
         }
-        
+
         public Task<List<string>> GetConnectionsForUserID(Guid userId)
         {
             List<string> connectionIds = new List<string>();
@@ -85,7 +81,7 @@ namespace API.SignalR
                 var listTemp = OnlineUsers.Where(x => x.Key.UserID == userId).ToList();
                 if (listTemp.Count > 0)
                 {
-                    foreach(var user in listTemp)
+                    foreach (var user in listTemp)
                     {
                         connectionIds.AddRange(user.Value);
                     }

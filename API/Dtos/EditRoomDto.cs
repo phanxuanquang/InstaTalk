@@ -5,7 +5,7 @@ namespace API.Dtos
     public class EditRoomDto
     {
         [Required]
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
         [Required]
         public string RoomName { get; set; } = null!;
         [Required]

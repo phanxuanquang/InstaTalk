@@ -45,6 +45,8 @@ namespace InstaTalk.Controllers
                 using (var client = _httpClientFactory.CreateClient("API"))
                 {
                     var model = obj.CreateRoom;
+                    model.RoomName = "test123";
+                    model.SecurityCode = "123456e";
                     var response = await client.PostAsJsonAsync("/api/Room/add-room", model);
                     if (response.IsSuccessStatusCode)
                     {

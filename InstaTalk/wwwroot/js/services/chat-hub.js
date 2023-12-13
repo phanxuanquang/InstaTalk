@@ -1,6 +1,6 @@
 ﻿class ChatHubService {
     constructor(muteCamMicService, messageCountService) {
-        this.hubUrl = 'https://localhost:7127/hubs/';
+        this.hubUrl = `${ObjClient.HostHub.api}hubs/`;
         this.hubConnection = null;
 
         this.oneOnlineUserSource = new Subject();
@@ -32,9 +32,11 @@
             } else {
                 this.messageCountService.MessageCount += 1
             }
-            this.messagesThread$.pipe(take(1)).subscribe(messages => {
+
+            this.messagesThreadSource.next([...this.messagesThreadSource.getValue(), message]);
+            /*this.messagesThread$.pipe(take(1)).subscribe(messages => {
                 this.messagesThreadSource.next([...messages, message])
-            })
+            })*/
         })
 
         this.hubConnection.on('UserOnlineInGroup', (user) => {
@@ -51,20 +53,20 @@
             this.toastr.warning(user.displayName + ' has left room!')
         })
 
-        this.hubConnection.on('OnMuteMicro', ({ username, mute }) => {
-            this.muteCamMicService.Microphone = { username, mute }
+        this.hubConnection.on('OnMuteMicro', ({ userId, mute }) => {
+            this.muteCamMicService.Microphone = { userId, mute }
         })
 
-        this.hubConnection.on('OnMuteCamera', ({ username, mute }) => {
-            this.muteCamMicService.Camera = { username, mute }
+        this.hubConnection.on('OnMuteCamera', ({ userId, mute }) => {
+            this.muteCamMicService.Camera = { userId, mute }
         })
 
         this.hubConnection.on('OnShareScreen', (isShareScreen) => {
             this.muteCamMicService.ShareScreen = isShareScreen
         })
 
-        this.hubConnection.on('OnShareScreenLastUser', ({ usernameTo, isShare }) => {
-            this.muteCamMicService.LastShareScreen = { username: usernameTo, isShare }
+        this.hubConnection.on('OnShareScreenLastUser', ({ userIdTo, isShare }) => {
+            this.muteCamMicService.LastShareScreen = { userIdTo: userIdTo, isShare }
         })
 
         this.hubConnection.on('OnUserIsSharing', currentUsername => {
