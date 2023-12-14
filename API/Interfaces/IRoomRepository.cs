@@ -17,5 +17,6 @@ namespace API.Interfaces
         Task<RoomDto?> GetRoomDtoById(Guid roomId);
         Task UpdateCountMember(Guid roomId, int count);
         Task UpdateBlockChat(Guid roomId, bool block);
+        void RemoveConnections(IEnumerable<Connection> connections);
     }
 }

@@ -89,5 +89,17 @@ namespace API.SignalR
             }
             return Task.FromResult(connectionIds);
         }
+
+        public Task RemoveAllConnectionByRoomID(Guid roomID)
+        {
+            lock (OnlineUsers)
+            {
+                var temp = OnlineUsers.Where(x => x.Key.RoomId == roomID).ToList();
+
+                foreach (var item in temp)
+                    OnlineUsers.Remove(item.Key);
+            }
+            return Task.CompletedTask;
+        }
     }
 }

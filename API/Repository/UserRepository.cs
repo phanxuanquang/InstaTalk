@@ -1,15 +1,11 @@
-﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using API.Data;
+﻿using API.Data;
 using API.Dtos;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.Repository
 {
@@ -23,26 +19,26 @@ namespace API.Repository
             _mapper = mapper;
         }
 
-        public async Task<AppUser> GetUserByIdAsync(Guid id)
+        public async Task<AppUser?> GetUserByIdAsync(Guid id)
         {
             return await _context.Users.FindAsync(id);
         }
 
-        public async Task<AppUser> GetUserByUsernameAsync(string username)
+        public async Task<AppUser?> GetUserByUsernameAsync(string username)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.UserName == username);
         }
 
-        public async Task<MemberDto> GetMemberAsync(Guid userId)
+        public async Task<MemberDto?> GetMemberAsync(Guid userId)
         {
             return await _context.Users.Where(x => x.Id == userId)
                 .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)//add CreateMap<AppUser, MemberDto>(); in AutoMapperProfiles
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MemberDto>> GetUsersOnlineAsync(UserConnectionInfo[] userOnlines)
+        public async Task<IEnumerable<MemberDto?>> GetUsersOnlineAsync(UserConnectionInfo[] userOnlines)
         {
-            var listUserOnline = new List<MemberDto>();
+            var listUserOnline = new List<MemberDto?>();
             foreach (var u in userOnlines)
             {
                 var user = await _context.Users.Where(x => x.Id == u.UserID)
@@ -70,10 +66,10 @@ namespace API.Repository
                 .ToListAsync();
         }
 
-        public async Task<AppUser> UpdateLocked(Guid userId)
+        public async Task<AppUser?> UpdateLocked(Guid userId)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId);
-            if(user != null)
+            if (user != null)
             {
                 user.Locked = !user.Locked;
             }

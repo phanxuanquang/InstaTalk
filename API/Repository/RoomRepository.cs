@@ -43,6 +43,11 @@ namespace API.Repository
             _context.Connections.Remove(connection);
         }
 
+        public void RemoveConnections(IEnumerable<Connection> connections)
+        {
+            _context.Connections.RemoveRange(connections);
+        }
+
         public void AddRoom(Room room)
         {
             _context.Rooms.Add(room);
