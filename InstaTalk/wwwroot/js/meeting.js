@@ -527,14 +527,18 @@ function InitRTC() {
 
                     call.on('stream', (otherUserVideoStream) => {
                         this.addOtherUserVideo(member, otherUserVideoStream);
+                        console.log('call stream');
+                        CallToast(member.displayName + ' has join room!')
                     });
 
                     call.on('close', () => {
+                        
                         videos = videos.filter((video) => video.user.id !== member.id);
                         //xoa user nao offline tren man hinh hien thi cua current user
                         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
 
                         videoSource.next(videos);
+                        
                     });
                 }, 1000);
             }
@@ -542,6 +546,8 @@ function InitRTC() {
     );
 
     this.subscriptions.add(chatService.oneOfflineUser$.subscribe(member => {
+        CallToast(member.displayName + ' has left room!')
+        console.log('call close');
         videos = videos.filter(video => video.user.id !== member.id);
         //xoa user nao offline tren man hinh hien thi current user
         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
