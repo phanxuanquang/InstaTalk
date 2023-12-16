@@ -26,7 +26,7 @@ namespace InstaTalk.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Meeting(int roomId)
+        public async Task<IActionResult> Meeting(Guid roomId)
         {
             var content = HttpContext.Session.GetString("sessionRoom");
             if (string.IsNullOrEmpty(content))

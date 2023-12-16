@@ -6,7 +6,7 @@ namespace InstaTalk.Models
     public class JoinRoomModel
     {
         [Required]
-        public int RoomId { get; set; }
+        public Guid RoomId { get; set; }
 
         [Required]
         [StringLength(20, MinimumLength = 6)]

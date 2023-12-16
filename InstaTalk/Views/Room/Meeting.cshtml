@@ -217,11 +217,19 @@
                 </span>
             </button>
         </div>
-        <div id="div_chat_right_meeting" class="w-100 h-100 d-flex flex-column-reverse">
-            <div id="my_chat_message" class="d-inline-flex justify-content-end bg-info p-1 m-1 rounded py-1">me chat</div>
-            <div id="other_chat_message" class="d-flex flex-column d-inline-flex p-1">
-                <p class="name h6">Quang</p>
-                <div class="message bg-dark rounded py-1">Tpro vjp</div>
+        <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column-reverse">
+            <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem">
+               <p id="my_message" class="m-0">
+
+               </p>
+            </div>
+            <div id="other_chat_message" style="max-width:75%;background-color:white;border-radius:0.75rem;padding:0.3rem">
+                <div id="other_name">
+
+                </div>
+                <p id="other_message">
+
+                </p>
             </div>
         </div>
         <div id="div_footer_right_meeting" class="w-100 d-flex p-3">
