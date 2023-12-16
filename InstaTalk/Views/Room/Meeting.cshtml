@@ -32,15 +32,15 @@
                     <span class="input-group-append col-1 d-flex justify-content-end input-custom" id="copy-btn">
                         <button id="btn_icon_visibility_modal_config" class="rounded border-0 py-2 d-flex justify-content-center" type="button" onclick="setCopyState()">
                             <span class="material-icons px-2" id="icon_copy_url">
-                                    content_copy
-                                </span>
-                            </button>
+                                content_copy
+                            </span>
+                        </button>
                     </span>
                 </div>
             </div>
 
             <div class="w-100 text-center mb-4">
-                    <button type="button" class="btn btn-primary" onclick="showModalConfig()">Security Configuration</button>
+                <button type="button" class="btn btn-primary" onclick="showModalConfig()">Security Configuration</button>
             </div>
         </div>
     </div>
@@ -60,17 +60,17 @@
                 </button>
 
             </div>
-            <div class="modal-body"> 
+            <div class="modal-body">
                 <div class="input-group" style="display: block;">
                     <div class="form-outline m-auto d-flex w-100" style="max-width:450px;">
                         <input type="password" id="input_pass_config" class="form-control border-1" />
                         <label id="lb_input_pass_config" class="form-label" for="input-room-mate-id" style="color:darkgray">Set password for your room</label>
                         @* <span class="input-group-append col-1 d-flex justify-content-end input-custom">
-                            <button id="btn-icon-visibility" class="bg-white py-2 pe-2 ps-0 d-flex justify-content-center" type="button" style="border:none;">
-                                <span class="material-icons" id="icon_pass_config" onclick="changeConfigPassIcon()">
-                                    visibility_off
-                                </span>
-                            </button>
+                        <button id="btn-icon-visibility" class="bg-white py-2 pe-2 ps-0 d-flex justify-content-center" type="button" style="border:none;">
+                        <span class="material-icons" id="icon_pass_config" onclick="changeConfigPassIcon()">
+                        visibility_off
+                        </span>
+                        </button>
                         </span> *@
                     </div>
                     <div class="form-check m-3 mt-2">
@@ -93,7 +93,6 @@
 <div id="div_count_remainder" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%">
     <div id="div_background_count_remainder" class="d-flex flex-column align-items-center justify-content-center" style="object-fit:cover;width:100%;height:100%;background-color:black;border-radius:0.5rem;">
         <div id="count_remainder" style="width:75px;height:75px;color:white;background-color:red;" class="rounded-circle d-flex align-items-center justify-content-center">
-            
         </div>
     </div>
 </div>
@@ -102,7 +101,7 @@
 <div class="d-flex align-items-center justify-content-center gap-1 h-100">
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
         <div id="div_header_left_meeting" class="d-flex" style="margin:0;padding:0;height:90%;">
-            <div id="div_share_screen"  style="display:none;position:relative;object-fit:cover;">
+            <div id="div_share_screen" style="display:none;position:relative;object-fit:cover;">
                 <video id="share-video" style="object-fit:contain;width:100%;height:100%"></video>
             </div>
             <div id="div_left_video_meeting" class="w-100 justify-content-center" style="margin:0;padding:0;height:100%;">
@@ -127,7 +126,12 @@
         <div id="div_footer_left_meeting" class="text-light d-flex align-items-center justify-content-center" style="height:auto;">
             <div id="div_title_meeting">
                 <span id="time_meeting" class="me-2">
-                    00:00:00
+                    @{
+                        var timer = (DateTime.Now - Model?.Room?.CreatedDate);
+                        var StartTime = new DateTime(timer.Value.Ticks);
+                    }
+                    @StartTime.ToString("HH:mm:ss")
+
                 </span>
                 |
                 <span id="id_room_meeting" class="ms-2" data-toggle="tooltip" data-placement="top" title="Click to copy room URL" style="cursor: pointer;">
@@ -178,7 +182,7 @@
                         <div class="text">LEAVE</div>
                     </button>
                 </div>
-                
+
                 <div id="side_bar_control_normal" class="align-items-center justify-content-center">
                     <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
                         <span class="material-icons" id="icon_chat_meeting">
@@ -217,11 +221,19 @@
                 </span>
             </button>
         </div>
-        <div id="div_chat_right_meeting" class="w-100 h-100 d-flex flex-column-reverse">
-            <div id="my_chat_message" class="d-inline-flex justify-content-end bg-info p-1 m-1 rounded py-1">me chat</div>
-            <div id="other_chat_message" class="d-flex flex-column d-inline-flex p-1">
-                <p class="name h6">Quang</p>
-                <div class="message bg-dark rounded py-1">Tpro vjp</div>
+        <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column-reverse">
+            <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem">
+               <p id="my_message" class="m-0">
+
+               </p>
+            </div>
+            <div id="other_chat_message" style="max-width:75%;background-color:white;border-radius:0.75rem;padding:0.3rem">
+                <div id="other_name">
+
+                </div>
+                <p id="other_message">
+
+                </p>
             </div>
         </div>
         <div id="div_footer_right_meeting" class="w-100 d-flex p-3">
@@ -232,7 +244,7 @@
             </button>
             <input type="file" id="file-input" style="display: none;">
             <form class="form-outline d-flex" id="chat-input">
-                <input type="text" id="input_chat_meeting" class="form-control border-0"/>
+                <input type="text" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
                 <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="submit">
                     <span class="material-icons" id="icon_clear_id">
