@@ -240,7 +240,7 @@ function sendFileHandler(event) {
                         file: arrayBuffer,
                         metadata: {
                             name: file.name,
-                            fileSize: file.fileSize,
+                            fileSize: file.size,
                             sentBy: {
                                 userId: ObjClient.User.userId,
                                 displayName: ObjClient.User.displayName
