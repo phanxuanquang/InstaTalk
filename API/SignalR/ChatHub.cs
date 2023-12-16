@@ -95,6 +95,9 @@ namespace API.SignalR
 
                 await _presenceHub.Clients.All.SendAsync("CountMemberInGroup",
                        new { roomId = group.RoomId, countMember = currentUsers.Length });
+
+                if (currentUsers.Length < 1 || Context.User.IsInRole("Host") || Context.User.IsInRole("Admin"))
+                    await LockdownRoom(group.RoomId);
             }
             await base.OnDisconnectedAsync(exception);
         }
@@ -213,7 +216,7 @@ namespace API.SignalR
             if (isShareScreen)//true is doing share
             {
                 await _shareScreenTracker.UserConnectedToShareScreen(userConnection);
-                await Clients.Group(roomid.ToString()).SendAsync("OnUserIsSharing", Context.User.GetUsername());
+                await Clients.Group(roomid.ToString()).SendAsync("OnUserIsSharing", Context.User.GetDisplayName());
             }
             else
             {
@@ -260,6 +263,24 @@ namespace API.SignalR
             if (await _unitOfWork.Complete()) return group;
 
             throw new HubException("Failed to add connection to room");
+        }
+
+        private async Task LockdownRoom(Guid roomId)
+        {
+            await Clients.Group(roomId.ToString()).SendAsync("LockdownRoom");
+            var connectionsInRoom = await _unitOfWork.RoomRepository.GetRoomById(roomId);
+            await _presenceTracker.RemoveAllConnectionByRoomID(roomId);
+            if (connectionsInRoom != null)
+            {
+                await Task.WhenAll(connectionsInRoom.Connections.Select(item => Groups.RemoveFromGroupAsync(item.ConnectionId, roomId.ToString())));
+                _unitOfWork.RoomRepository.RemoveConnections(connectionsInRoom.Connections);
+                await _unitOfWork.RoomRepository.DeleteRoom(roomId);
+                foreach (var user in connectionsInRoom.Connections)
+                {
+                    await _unitOfWork.UserRepository.UpdateLocked(user.UserID);
+                }
+            }
+            await _unitOfWork.Complete();
         }
     }
 }
