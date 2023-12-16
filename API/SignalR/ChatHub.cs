@@ -3,6 +3,7 @@ using API.Entities;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
@@ -14,14 +15,15 @@ namespace API.SignalR
         PresenceTracker _presenceTracker;
         IUnitOfWork _unitOfWork;
         UserShareScreenTracker _shareScreenTracker;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ChatHub(IUnitOfWork unitOfWork, UserShareScreenTracker shareScreenTracker, PresenceTracker presenceTracker, IHubContext<PresenceHub> presenceHub)
+        public ChatHub(IUnitOfWork unitOfWork, UserShareScreenTracker shareScreenTracker, PresenceTracker presenceTracker, IHubContext<PresenceHub> presenceHub, UserManager<AppUser> userManager)
         {
-            //_mapper = mapper;
             _unitOfWork = unitOfWork;
             _presenceTracker = presenceTracker;
             _presenceHub = presenceHub;
             _shareScreenTracker = shareScreenTracker;
+            _userManager = userManager;
         }
 
         public override async Task OnConnectedAsync()
@@ -67,7 +69,7 @@ namespace API.SignalR
             }
         }
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             if (Context.User == null)
                 throw new HubException("401");
@@ -277,7 +279,8 @@ namespace API.SignalR
                 await _unitOfWork.RoomRepository.DeleteRoom(roomId);
                 foreach (var user in connectionsInRoom.Connections)
                 {
-                    await _unitOfWork.UserRepository.UpdateLocked(user.UserID);
+                    var dbUser = await _unitOfWork.UserRepository.GetUserByIdAsync(user.UserID);
+                    if (dbUser != null) await _userManager.DeleteAsync(dbUser);
                 }
             }
             await _unitOfWork.Complete();

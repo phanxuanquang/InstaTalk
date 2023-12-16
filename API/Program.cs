@@ -70,6 +70,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
     endpoints.MapHub<PresenceHub>("hubs/presence");
     endpoints.MapHub<ChatHub>("hubs/chathub");
+    endpoints.MapHub<ChatHub>("hubs/stranger");
     endpoints.MapFallbackToController("Index", "Fallback");//publish
 });
 

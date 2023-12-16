@@ -18,6 +18,9 @@ namespace API.Helpers
             CreateMap<Room, RoomDto>()
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.AppUser.DisplayName))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.AppUser.UserName));
+
+            CreateMap<RegisterStrangerDto, AppUser>();
+            CreateMap<StrangerFilterDto, StrangerFilter>().ReverseMap();           
         }
     }
 }

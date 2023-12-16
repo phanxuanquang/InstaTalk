@@ -43,4 +43,25 @@ namespace API.Entities
 
         public Guid UserID { get; set; }
     }
+
+    public class StrangerFilter
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid FilterID { get; set; }
+
+        public string FindGener { get; set; }
+
+        [DefaultValue(0)]
+        public int MinAge { get; set; }
+
+        [DefaultValue(100)]
+        public int MaxAge { get; set; }
+
+        public ICollection<string> FindRegion { get; set; } = new List<string>();
+
+        public ICollection<string> FindType { get; set; } = new List<string>();
+
+        public Room? CurrentRoom { get; set; }
+    }
 }
