@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace InstaTalk.Models
 {
@@ -14,7 +13,6 @@ namespace InstaTalk.Models
         public string UserName { get; set; }
         public string DisplayName { get; set; }
         public DateTime CreatedDate { get; set; }
-        [DefaultValue(false)]
         public bool BlockedChat { get; set; }
 
     }
