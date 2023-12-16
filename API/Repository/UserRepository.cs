@@ -54,7 +54,7 @@ namespace API.Repository
         public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
         {
             var query = _context.Users.AsQueryable();
-            query = query.Where(u => u.UserName != userParams.CurrentUsername).OrderByDescending(u => u.LastActive);
+            query = query.Where(u => u.DisplayName != userParams.CurrentDisplayName).OrderByDescending(u => u.LastActive);
 
             return await PagedList<MemberDto>.CreateAsync(query.ProjectTo<MemberDto>(_mapper.ConfigurationProvider).AsNoTracking(), userParams.PageNumber, userParams.PageSize);
         }
