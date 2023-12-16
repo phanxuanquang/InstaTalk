@@ -242,7 +242,7 @@
                     attach_file
                 </span>
             </button>
-            <input type="file" id="file-input" style="display: none;">
+            <input type="file" id="file-input" style="display: none;" onchange="sendFileHandler(event)">
             <form class="form-outline d-flex" id="chat-input">
                 <input type="text" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>

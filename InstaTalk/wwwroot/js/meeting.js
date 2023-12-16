@@ -225,6 +225,35 @@ function openFileSelector() {
     fileInput.click();
 }
 
+function sendFileHandler(event) {
+    var file = event.target.files[0];
+    var arrayBuffer;
+
+    var fileReader = new FileReader();
+    fileReader.onload = function () {
+        arrayBuffer = this.result;
+        Object.keys(myPeer.connections).forEach(peerId => {
+            const conn = myPeer.connect(peerId);
+            if (conn) {
+                conn.on('open', () => {
+                    conn.send({
+                        file: arrayBuffer,
+                        metadata: {
+                            name: file.name,
+                            fileSize: file.fileSize,
+                            sentBy: {
+                                userId: ObjClient.User.userId,
+                                displayName: ObjClient.User.displayName
+                            }
+                        }
+                    });
+                })
+            }
+        })
+    };
+    fileReader.readAsArrayBuffer(file);
+}
+
 function addDivForUser(item) {
     var newVideo = localView.cloneNode(true);
     var title = document.getElementById("title_video");
@@ -495,8 +524,19 @@ function InitRTC() {
 
     myPeer.on("connection", (conn) => {
         conn.on("data", (data) => {
-            // Will print 'hi!'
-            console.log(data);
+            if (data?.file instanceof ArrayBuffer) {
+                let metadata = data.metadata;
+                var blob = new Blob([data]);
+                var url = URL.createObjectURL(blob);
+
+                // Create a link to download the file
+                var downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = metadata.name;
+                downloadLink.click();
+
+            }
+            else console.log(data);
         });
         conn.on("open", () => {
             conn.send("hello!");
