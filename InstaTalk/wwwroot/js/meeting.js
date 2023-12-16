@@ -478,6 +478,15 @@ muteCamMicService.shareScreen$.subscribe(event => {
     }
 });
 
+chatService.blockChat$.subscribe(state => {
+    if (state) {
+        $('#div_right_meeting').addClass("d-none");
+    }
+    else {
+        $('#div_right_meeting').removeClass("d-none");
+    }
+});
+
 function InitRTC() {
     //#region Init myPeer
     myPeer = new Peer(ObjClient.User.userId, {
@@ -775,7 +784,7 @@ $(document).ready(function () {
         $("#time_meeting").load(window.location.href + " #time_meeting");
     }, 1000);
 });
-function toggleComponents() {
+function toggleComponents(event) {
     var checkbox = document.getElementById("switch");
 
     var parentDiv = document.getElementById("div_right_meeting");
@@ -783,6 +792,9 @@ function toggleComponents() {
     var formElements = parentDiv.querySelectorAll("select, textarea, button");
 
     var disable = !checkbox.checked;
+
+    let state = event.target.checked;
+    chatService.blockChat(state);
 
     formElements.forEach(function (element) {
         element.disabled = disable;
