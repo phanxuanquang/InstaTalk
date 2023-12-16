@@ -183,6 +183,7 @@ function showModalConfig() {
 }
 
 function updateTimer() {
+    
     seconds++;
     if (seconds == 60) {
         seconds = 0;
@@ -714,7 +715,8 @@ input.setAttribute("type", "text");
 input.setAttribute("name", "content");
 input.setAttribute("required", "true");
 
-var myChatClone = document.getElementById("my_chat_message")
+var myChatClone = document.getElementById("my_chat_message");
+var otherChatClone = document.getElementById("other_chat_message");
 var myChatDisplay = document.getElementById("div_chat_right_meeting");
 
 // Define a function to send the message
@@ -736,12 +738,30 @@ chatObs$.subscribe((val) => {
     while (myChatDisplay.firstChild) {
         myChatDisplay.removeChild(myChatDisplay.lastChild);
     }
-    for (let i = 0; i < val.length; i++) {
+    console.log(val);
+    for (let i = val.length - 1; i >= 0; i--) {
         //Tao div message
-        var chat = myChatClone.cloneNode(true);
-        //createMessage(content);
-        chat.innerHTML = val[i].content;
-        myChatDisplay.append(chat);
+        const now = new Date();
+        const h = now.getHours();
+        var m;
+        if (now.getMinutes() < 10) {
+            m = "0" + now.getMinutes();
+        } else {
+            m = now.getMinutes();
+        }
+        if (val[i].senderUserID == ObjClient.User.userId) {
+            var chat = myChatClone.cloneNode(true);
+            var chat_message = chat.querySelector("#my_message");
+            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+            myChatDisplay.append(chat);
+        } else {
+            var chat = otherChatClone.cloneNode(true);
+            var chat_name = chat.querySelector("#other_name");
+            chat_name.innerHTML = val[i].senderDisplayName;
+            var chat_message = chat.querySelector("#other_message");
+            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+            myChatDisplay.append(chat);
+        }
     }
 })
 
@@ -751,6 +771,9 @@ $(document).ready(function () {
     $('#ModalMeetingRoom').modal('show');
     changeMicState();
     changeCamState();
+    setInterval(function () {
+        $("#time_meeting").load(window.location.href + " #time_meeting");
+    }, 1000);
 });
 function toggleComponents() {
     var checkbox = document.getElementById("switch");
