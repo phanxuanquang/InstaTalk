@@ -351,14 +351,14 @@ function changeShareScreenState() {
     icon.style.transform = "transform 0.5s ease";
 
     if (isSharingScreen) {
-        icon.innerHTML = "mic";
+        icon.innerHTML = "screen_share";
         btn.classList.remove("btn-danger");
-        btn.classList.add("btn-light");
+        btn.classList.add("btn-sucess");
     }
     else {
-        icon.innerHTML = "mic_off";
+        icon.innerHTML = "stop_screen_share";
         btn.classList.add("btn-danger");
-        btn.classList.remove("btn-light");
+        btn.classList.remove("btn-sucess");
     }
 }
 
