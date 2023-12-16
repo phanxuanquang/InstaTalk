@@ -183,6 +183,7 @@ function showModalConfig() {
 }
 
 function updateTimer() {
+    
     seconds++;
     if (seconds == 60) {
         seconds = 0;
@@ -527,14 +528,18 @@ function InitRTC() {
 
                     call.on('stream', (otherUserVideoStream) => {
                         this.addOtherUserVideo(member, otherUserVideoStream);
+                        console.log('call stream');
+                        CallToast(member.displayName + ' has join room!')
                     });
 
                     call.on('close', () => {
+                        
                         videos = videos.filter((video) => video.user.id !== member.id);
                         //xoa user nao offline tren man hinh hien thi cua current user
                         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
 
                         videoSource.next(videos);
+                        
                     });
                 }, 1000);
             }
@@ -542,6 +547,8 @@ function InitRTC() {
     );
 
     this.subscriptions.add(chatService.oneOfflineUser$.subscribe(member => {
+        CallToast(member.displayName + ' has left room!')
+        console.log('call close');
         videos = videos.filter(video => video.user.id !== member.id);
         //xoa user nao offline tren man hinh hien thi current user
         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
@@ -764,6 +771,9 @@ $(document).ready(function () {
     $('#ModalMeetingRoom').modal('show');
     changeMicState();
     changeCamState();
+    setInterval(function () {
+        $("#time_meeting").load(window.location.href + " #time_meeting");
+    }, 1000);
 });
 function toggleComponents() {
     var checkbox = document.getElementById("switch");

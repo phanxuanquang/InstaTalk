@@ -216,7 +216,7 @@ namespace API.SignalR
             if (isShareScreen)//true is doing share
             {
                 await _shareScreenTracker.UserConnectedToShareScreen(userConnection);
-                await Clients.Group(roomid.ToString()).SendAsync("OnUserIsSharing", Context.User.GetUsername());
+                await Clients.Group(roomid.ToString()).SendAsync("OnUserIsSharing", Context.User.GetDisplayName());
             }
             else
             {
