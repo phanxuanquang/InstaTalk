@@ -183,6 +183,7 @@ function showModalConfig() {
 }
 
 function updateTimer() {
+    
     seconds++;
     if (seconds == 60) {
         seconds = 0;
@@ -751,6 +752,9 @@ $(document).ready(function () {
     $('#ModalMeetingRoom').modal('show');
     changeMicState();
     changeCamState();
+    setInterval(function () {
+        $("#time_meeting").load(window.location.href + " #time_meeting");
+    }, 1000);
 });
 function toggleComponents() {
     var checkbox = document.getElementById("switch");
