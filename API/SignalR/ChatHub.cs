@@ -10,10 +10,10 @@ namespace API.SignalR
     [Authorize]
     public class ChatHub : Hub
     {
-        IHubContext<PresenceHub> _presenceHub;
-        PresenceTracker _presenceTracker;
-        IUnitOfWork _unitOfWork;
-        UserShareScreenTracker _shareScreenTracker;
+        private IHubContext<PresenceHub> _presenceHub;
+        private PresenceTracker _presenceTracker;
+        private IUnitOfWork _unitOfWork;
+        private UserShareScreenTracker _shareScreenTracker;
 
         public ChatHub(IUnitOfWork unitOfWork, UserShareScreenTracker shareScreenTracker, PresenceTracker presenceTracker, IHubContext<PresenceHub> presenceHub)
         {
