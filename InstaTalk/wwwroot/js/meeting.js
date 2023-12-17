@@ -783,6 +783,7 @@ async function createLocalStream() {
     try {
         localView.srcObject = myVideo.srcObject;
         localTitle.innerHTML = ObjClient.User.displayName;
+        localView.muted = true;
         localView.load();
         localView.play();
     }
