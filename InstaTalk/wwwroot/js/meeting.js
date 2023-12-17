@@ -134,6 +134,7 @@ function changeMicState() {
     chatService.muteMicroPhone(isMuted);
 
     isMuted = !isMuted;
+    myVideo.muted = isMuted;
 }
 function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
@@ -279,6 +280,7 @@ function addDivForUser(item) {
     x.append(newVideo);
     x.append(y);
     x.append(z);
+    SetVolume(item, x)
     return x;
 }
 
@@ -413,8 +415,11 @@ videoObs$.subscribe((val) => {
             return addDivForUser(item);
         });
     console.log("cai list video" + newVideos);
+    console.log(val);
     if (newVideos && newVideos.length > 0) {
         $("#div_left_video_meeting").append(newVideos);
+
+
     }
     let currentViews = $("#div_left_video_meeting").children();
     if (isSharingScreen) {
@@ -703,11 +708,13 @@ function addOtherUserVideo(user, stream) {
         console.log(videos, user);
         return;
     }
-
+    const soundMeterme = NewSoundMeter(stream)
     videos.push({
         muted: false,
         srcObject: stream,
-        user: user
+        user: user,
+        soundMeter: soundMeterme,
+
     });
 
     videoSource.next(videos);
@@ -716,26 +723,34 @@ function addOtherUserVideo(user, stream) {
         this.tempvideos.push({
             muted: false,
             srcObject: stream,
-            user: user
+            user: user,
+            soundMeter: soundMeterme,
         })
     }
 }
 
+let myVideo = {
+    muted: true,
+    srcObject: null,
+    soundMeter: null,
+}
 async function createLocalStream() {
 
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        handleSuccess(stream, parent);
+        const soundMeterme = NewSoundMeter(stream)
+        myVideo.soundMeter = soundMeterme;
+        myVideo.srcObject = stream;
+        stream.getAudioTracks()[0].enabled = myVideo.muted;
+        SetVolume(myVideo, parent);
     } catch (error) {
         stream = new webkitMediaStream();
         handleError(error);
     }
 
     try {
-        localView.srcObject = stream;
-        localView.muted = true;
+        localView.srcObject = myVideo.srcObject;
         localTitle.innerHTML = ObjClient.User.displayName;
-        localView.muted = true;
         localView.load();
         localView.play();
     }
@@ -872,7 +887,7 @@ function toggleComponents() {
 }
 
 
-function handleSuccess(stream, userCard) {
+function NewSoundMeter(stream) {
     // Put variables in global scope to make them available to the
 
     try {
@@ -881,25 +896,25 @@ function handleSuccess(stream, userCard) {
     } catch (e) {
         alert('Web Audio API not supported.');
     }
-    // browser console.
-    console.log(stream)
-    window.stream = stream;
-    const soundMeter = window.soundMeter = new SoundMeter(window.audioContext);
-    soundMeter.connectToSource(stream, function (e) {
-        if (e) {
-            alert(e);
-            return;
+    const soundMeter = new SoundMeter(window.audioContext);
+    soundMeter.connectToSource(stream);
+    return soundMeter;
+}
+
+function SetVolume(video, userVideo) {
+    const soundMeter = NewSoundMeter(video.srcObject);
+    setInterval(() => {
+        
+        if (userVideo) {
+            const volume = soundMeter.instant.toFixed(2);
+            console.log(volume);
+            if (volume > 0.01) {
+                userVideo.style.borderStyle = "ridge";
+            } else {
+                userVideo.style.borderStyle = "none";
+            }
         }
-        meterRefresh = setInterval(() => {
-            let soundMeterVolume = soundMeter.instant.toFixed(2);
-            if (soundMeterVolume > 0.01) {
-                userCard.style.borderStyle = "ridge";
-            }
-            else {
-                userCard.style.borderStyle = "none";
-            }
-        }, 200);
-    });
+    }, 200);
 }
 
 function uuidv4() {
