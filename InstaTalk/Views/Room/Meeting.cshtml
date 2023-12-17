@@ -102,7 +102,7 @@
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
         <div id="div_header_left_meeting" class="d-flex" style="margin:0;padding:0;height:90%;">
             <div id="div_share_screen" style="display:none;position:relative;object-fit:cover;">
-                <video id="share-video" style="object-fit:contain;width:100%;height:100%"></video>
+                <video id="share-video" class="rounded-4 border-success" style="object-fit:contain;width:100%;height:100%"></video>
             </div>
             <div id="div_left_video_meeting" class="w-100 justify-content-center" style="margin:0;padding:0;height:100%;">
                 @*  Random rnd = new Random();
@@ -184,7 +184,7 @@
                 </div>
 
                 <div id="side_bar_control_normal" class="align-items-center justify-content-center">
-                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
+                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openParticipants()">
                         <span class="material-icons" id="icon_people_alt_normal">
                             people_alt
                         </span>
@@ -221,7 +221,7 @@
                 </span>
             </button>
         </div>
-        <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column-reverse">
+        <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column">
             <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;">
                <p id="my_message" class="m-0">
 
@@ -254,6 +254,34 @@
             </form>
 
         </div>
+    </div>
+    <div id="div_participants" style="height:95%" class="d-none flex-column align-items-center border border-2 rounded-3 bg-light col-3">
+        <div id="div_header_participants" class="w-100 d-flex p-2">
+            <div class="checkbox-wrapper-35 col-11 bg-light py-2">
+                <label>Participants</label>
+            </div>
+            <button id="btn_close_participants" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeChat()">
+                <span class="material-icons" id="ic_close_participants">
+                    close
+                </span>
+            </button>
+        </div>
+    <div id="div_body_participants" style="overflow:auto;background-color:#aebc8e;width:100%">
+         <div id="participant" style="width:95%" class="d-flex align-items-center m-1">
+             <div id="participant_name" style="width:80%">
+
+             </div>
+                <button id="btn_mic_participant" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1" type="button" onclick="closeChat()">
+                <span class="material-icons" id="ic_mic_participant">
+                    mic
+                </span>
+            </button>
+            <button id="btn_volumn_participant" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1" type="button" onclick="closeChat()">
+                <span class="material-icons" id="ic_volumn_participant">
+                    more_horiz
+                </span>
+            </button>
+         </div>
     </div>
 </div>
 
