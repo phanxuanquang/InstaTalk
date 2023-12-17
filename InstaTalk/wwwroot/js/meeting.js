@@ -351,12 +351,12 @@ function changeShareScreenState() {
     icon.style.transform = "transform 0.5s ease";
 
     if (isSharingScreen) {
-        icon.innerHTML = "mic";
+        icon.innerHTML = "screen_share";
         btn.classList.remove("btn-danger");
         btn.classList.add("btn-light");
     }
     else {
-        icon.innerHTML = "mic_off";
+        icon.innerHTML = "stop_screen_share";
         btn.classList.add("btn-danger");
         btn.classList.remove("btn-light");
     }
@@ -767,14 +767,26 @@ chatObs$.subscribe((val) => {
 
 $(document).ready(function () {
     InitRTC();
-
-    $('#ModalMeetingRoom').modal('show');
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Host") {
+        $('#ModalMeetingRoom').modal('show');
+    } else {
+        hiddenForMembers();
+    }
     changeMicState();
     changeCamState();
     setInterval(function () {
         $("#time_meeting").load(window.location.href + " #time_meeting");
     }, 1000);
 });
+
+function hiddenForMembers() {
+    var btnSettings = document.getElementById("btn_settings_meeting");
+    var btnSettingsMobile = document.getElementById("btn_settings_normal");
+    btnSettings.style.display = "none";
+    btnSettingsMobile.style.display = "none";
+    btnSettings.classList.remove("d-flex");
+    btnSettingsMobile.classList.remove("d-flex");
+}
 function toggleComponents() {
     var checkbox = document.getElementById("switch");
 
