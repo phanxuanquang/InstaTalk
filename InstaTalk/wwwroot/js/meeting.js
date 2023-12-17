@@ -40,6 +40,7 @@ var isSharingScreenSource = new Subject();
 var isSharingScreen$ = isSharingScreenSource.asObservable();
 var tempvideos = [];
 const localView = document.getElementById("user_video");
+var localSoundMeter;
 const localUserCard = document.getElementById("div_user_card");
 const localTitle = document.getElementById("title_video");
 
@@ -386,7 +387,7 @@ function changeShareScreenState() {
         btn.classList.add("btn-sucess");
     }
     else {
-        icon.innerHTML = "stop_screen_share";
+        icon.innerHTML = "stop_screen_share"; videoObs$
         btn.classList.add("btn-danger");
         btn.classList.remove("btn-sucess");
     }
@@ -723,9 +724,11 @@ function addOtherUserVideo(user, stream) {
 async function createLocalStream() {
 
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(handleSuccess).catch(handleError);
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        handleSuccess(stream, parent);
     } catch (error) {
         stream = new webkitMediaStream();
+        handleError(error);
     }
 
     try {
@@ -869,7 +872,7 @@ function toggleComponents() {
 }
 
 
-function handleSuccess(stream) {
+function handleSuccess(stream, userCard) {
     // Put variables in global scope to make them available to the
 
     try {
@@ -888,7 +891,13 @@ function handleSuccess(stream) {
             return;
         }
         meterRefresh = setInterval(() => {
-            //console.log(soundMeter.instant.toFixed(2));
+            let soundMeterVolume = soundMeter.instant.toFixed(2);
+            if (soundMeterVolume > 0.01) {
+                userCard.style.borderStyle = "ridge";
+            }
+            else {
+                userCard.style.borderStyle = "none";
+            }
         }, 200);
     });
 }
