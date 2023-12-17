@@ -96,8 +96,8 @@ namespace API.SignalR
                 await _presenceHub.Clients.All.SendAsync("CountMemberInGroup",
                        new { roomId = group.RoomId, countMember = currentUsers.Length });
 
-                if (currentUsers.Length < 1 || Context.User.IsInRole("Host") || Context.User.IsInRole("Admin"))
-                    await LockdownRoom(group.RoomId);
+                //if (currentUsers.Length < 1 || Context.User.IsInRole("Host") || Context.User.IsInRole("Admin"))
+                //    await LockdownRoom(group.RoomId);
             }
             await base.OnDisconnectedAsync(exception);
         }

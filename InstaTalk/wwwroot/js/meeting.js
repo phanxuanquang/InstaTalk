@@ -36,6 +36,8 @@ var shareScreenSource = new Subject();
 var shareScreenObs$ = shareScreenSource.asObservable();
 var parent = document.getElementById("div_user_video");
 var userCard = document.getElementById("div_user_card");
+var divParticipants = document.getElementById("div_body_participants");
+var participant = document.getElementById("participant");
 var isSharingScreenSource = new Subject();
 var isSharingScreen$ = isSharingScreenSource.asObservable();
 var tempvideos = [];
@@ -113,6 +115,21 @@ function openChat() {
         chat.classList.add("col-11");
     }
 }
+
+function openParticipants() {
+    var participants = document.getElementById("div_participants");
+    var left_meeting = document.getElementById("div_left_meeting");
+    left_meeting.classList.remove("col-11");
+    left_meeting.classList.add("col-8");
+    participants.classList.add("d-flex");
+    participants.classList.remove("d-none");
+}
+
+function closeParticipants() {
+    var participants = document.getElementById("div_participants");
+    participants.classList.add("d-none");
+    participants.classList.remove("d-flex");
+}
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
     var btn = document.getElementById("btn_mic_meeting");
@@ -141,6 +158,7 @@ function changeCamState() {
     var user_video = document.getElementById("user_video");
     var title_video = document.getElementById("title_video");
     var name_user_card = document.getElementById("name_user_card");
+    var participant_name = document.getElementById("participant_name");
     icon.style.transition = "transform 0.5 ease";
     icon.style.transform = "transform 0.5s ease";
 
@@ -158,7 +176,8 @@ function changeCamState() {
         btn.classList.remove("btn-light");
         div_user_card.style.display = "block";
         div_user_card.classList.add("d-flex");
-        name_user_card.innerHTML = ObjClient.User.displayName;
+        name_user_card.innerHTML = ObjClient.User.displayName.charAt(0).toUpperCase();
+        participant_name.innerHTML = ObjClient.User.displayName;
         user_video.style.display = "none";
         title_video.style.display = "none";
     }
@@ -280,6 +299,13 @@ function addDivForUser(item) {
     return x;
 }
 
+function addParticipant(item) {
+    var parentPart = participant.cloneNode(true);
+    var name = parentPart.querySelector("#participant_name");
+    name.innerHTML = item.user.displayName;
+    divParticipants.append(parentPart);
+}
+
 function arrangeUser(currentViews) {
     let heightBase;
     let widthBase;
@@ -382,14 +408,15 @@ function changeShareScreenState() {
     if (isSharingScreen) {
         icon.innerHTML = "screen_share";
         btn.classList.remove("btn-danger");
-        btn.classList.add("btn-sucess");
+        btn.classList.add("btn-light");
     }
     else {
         icon.innerHTML = "stop_screen_share";
         btn.classList.add("btn-danger");
-        btn.classList.remove("btn-sucess");
+        btn.classList.remove("btn-light");
     }
 }
+
 
 videoObs$.subscribe((val) => {
     console.log(val);
@@ -408,6 +435,7 @@ videoObs$.subscribe((val) => {
         .map(item => {
             console.log("vao addDiv");
             console.log(item);
+            addParticipant(item);
             return addDivForUser(item);
         });
     console.log("cai list video" + newVideos);
@@ -468,23 +496,25 @@ muteCamMicService.muteMicro$.subscribe(event => {
 });
 
 muteCamMicService.muteCamera$.subscribe(event => {
-    let div_user_video = document.getElementById(event.userId);
-    let div_user_card = div_user_video.querySelector("#div_user_card");
-    let user_video = document.getElementById(event.userId + '_video')
-    console.log("Tim thay roi nha" + event.userId);
-    let title_video = div_user_video.querySelector("#title_video");
-    if (event.mute) {
-        div_user_card.style.display = "block";
-        div_user_card.classList.add("d-flex");
-        user_video.style.display = "none";
-        title_video.style.display = "none";
-    } else {
-        div_user_card.style.display = "none";
-        div_user_card.classList.remove("d-flex");
-        user_video.style.display = "block";
-        title_video.style.display = "block";
+    if (event.userId == ObjClient.User.userId) {
+        let div_user_video = document.getElementById(event.userId);
+        let div_user_card = div_user_video.querySelector("#div_user_card");
+        let user_video = document.getElementById(event.userId + '_video')
+        console.log("Tim thay roi nha" + event.userId);
+        let title_video = div_user_video.querySelector("#title_video");
+        if (event.mute) {
+            div_user_card.style.display = "block";
+            div_user_card.classList.add("d-flex");
+            user_video.style.display = "none";
+            title_video.style.display = "none";
+        } else {
+            div_user_card.style.display = "none";
+            div_user_card.classList.remove("d-flex");
+            user_video.style.display = "block";
+            title_video.style.display = "block";
+        }
+        console.log(event);
     }
-    console.log(event);
 });
 
 muteCamMicService.shareScreen$.subscribe(event => {
@@ -508,11 +538,13 @@ muteCamMicService.shareScreen$.subscribe(event => {
 });
 
 chatService.blockChat$.subscribe(state => {
-    if (state) {
-        $('#div_right_meeting').addClass("d-none");
-    }
-    else {
-        $('#div_right_meeting').removeClass("d-none");
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member") {
+        if (state) {
+            $('#div_right_meeting').addClass("d-none");
+        }
+        else {
+            $('#div_right_meeting').removeClass("d-none");
+        }
     }
 });
 
@@ -526,7 +558,7 @@ function InitRTC() {
         conn.on("data", (data) => {
             if (data?.file instanceof ArrayBuffer) {
                 let metadata = data.metadata;
-                var blob = new Blob([data]);
+                var blob = new Blob([data.file]);
                 var url = URL.createObjectURL(blob);
 
                 // Create a link to download the file
@@ -590,7 +622,7 @@ function InitRTC() {
                         videoSource.next(videos);
                         
                     });
-                }, 1000);
+                }, 10000);
             }
         })
     );
@@ -788,7 +820,7 @@ chatObs$.subscribe((val) => {
         myChatDisplay.removeChild(myChatDisplay.lastChild);
     }
     console.log(val);
-    for (let i = val.length - 1; i >= 0; i--) {
+    for (let i = 0; i < val.length; i--) {
         //Tao div message
         const now = new Date();
         const h = now.getHours();
@@ -823,6 +855,7 @@ $(document).ready(function () {
     }
     changeMicState();
     changeCamState();
+    changeShareScreenState();
     setInterval(function () {
         $("#time_meeting").load(window.location.href + " #time_meeting");
     }, 1000);
