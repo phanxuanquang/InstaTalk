@@ -149,7 +149,7 @@
                         videocam
                     </span>
                 </button>
-                <button data-toggle="tooltip" data-placement="top" title="Share Screen" id="btn_sharing_screen" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-danger btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" onclick="shareScreen()">
+                <button data-toggle="tooltip" data-placement="top" title="Share Screen" id="btn_sharing_screen" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" onclick="shareScreen()">
                     <span class="material-icons" id="icon_sharing_screen">
                         stop_screen_share
                     </span>
@@ -206,7 +206,7 @@
     <div id="div_right_meeting" style="min-width:250px;" class="col-3 flex-column align-items-center border border-2 rounded-3 bg-light">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2">
             <div class="checkbox-wrapper-35 col-11 bg-light py-2">
-                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents()">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents(event)">
                 <label for="switch">
                     <span class="switch-x-text">Chat Area is </span>
                     <span class="switch-x-toggletext">
@@ -242,7 +242,7 @@
                     attach_file
                 </span>
             </button>
-            <input type="file" id="file-input" style="display: none;">
+            <input type="file" id="file-input" style="display: none;" onchange="sendFileHandler(event)">
             <form class="form-outline d-flex" id="chat-input">
                 <input type="text" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>

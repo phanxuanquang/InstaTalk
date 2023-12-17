@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace API.Dtos
+﻿namespace API.Dtos
 {
     public class MemberDto
     {

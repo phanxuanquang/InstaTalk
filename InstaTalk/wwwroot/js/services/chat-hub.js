@@ -14,6 +14,9 @@
 
         this.muteCamMicService = muteCamMicService;
         this.messageCountService = messageCountService;
+
+        this.blockChatSource = new Subject();
+        this.blockChat$ = this.blockChatSource.asObservable();
     }
 
     createHubConnection(user, roomId) {
@@ -72,6 +75,10 @@
         this.hubConnection.on('OnUserIsSharing', currentUsername => {
             this.muteCamMicService.UserIsSharing = currentUsername
         })
+
+        this.hubConnection.on('OnBlockChat', state => {
+            this.blockChatSource.next(state);
+        })
     }
 
     stopHubConnection() {
@@ -80,6 +87,11 @@
                 .then(() => console.log('Hub connection stopped.'))
                 .catch(error => console.log(error));
         }
+    }
+
+    async blockChat(state) {
+        return this.hubConnection.invoke('BlockChat', state)
+            .catch(error => console.log(error));
     }
 
     async sendMessage(content) {

@@ -1,10 +1,6 @@
 ﻿using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 
 namespace API.Helpers
 {
