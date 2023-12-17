@@ -526,7 +526,7 @@ function InitRTC() {
         conn.on("data", (data) => {
             if (data?.file instanceof ArrayBuffer) {
                 let metadata = data.metadata;
-                var blob = new Blob([data]);
+                var blob = new Blob([data.file]);
                 var url = URL.createObjectURL(blob);
 
                 // Create a link to download the file
