@@ -183,7 +183,7 @@ function showModalConfig() {
 }
 
 function updateTimer() {
-    
+
     seconds++;
     if (seconds == 60) {
         seconds = 0;
@@ -582,13 +582,13 @@ function InitRTC() {
                     });
 
                     call.on('close', () => {
-                        
+
                         videos = videos.filter((video) => video.user.id !== member.id);
                         //xoa user nao offline tren man hinh hien thi cua current user
                         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
 
                         videoSource.next(videos);
-                        
+
                     });
                 }, 1000);
             }
@@ -606,8 +606,8 @@ function InitRTC() {
 
     this.subscriptions.add(
         chatService.messagesThread$.subscribe(messages => {
-            chatMessageList = messages;
-            chatSource.next(chatMessageList);
+            chatMessage = messages;
+            chatSource.next(chatMessage);
         })
     );
 
@@ -712,8 +712,9 @@ function addOtherUserVideo(user, stream) {
 }
 
 async function createLocalStream() {
+
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(handleSuccess).catch(handleError);
     } catch (error) {
         stream = new webkitMediaStream();
     }
@@ -749,7 +750,7 @@ async function shareScreen() {
     }
 }
 
-var chatMessageList = [];
+var chatMessage;
 var chatSource = new Subject();
 var chatObs$ = chatSource.asObservable();
 
@@ -784,35 +785,40 @@ function sendMessage() {
 }
 
 chatObs$.subscribe((val) => {
-    while (myChatDisplay.firstChild) {
-        myChatDisplay.removeChild(myChatDisplay.lastChild);
-    }
+    /*    while (myChatDisplay.firstChild) {
+            myChatDisplay.removeChild(myChatDisplay.lastChild);
+        }*/
     console.log(val);
-    for (let i = val.length - 1; i >= 0; i--) {
-        //Tao div message
-        const now = new Date();
-        const h = now.getHours();
-        var m;
-        if (now.getMinutes() < 10) {
-            m = "0" + now.getMinutes();
-        } else {
-            m = now.getMinutes();
-        }
-        if (val[i].senderUserID == ObjClient.User.userId) {
-            var chat = myChatClone.cloneNode(true);
-            var chat_message = chat.querySelector("#my_message");
-            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
-            myChatDisplay.append(chat);
-        } else {
-            var chat = otherChatClone.cloneNode(true);
-            var chat_name = chat.querySelector("#other_name");
-            chat_name.innerHTML = val[i].senderDisplayName;
-            var chat_message = chat.querySelector("#other_message");
-            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
-            myChatDisplay.append(chat);
-        }
+    if (val.length <= 0) return;
+    //Tao div message
+    const now = new Date();
+    const h = now.getHours();
+    var m;
+    if (now.getMinutes() < 10) {
+        m = "0" + now.getMinutes();
+    } else {
+        m = now.getMinutes();
+    }
+    if (val.senderUserID == ObjClient.User.userId) {
+        var chat = myChatClone.cloneNode(true);
+        var chat_message = chat.querySelector("#my_message");
+        chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+        myChatDisplay.append(chat);
+    } else {
+        var chat = otherChatClone.cloneNode(true);
+        var chat_name = chat.querySelector("#other_name");
+        chat_name.innerHTML = val.senderDisplayName;
+        var chat_message = chat.querySelector("#other_message");
+        chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+        myChatDisplay.append(chat);
     }
 })
+
+let meterRefresh = null;
+function handleError(error) {
+    console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+}
+
 
 $(document).ready(function () {
     InitRTC();
@@ -850,5 +856,30 @@ function toggleComponents() {
 
     formElements.forEach(function (element) {
         element.disabled = disable;
+    });
+}
+
+
+function handleSuccess(stream) {
+    // Put variables in global scope to make them available to the
+
+    try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.audioContext = new AudioContext();
+    } catch (e) {
+        alert('Web Audio API not supported.');
+    }
+    // browser console.
+    console.log(stream)
+    window.stream = stream;
+    const soundMeter = window.soundMeter = new SoundMeter(window.audioContext);
+    soundMeter.connectToSource(stream, function (e) {
+        if (e) {
+            alert(e);
+            return;
+        }
+        meterRefresh = setInterval(() => {
+            console.log(soundMeter.instant.toFixed(2));
+        }, 200);
     });
 }

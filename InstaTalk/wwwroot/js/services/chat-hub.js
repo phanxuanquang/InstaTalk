@@ -36,7 +36,7 @@
                 this.messageCountService.MessageCount += 1
             }
 
-            this.messagesThreadSource.next([...this.messagesThreadSource.getValue(), message]);
+            this.messagesThreadSource.next(message);
             /*this.messagesThread$.pipe(take(1)).subscribe(messages => {
                 this.messagesThreadSource.next([...messages, message])
             })*/
