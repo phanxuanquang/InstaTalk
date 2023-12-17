@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using System.Security.Permissions;
 
 namespace InstaTalk.Controllers
 {
@@ -42,23 +41,23 @@ namespace InstaTalk.Controllers
             /*if (ModelState.IsValid)
             {
                 */
-                using (var client = _httpClientFactory.CreateClient("API"))
+            using (var client = _httpClientFactory.CreateClient("API"))
+            {
+                var model = obj.CreateRoom;
+                model.RoomName = "test123";
+                model.SecurityCode = "123456e";
+                var response = await client.PostAsJsonAsync("/api/Room/add-room", model);
+                if (response.IsSuccessStatusCode)
                 {
-                    var model = obj.CreateRoom;
-                    model.RoomName = "test123";
-                    model.SecurityCode = "123456e";
-                    var response = await client.PostAsJsonAsync("/api/Room/add-room", model);
-                    if (response.IsSuccessStatusCode)
+                    using (var content = response.Content)
                     {
-                        using (var content = response.Content)
-                        {
-                            var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
-                            HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
-                            HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
-                            return RedirectToAction("Meeting", "Room", responseContent?.Room?.RoomId);
-                        }
+                        var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
+                        HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
+                        HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
+                        return RedirectToAction("Meeting", "Room", responseContent?.Room?.RoomId);
                     }
                 }
+            }
             /*}*/
             return RedirectToAction("FriendHub", obj);
         }

@@ -183,7 +183,7 @@ function showModalConfig() {
 }
 
 function updateTimer() {
-    
+
     seconds++;
     if (seconds == 60) {
         seconds = 0;
@@ -223,6 +223,36 @@ function openFileSelector() {
 
     // Trigger a click event on the file input
     fileInput.click();
+}
+
+function sendFileHandler(event) {
+    var file = event.target.files[0];
+    var arrayBuffer;
+    let idFile = uuidv4();
+    var fileReader = new FileReader();
+    fileReader.onload = function () {
+        arrayBuffer = this.result;
+        Object.keys(myPeer.connections).forEach(peerId => {
+            const conn = myPeer.connect(peerId);
+            if (conn) {
+                conn.on('open', () => {
+                    conn.send({
+                        file: arrayBuffer,
+                        metadata: {
+                            id: idFile,
+                            name: file.name,
+                            fileSize: file.size,
+                            sentBy: {
+                                userId: ObjClient.User.userId,
+                                displayName: ObjClient.User.displayName
+                            }
+                        }
+                    });
+                })
+            }
+        })
+    };
+    fileReader.readAsArrayBuffer(file);
 }
 
 function addDivForUser(item) {
@@ -351,14 +381,14 @@ function changeShareScreenState() {
     icon.style.transform = "transform 0.5s ease";
 
     if (isSharingScreen) {
-        icon.innerHTML = "mic";
+        icon.innerHTML = "screen_share";
         btn.classList.remove("btn-danger");
-        btn.classList.add("btn-light");
+        btn.classList.add("btn-sucess");
     }
     else {
-        icon.innerHTML = "mic_off";
+        icon.innerHTML = "stop_screen_share";
         btn.classList.add("btn-danger");
-        btn.classList.remove("btn-light");
+        btn.classList.remove("btn-sucess");
     }
 }
 
@@ -478,6 +508,15 @@ muteCamMicService.shareScreen$.subscribe(event => {
     }
 });
 
+chatService.blockChat$.subscribe(state => {
+    if (state) {
+        $('#div_right_meeting').addClass("d-none");
+    }
+    else {
+        $('#div_right_meeting').removeClass("d-none");
+    }
+});
+
 function InitRTC() {
     //#region Init myPeer
     myPeer = new Peer(ObjClient.User.userId, {
@@ -486,8 +525,27 @@ function InitRTC() {
 
     myPeer.on("connection", (conn) => {
         conn.on("data", (data) => {
-            // Will print 'hi!'
-            console.log(data);
+            let bufferFile = undefined;
+            if (data?.file instanceof ArrayBuffer)
+                bufferFile = data.file;
+            else if (data?.file instanceof Uint8Array)
+                bufferFile = data.file.buffer;
+            if (bufferFile) {
+                let metadata = data.metadata;
+                var blob = new Blob([bufferFile]);
+                var url = URL.createObjectURL(blob);
+
+                // Create a link to download the file
+                var downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = metadata.name;
+                downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
+                var chat = myChatClone.cloneNode(true);
+                var chat_message = chat.querySelector("#my_message");
+                chat_message.append(downloadLink)
+                myChatDisplay.append(chat);
+            }
+            else console.log(data);
         });
         conn.on("open", () => {
             conn.send("hello!");
@@ -533,13 +591,13 @@ function InitRTC() {
                     });
 
                     call.on('close', () => {
-                        
+
                         videos = videos.filter((video) => video.user.id !== member.id);
                         //xoa user nao offline tren man hinh hien thi cua current user
                         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
 
                         videoSource.next(videos);
-                        
+
                     });
                 }, 1000);
             }
@@ -557,8 +615,8 @@ function InitRTC() {
 
     this.subscriptions.add(
         chatService.messagesThread$.subscribe(messages => {
-            chatMessageList = messages;
-            chatSource.next(chatMessageList);
+            chatMessage = messages;
+            chatSource.next(chatMessage);
         })
     );
 
@@ -663,8 +721,9 @@ function addOtherUserVideo(user, stream) {
 }
 
 async function createLocalStream() {
+
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(handleSuccess).catch(handleError);
     } catch (error) {
         stream = new webkitMediaStream();
     }
@@ -700,7 +759,7 @@ async function shareScreen() {
     }
 }
 
-var chatMessageList = [];
+var chatMessage;
 var chatSource = new Subject();
 var chatObs$ = chatSource.asObservable();
 
@@ -735,46 +794,63 @@ function sendMessage() {
 }
 
 chatObs$.subscribe((val) => {
-    while (myChatDisplay.firstChild) {
-        myChatDisplay.removeChild(myChatDisplay.lastChild);
-    }
+    /*    while (myChatDisplay.firstChild) {
+            myChatDisplay.removeChild(myChatDisplay.lastChild);
+        }*/
     console.log(val);
-    for (let i = val.length - 1; i >= 0; i--) {
-        //Tao div message
-        const now = new Date();
-        const h = now.getHours();
-        var m;
-        if (now.getMinutes() < 10) {
-            m = "0" + now.getMinutes();
-        } else {
-            m = now.getMinutes();
-        }
-        if (val[i].senderUserID == ObjClient.User.userId) {
-            var chat = myChatClone.cloneNode(true);
-            var chat_message = chat.querySelector("#my_message");
-            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
-            myChatDisplay.append(chat);
-        } else {
-            var chat = otherChatClone.cloneNode(true);
-            var chat_name = chat.querySelector("#other_name");
-            chat_name.innerHTML = val[i].senderDisplayName;
-            var chat_message = chat.querySelector("#other_message");
-            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
-            myChatDisplay.append(chat);
-        }
+    if (val.length <= 0) return;
+    //Tao div message
+    const now = new Date();
+    const h = now.getHours();
+    var m;
+    if (now.getMinutes() < 10) {
+        m = "0" + now.getMinutes();
+    } else {
+        m = now.getMinutes();
+    }
+    if (val.senderUserID == ObjClient.User.userId) {
+        var chat = myChatClone.cloneNode(true);
+        var chat_message = chat.querySelector("#my_message");
+        chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+        myChatDisplay.append(chat);
+    } else {
+        var chat = otherChatClone.cloneNode(true);
+        var chat_name = chat.querySelector("#other_name");
+        chat_name.innerHTML = val.senderDisplayName;
+        var chat_message = chat.querySelector("#other_message");
+        chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+        myChatDisplay.append(chat);
     }
 })
 
+let meterRefresh = null;
+function handleError(error) {
+    console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+}
+
+
 $(document).ready(function () {
     InitRTC();
-
-    $('#ModalMeetingRoom').modal('show');
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Host") {
+        $('#ModalMeetingRoom').modal('show');
+    } else {
+        hiddenForMembers();
+    }
     changeMicState();
     changeCamState();
     setInterval(function () {
         $("#time_meeting").load(window.location.href + " #time_meeting");
     }, 1000);
 });
+
+function hiddenForMembers() {
+    var btnSettings = document.getElementById("btn_settings_meeting");
+    var btnSettingsMobile = document.getElementById("btn_settings_normal");
+    btnSettings.style.display = "none";
+    btnSettingsMobile.style.display = "none";
+    btnSettings.classList.remove("d-flex");
+    btnSettingsMobile.classList.remove("d-flex");
+}
 function toggleComponents() {
     var checkbox = document.getElementById("switch");
 
@@ -784,7 +860,44 @@ function toggleComponents() {
 
     var disable = !checkbox.checked;
 
+    let state = event.target.checked;
+    chatService.blockChat(state);
+
     formElements.forEach(function (element) {
         element.disabled = disable;
     });
+}
+
+
+function handleSuccess(stream) {
+    // Put variables in global scope to make them available to the
+
+    try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.audioContext = new AudioContext();
+    } catch (e) {
+        alert('Web Audio API not supported.');
+    }
+    // browser console.
+    console.log(stream)
+    window.stream = stream;
+    const soundMeter = window.soundMeter = new SoundMeter(window.audioContext);
+    soundMeter.connectToSource(stream, function (e) {
+        if (e) {
+            alert(e);
+            return;
+        }
+        meterRefresh = setInterval(() => {
+            //console.log(soundMeter.instant.toFixed(2));
+        }, 200);
+    });
+}
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+        .replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
 }

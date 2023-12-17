@@ -113,7 +113,7 @@
                     <div id="title_video" class="video-text rounded bg-opacity-75 bg-dark" style="padding:0.4rem;">
                         Hello
                     </div>
-                    <div id="div_user_card" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%">
+                    <div id="div_user_card" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%;border:aqua">
                         <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="object-fit:cover;width:100%;height:100%;background-color:black;border-radius:0.5rem;">
                             <div id="name_user_card" style="width:75px;height:75px;color:white;background-color:red;" class="rounded-circle d-flex align-items-center justify-content-center">
                                 OK
@@ -149,9 +149,9 @@
                         videocam
                     </span>
                 </button>
-                <button data-toggle="tooltip" data-placement="top" title="Share Screen" id="btn_sharing_screen" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-danger btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" onclick="shareScreen()">
+                <button data-toggle="tooltip" data-placement="top" title="Share Screen" id="btn_sharing_screen" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" onclick="shareScreen()">
                     <span class="material-icons" id="icon_sharing_screen">
-                        mic_off
+                        stop_screen_share
                     </span>
                 </button>
                 <button data-toggle="tooltip" data-placement="top" title="Chat Area" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
@@ -161,19 +161,19 @@
                 </button>
 
                 <button data-toggle="tooltip" data-placement="top" title="Show more" id="btn-icon-expand" class="col-1 rounded-circle flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="expand()">
-                    <span class="material-icons" id="icon_chat_meeting">
+                    <span class="material-icons" id="icon_expand_meeting">
                         expand_more
                     </span>
                 </button>
 
                 <div id="side_bar_control" style="display:none;" class="align-items-center justify-content-center">
                     <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
-                        <span class="material-icons" id="icon_chat_meeting">
+                        <span class="material-icons" id="icon_people_alt_meeting">
                             people_alt
                         </span>
                     </button>
-                    <button data-toggle="tooltip" data-placement="top" title="Security Configuration" id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" data-bs-toggle="modal" data-bs-target="#ModalSecurityConfig">
-                        <span class="material-icons btn-ove" id="icon_cam_meeting">
+                    <button data-toggle="tooltip" data-placement="top" title="Security Configuration" id="btn_settings_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" data-bs-toggle="modal" data-bs-target="#ModalSecurityConfig">
+                        <span class="material-icons btn-ove" id="icon_settings_meeting">
                             settings
                         </span>
                     </button>
@@ -185,12 +185,12 @@
 
                 <div id="side_bar_control_normal" class="align-items-center justify-content-center">
                     <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
-                        <span class="material-icons" id="icon_chat_meeting">
+                        <span class="material-icons" id="icon_people_alt_normal">
                             people_alt
                         </span>
                     </button>
-                    <button data-toggle="tooltip" data-placement="top" title="Security Configuration" id="btn_cam_meeting" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" data-bs-toggle="modal" data-bs-target="#ModalSecurityConfig">
-                        <span class="material-icons btn-ove" id="icon_cam_meeting">
+                    <button data-toggle="tooltip" data-placement="top" title="Security Configuration" id="btn_settings_normal" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid; transition: .3s;" data-bs-toggle="modal" data-bs-target="#ModalSecurityConfig">
+                        <span class="material-icons btn-ove" id="icon_settings_normal">
                             settings
                         </span>
                     </button>
@@ -206,7 +206,7 @@
     <div id="div_right_meeting" style="min-width:250px;" class="col-3 flex-column align-items-center border border-2 rounded-3 bg-light">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2">
             <div class="checkbox-wrapper-35 col-11 bg-light py-2">
-                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents()">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents(event)">
                 <label for="switch">
                     <span class="switch-x-text">Chat Area is </span>
                     <span class="switch-x-toggletext">
@@ -222,16 +222,16 @@
             </button>
         </div>
         <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column-reverse">
-            <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem">
+            <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;">
                <p id="my_message" class="m-0">
 
                </p>
             </div>
-            <div id="other_chat_message" style="max-width:75%;background-color:white;border-radius:0.75rem;padding:0.3rem">
-                <div id="other_name">
+            <div id="other_chat_message" style="max-width:75%;width:fit-content;background-color:white;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;">
+                <div id="other_name" style="max-width:fit-content;color:deepskyblue;font-weight:bold">
 
                 </div>
-                <p id="other_message">
+                <p id="other_message" class="m-0">
 
                 </p>
             </div>
@@ -242,7 +242,7 @@
                     attach_file
                 </span>
             </button>
-            <input type="file" id="file-input" style="display: none;">
+            <input type="file" id="file-input" style="display: none;" onchange="sendFileHandler(event)">
             <form class="form-outline d-flex" id="chat-input">
                 <input type="text" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
@@ -286,5 +286,6 @@
     <script type="text/javascript" src="~/js/services/mute-cam-mic-service.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/services/chat-hub.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/config/webrtc-config.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/soundmeter.js" asp-append-version="true"></script>
     <script src="~/js/meeting.js" asp-append-version="true"></script>
 }
