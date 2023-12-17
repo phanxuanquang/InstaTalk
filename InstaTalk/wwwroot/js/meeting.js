@@ -888,7 +888,7 @@ function handleSuccess(stream) {
             return;
         }
         meterRefresh = setInterval(() => {
-            console.log(soundMeter.instant.toFixed(2));
+            //console.log(soundMeter.instant.toFixed(2));
         }, 200);
     });
 }
