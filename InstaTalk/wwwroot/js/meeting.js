@@ -228,7 +228,7 @@ function openFileSelector() {
 function sendFileHandler(event) {
     var file = event.target.files[0];
     var arrayBuffer;
-
+    let idFile = uuidv4();
     var fileReader = new FileReader();
     fileReader.onload = function () {
         arrayBuffer = this.result;
@@ -239,6 +239,7 @@ function sendFileHandler(event) {
                     conn.send({
                         file: arrayBuffer,
                         metadata: {
+                            id: idFile,
                             name: file.name,
                             fileSize: file.size,
                             sentBy: {
@@ -524,17 +525,25 @@ function InitRTC() {
 
     myPeer.on("connection", (conn) => {
         conn.on("data", (data) => {
-            if (data?.file instanceof ArrayBuffer) {
+            let bufferFile = undefined;
+            if (data?.file instanceof ArrayBuffer)
+                bufferFile = data.file;
+            else if (data?.file instanceof Uint8Array)
+                bufferFile = data.file.buffer;
+            if (bufferFile) {
                 let metadata = data.metadata;
-                var blob = new Blob([data.file]);
+                var blob = new Blob([bufferFile]);
                 var url = URL.createObjectURL(blob);
 
                 // Create a link to download the file
                 var downloadLink = document.createElement('a');
                 downloadLink.href = url;
                 downloadLink.download = metadata.name;
-                downloadLink.click();
-
+                downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
+                var chat = myChatClone.cloneNode(true);
+                var chat_message = chat.querySelector("#my_message");
+                chat_message.append(downloadLink)
+                myChatDisplay.append(chat);
             }
             else console.log(data);
         });
@@ -851,4 +860,13 @@ function toggleComponents() {
     formElements.forEach(function (element) {
         element.disabled = disable;
     });
+}
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+        .replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
 }
