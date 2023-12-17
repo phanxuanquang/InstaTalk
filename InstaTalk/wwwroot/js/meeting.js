@@ -42,6 +42,7 @@ var isSharingScreenSource = new Subject();
 var isSharingScreen$ = isSharingScreenSource.asObservable();
 var tempvideos = [];
 const localView = document.getElementById("user_video");
+var localSoundMeter;
 const localUserCard = document.getElementById("div_user_card");
 const localTitle = document.getElementById("title_video");
 
@@ -202,7 +203,7 @@ function showModalConfig() {
 }
 
 function updateTimer() {
-    
+
     seconds++;
     if (seconds == 60) {
         seconds = 0;
@@ -247,7 +248,7 @@ function openFileSelector() {
 function sendFileHandler(event) {
     var file = event.target.files[0];
     var arrayBuffer;
-
+    let idFile = uuidv4();
     var fileReader = new FileReader();
     fileReader.onload = function () {
         arrayBuffer = this.result;
@@ -258,6 +259,7 @@ function sendFileHandler(event) {
                     conn.send({
                         file: arrayBuffer,
                         metadata: {
+                            id: idFile,
                             name: file.name,
                             fileSize: file.size,
                             sentBy: {
@@ -411,7 +413,7 @@ function changeShareScreenState() {
         btn.classList.add("btn-light");
     }
     else {
-        icon.innerHTML = "stop_screen_share";
+        icon.innerHTML = "stop_screen_share"; videoObs$
         btn.classList.add("btn-danger");
         btn.classList.remove("btn-light");
     }
@@ -556,17 +558,25 @@ function InitRTC() {
 
     myPeer.on("connection", (conn) => {
         conn.on("data", (data) => {
-            if (data?.file instanceof ArrayBuffer) {
+            let bufferFile = undefined;
+            if (data?.file instanceof ArrayBuffer)
+                bufferFile = data.file;
+            else if (data?.file instanceof Uint8Array)
+                bufferFile = data.file.buffer;
+            if (bufferFile) {
                 let metadata = data.metadata;
-                var blob = new Blob([data.file]);
+                var blob = new Blob([bufferFile]);
                 var url = URL.createObjectURL(blob);
 
                 // Create a link to download the file
                 var downloadLink = document.createElement('a');
                 downloadLink.href = url;
                 downloadLink.download = metadata.name;
-                downloadLink.click();
-
+                downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
+                var chat = myChatClone.cloneNode(true);
+                var chat_message = chat.querySelector("#my_message");
+                chat_message.append(downloadLink)
+                myChatDisplay.append(chat);
             }
             else console.log(data);
         });
@@ -614,13 +624,13 @@ function InitRTC() {
                     });
 
                     call.on('close', () => {
-                        
+
                         videos = videos.filter((video) => video.user.id !== member.id);
                         //xoa user nao offline tren man hinh hien thi cua current user
                         this.tempvideos = this.tempvideos.filter(video => video.user.id !== member.id);
 
                         videoSource.next(videos);
-                        
+
                     });
                 }, 10000);
             }
@@ -638,8 +648,8 @@ function InitRTC() {
 
     this.subscriptions.add(
         chatService.messagesThread$.subscribe(messages => {
-            chatMessageList = messages;
-            chatSource.next(chatMessageList);
+            chatMessage = messages;
+            chatSource.next(chatMessage);
         })
     );
 
@@ -744,10 +754,13 @@ function addOtherUserVideo(user, stream) {
 }
 
 async function createLocalStream() {
+
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        handleSuccess(stream, parent);
     } catch (error) {
         stream = new webkitMediaStream();
+        handleError(error);
     }
 
     try {
@@ -781,7 +794,7 @@ async function shareScreen() {
     }
 }
 
-var chatMessageList = [];
+var chatMessage;
 var chatSource = new Subject();
 var chatObs$ = chatSource.asObservable();
 
@@ -816,35 +829,40 @@ function sendMessage() {
 }
 
 chatObs$.subscribe((val) => {
-    while (myChatDisplay.firstChild) {
-        myChatDisplay.removeChild(myChatDisplay.lastChild);
-    }
+    /*    while (myChatDisplay.firstChild) {
+            myChatDisplay.removeChild(myChatDisplay.lastChild);
+        }*/
     console.log(val);
-    for (let i = 0; i < val.length; i--) {
-        //Tao div message
-        const now = new Date();
-        const h = now.getHours();
-        var m;
-        if (now.getMinutes() < 10) {
-            m = "0" + now.getMinutes();
-        } else {
-            m = now.getMinutes();
-        }
-        if (val[i].senderUserID == ObjClient.User.userId) {
-            var chat = myChatClone.cloneNode(true);
-            var chat_message = chat.querySelector("#my_message");
-            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
-            myChatDisplay.append(chat);
-        } else {
-            var chat = otherChatClone.cloneNode(true);
-            var chat_name = chat.querySelector("#other_name");
-            chat_name.innerHTML = val[i].senderDisplayName;
-            var chat_message = chat.querySelector("#other_message");
-            chat_message.innerHTML = val[i].content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
-            myChatDisplay.append(chat);
-        }
+    if (val.length <= 0) return;
+    //Tao div message
+    const now = new Date();
+    const h = now.getHours();
+    var m;
+    if (now.getMinutes() < 10) {
+        m = "0" + now.getMinutes();
+    } else {
+        m = now.getMinutes();
+    }
+    if (val.senderUserID == ObjClient.User.userId) {
+        var chat = myChatClone.cloneNode(true);
+        var chat_message = chat.querySelector("#my_message");
+        chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+        myChatDisplay.append(chat);
+    } else {
+        var chat = otherChatClone.cloneNode(true);
+        var chat_name = chat.querySelector("#other_name");
+        chat_name.innerHTML = val.senderDisplayName;
+        var chat_message = chat.querySelector("#other_message");
+        chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
+        myChatDisplay.append(chat);
     }
 })
+
+let meterRefresh = null;
+function handleError(error) {
+    console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
+}
+
 
 $(document).ready(function () {
     InitRTC();
@@ -884,4 +902,44 @@ function toggleComponents() {
     formElements.forEach(function (element) {
         element.disabled = disable;
     });
+}
+
+
+function handleSuccess(stream, userCard) {
+    // Put variables in global scope to make them available to the
+
+    try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        window.audioContext = new AudioContext();
+    } catch (e) {
+        alert('Web Audio API not supported.');
+    }
+    // browser console.
+    console.log(stream)
+    window.stream = stream;
+    const soundMeter = window.soundMeter = new SoundMeter(window.audioContext);
+    soundMeter.connectToSource(stream, function (e) {
+        if (e) {
+            alert(e);
+            return;
+        }
+        meterRefresh = setInterval(() => {
+            let soundMeterVolume = soundMeter.instant.toFixed(2);
+            if (soundMeterVolume > 0.01) {
+                userCard.style.borderStyle = "ridge";
+            }
+            else {
+                userCard.style.borderStyle = "none";
+            }
+        }, 200);
+    });
+}
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+        .replace(/[xy]/g, function (c) {
+            const r = Math.random() * 16 | 0,
+                v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
 }
