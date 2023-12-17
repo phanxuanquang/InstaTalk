@@ -816,15 +816,27 @@ chatObs$.subscribe((val) => {
 
 $(document).ready(function () {
     InitRTC();
-
-    $('#ModalMeetingRoom').modal('show');
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Host") {
+        $('#ModalMeetingRoom').modal('show');
+    } else {
+        hiddenForMembers();
+    }
     changeMicState();
     changeCamState();
     setInterval(function () {
         $("#time_meeting").load(window.location.href + " #time_meeting");
     }, 1000);
 });
-function toggleComponents(event) {
+
+function hiddenForMembers() {
+    var btnSettings = document.getElementById("btn_settings_meeting");
+    var btnSettingsMobile = document.getElementById("btn_settings_normal");
+    btnSettings.style.display = "none";
+    btnSettingsMobile.style.display = "none";
+    btnSettings.classList.remove("d-flex");
+    btnSettingsMobile.classList.remove("d-flex");
+}
+function toggleComponents() {
     var checkbox = document.getElementById("switch");
 
     var parentDiv = document.getElementById("div_right_meeting");
