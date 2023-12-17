@@ -11,13 +11,17 @@ namespace API.SignalR
     [Authorize]
     public class ChatHub : Hub
     {
-        IHubContext<PresenceHub> _presenceHub;
-        PresenceTracker _presenceTracker;
-        IUnitOfWork _unitOfWork;
-        UserShareScreenTracker _shareScreenTracker;
+        private readonly IHubContext<PresenceHub> _presenceHub;
+        private readonly PresenceTracker _presenceTracker;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserShareScreenTracker _shareScreenTracker;
         private readonly UserManager<AppUser> _userManager;
 
-        public ChatHub(IUnitOfWork unitOfWork, UserShareScreenTracker shareScreenTracker, PresenceTracker presenceTracker, IHubContext<PresenceHub> presenceHub, UserManager<AppUser> userManager)
+        public ChatHub(IUnitOfWork unitOfWork,
+            UserShareScreenTracker shareScreenTracker,
+            PresenceTracker presenceTracker,
+            IHubContext<PresenceHub> presenceHub,
+            UserManager<AppUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _presenceTracker = presenceTracker;
@@ -218,14 +222,13 @@ namespace API.SignalR
             if (isShareScreen)//true is doing share
             {
                 await _shareScreenTracker.UserConnectedToShareScreen(userConnection);
-                await Clients.Group(roomid.ToString()).SendAsync("OnUserIsSharing", Context.User.GetUsername());
+                await Clients.Group(roomid.ToString()).SendAsync("OnUserIsSharing", Context.User.GetDisplayName());
             }
             else
             {
                 await _shareScreenTracker.UserDisconnectedShareScreen(userConnection);
             }
             await Clients.Group(roomid.ToString()).SendAsync("OnShareScreen", isShareScreen);
-            //var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
         }
 
         public async Task ShareScreenToUser(Guid roomid, Guid userId, bool isShare)

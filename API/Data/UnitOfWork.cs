@@ -1,17 +1,13 @@
-﻿using AutoMapper;
-using API.Interfaces;
+﻿using API.Interfaces;
 using API.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace API.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
-        DataContext _context;
-        IMapper _mapper;
+        private DataContext _context;
+        private IMapper _mapper;
 
         public UnitOfWork(DataContext context, IMapper mapper)
         {

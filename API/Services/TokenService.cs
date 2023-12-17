@@ -11,7 +11,7 @@ namespace API.Services
     public class TokenService : ITokenService
     {
         private readonly SymmetricSecurityKey _key;
-        UserManager<AppUser> _userManager;
+        private UserManager<AppUser> _userManager;
 
         public TokenService(IConfiguration config, UserManager<AppUser> userManager)
         {

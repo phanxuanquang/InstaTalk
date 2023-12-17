@@ -26,7 +26,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MemberDto>>> GetAllMembers([FromQuery] UserParams userParams)
         {
-            userParams.CurrentUsername = User.GetUsername();
+            userParams.CurrentDisplayName = User.GetDisplayName();
             var comments = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
             Response.AddPaginationHeader(comments.CurrentPage, comments.PageSize, comments.TotalCount, comments.TotalPages);
 
