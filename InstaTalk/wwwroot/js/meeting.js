@@ -558,7 +558,8 @@ chatService.blockChat$.subscribe(state => {
 function InitRTC() {
     //#region Init myPeer
     myPeer = new Peer(ObjClient.User.userId, {
-        config: config
+        config: config,
+        debug: 3
     });
 
     myPeer.on("connection", (conn) => {
@@ -938,7 +939,7 @@ function NewSoundMeter(stream) {
 function SetVolume(video, userVideo) {
     const soundMeter = NewSoundMeter(video.srcObject);
     setInterval(() => {
-        
+
         if (userVideo) {
             const volume = soundMeter.instant.toFixed(2);
             console.log(volume);
