@@ -141,7 +141,7 @@ namespace API.SignalR
             if (group != null)
             {
                 await _unitOfWork.RoomRepository.UpdateBlockChat(group.RoomId, block);
-
+                await _unitOfWork.Complete();
                 await Clients.Group(group.RoomId.ToString()).SendAsync("OnBlockChat", new { block });
             }
         }

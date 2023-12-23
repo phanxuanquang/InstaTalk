@@ -36,10 +36,13 @@ var shareScreenSource = new Subject();
 var shareScreenObs$ = shareScreenSource.asObservable();
 var parent = document.getElementById("div_user_video");
 var userCard = document.getElementById("div_user_card");
+var divParticipants = document.getElementById("div_body_participants");
+var participant = document.getElementById("participant");
 var isSharingScreenSource = new Subject();
 var isSharingScreen$ = isSharingScreenSource.asObservable();
 var tempvideos = [];
 const localView = document.getElementById("user_video");
+var localSoundMeter;
 const localUserCard = document.getElementById("div_user_card");
 const localTitle = document.getElementById("title_video");
 
@@ -113,6 +116,21 @@ function openChat() {
         chat.classList.add("col-11");
     }
 }
+
+function openParticipants() {
+    var participants = document.getElementById("div_participants");
+    var left_meeting = document.getElementById("div_left_meeting");
+    left_meeting.classList.remove("col-11");
+    left_meeting.classList.add("col-8");
+    participants.classList.add("d-flex");
+    participants.classList.remove("d-none");
+}
+
+function closeParticipants() {
+    var participants = document.getElementById("div_participants");
+    participants.classList.add("d-none");
+    participants.classList.remove("d-flex");
+}
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
     var btn = document.getElementById("btn_mic_meeting");
@@ -133,6 +151,7 @@ function changeMicState() {
     chatService.muteMicroPhone(isMuted);
 
     isMuted = !isMuted;
+    myVideo.muted = isMuted;
 }
 function changeCamState() {
     var icon = document.getElementById("icon_cam_meeting");
@@ -141,6 +160,7 @@ function changeCamState() {
     var user_video = document.getElementById("user_video");
     var title_video = document.getElementById("title_video");
     var name_user_card = document.getElementById("name_user_card");
+    var participant_name = document.getElementById("participant_name");
     icon.style.transition = "transform 0.5 ease";
     icon.style.transform = "transform 0.5s ease";
 
@@ -158,7 +178,8 @@ function changeCamState() {
         btn.classList.remove("btn-light");
         div_user_card.style.display = "block";
         div_user_card.classList.add("d-flex");
-        name_user_card.innerHTML = ObjClient.User.displayName;
+        name_user_card.innerHTML = ObjClient.User.displayName.charAt(0).toUpperCase();
+        participant_name.innerHTML = ObjClient.User.displayName;
         user_video.style.display = "none";
         title_video.style.display = "none";
     }
@@ -278,7 +299,15 @@ function addDivForUser(item) {
     x.append(newVideo);
     x.append(y);
     x.append(z);
+    SetVolume(item, x)
     return x;
+}
+
+function addParticipant(item) {
+    var parentPart = participant.cloneNode(true);
+    var name = parentPart.querySelector("#participant_name");
+    name.innerHTML = item.user.displayName;
+    divParticipants.append(parentPart);
 }
 
 function arrangeUser(currentViews) {
@@ -383,14 +412,15 @@ function changeShareScreenState() {
     if (isSharingScreen) {
         icon.innerHTML = "screen_share";
         btn.classList.remove("btn-danger");
-        btn.classList.add("btn-sucess");
+        btn.classList.add("btn-light");
     }
     else {
-        icon.innerHTML = "stop_screen_share";
+        icon.innerHTML = "stop_screen_share"; videoObs$
         btn.classList.add("btn-danger");
-        btn.classList.remove("btn-sucess");
+        btn.classList.remove("btn-light");
     }
 }
+
 
 videoObs$.subscribe((val) => {
     console.log(val);
@@ -409,11 +439,15 @@ videoObs$.subscribe((val) => {
         .map(item => {
             console.log("vao addDiv");
             console.log(item);
+            addParticipant(item);
             return addDivForUser(item);
         });
     console.log("cai list video" + newVideos);
+    console.log(val);
     if (newVideos && newVideos.length > 0) {
         $("#div_left_video_meeting").append(newVideos);
+
+
     }
     let currentViews = $("#div_left_video_meeting").children();
     if (isSharingScreen) {
@@ -469,23 +503,25 @@ muteCamMicService.muteMicro$.subscribe(event => {
 });
 
 muteCamMicService.muteCamera$.subscribe(event => {
-    let div_user_video = document.getElementById(event.userId);
-    let div_user_card = div_user_video.querySelector("#div_user_card");
-    let user_video = document.getElementById(event.userId + '_video')
-    console.log("Tim thay roi nha" + event.userId);
-    let title_video = div_user_video.querySelector("#title_video");
-    if (event.mute) {
-        div_user_card.style.display = "block";
-        div_user_card.classList.add("d-flex");
-        user_video.style.display = "none";
-        title_video.style.display = "none";
-    } else {
-        div_user_card.style.display = "none";
-        div_user_card.classList.remove("d-flex");
-        user_video.style.display = "block";
-        title_video.style.display = "block";
+    if (event.userId == ObjClient.User.userId) {
+        let div_user_video = document.getElementById(event.userId);
+        let div_user_card = div_user_video.querySelector("#div_user_card");
+        let user_video = document.getElementById(event.userId + '_video')
+        console.log("Tim thay roi nha" + event.userId);
+        let title_video = div_user_video.querySelector("#title_video");
+        if (event.mute) {
+            div_user_card.style.display = "block";
+            div_user_card.classList.add("d-flex");
+            user_video.style.display = "none";
+            title_video.style.display = "none";
+        } else {
+            div_user_card.style.display = "none";
+            div_user_card.classList.remove("d-flex");
+            user_video.style.display = "block";
+            title_video.style.display = "block";
+        }
+        console.log(event);
     }
-    console.log(event);
 });
 
 muteCamMicService.shareScreen$.subscribe(event => {
@@ -509,18 +545,21 @@ muteCamMicService.shareScreen$.subscribe(event => {
 });
 
 chatService.blockChat$.subscribe(state => {
-    if (state) {
-        $('#div_right_meeting').addClass("d-none");
-    }
-    else {
-        $('#div_right_meeting').removeClass("d-none");
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member") {
+        if (state) {
+            $('#div_right_meeting').addClass("d-none");
+        }
+        else {
+            $('#div_right_meeting').removeClass("d-none");
+        }
     }
 });
 
 function InitRTC() {
     //#region Init myPeer
     myPeer = new Peer(ObjClient.User.userId, {
-        config: config
+        config: config,
+        debug: 3
     });
 
     myPeer.on("connection", (conn) => {
@@ -599,7 +638,7 @@ function InitRTC() {
                         videoSource.next(videos);
 
                     });
-                }, 1000);
+                }, 10000);
             }
         })
     );
@@ -702,11 +741,13 @@ function addOtherUserVideo(user, stream) {
         console.log(videos, user);
         return;
     }
-
+    const soundMeterme = NewSoundMeter(stream)
     videos.push({
         muted: false,
         srcObject: stream,
-        user: user
+        user: user,
+        soundMeter: soundMeterme,
+
     });
 
     videoSource.next(videos);
@@ -715,22 +756,33 @@ function addOtherUserVideo(user, stream) {
         this.tempvideos.push({
             muted: false,
             srcObject: stream,
-            user: user
+            user: user,
+            soundMeter: soundMeterme,
         })
     }
 }
 
+let myVideo = {
+    muted: true,
+    srcObject: null,
+    soundMeter: null,
+}
 async function createLocalStream() {
 
     try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(handleSuccess).catch(handleError);
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const soundMeterme = NewSoundMeter(stream)
+        myVideo.soundMeter = soundMeterme;
+        myVideo.srcObject = stream;
+        stream.getAudioTracks()[0].enabled = myVideo.muted;
+        SetVolume(myVideo, parent);
     } catch (error) {
         stream = new webkitMediaStream();
+        handleError(error);
     }
 
     try {
-        localView.srcObject = stream;
-        localView.muted = true;
+        localView.srcObject = myVideo.srcObject;
         localTitle.innerHTML = ObjClient.User.displayName;
         localView.muted = true;
         localView.load();
@@ -810,11 +862,13 @@ chatObs$.subscribe((val) => {
     }
     if (val.senderUserID == ObjClient.User.userId) {
         var chat = myChatClone.cloneNode(true);
+        chat.style.display = "block";
         var chat_message = chat.querySelector("#my_message");
         chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
         myChatDisplay.append(chat);
     } else {
         var chat = otherChatClone.cloneNode(true);
+        chat.style.display = "block";
         var chat_name = chat.querySelector("#other_name");
         chat_name.innerHTML = val.senderDisplayName;
         var chat_message = chat.querySelector("#other_message");
@@ -838,6 +892,7 @@ $(document).ready(function () {
     }
     changeMicState();
     changeCamState();
+    changeShareScreenState();
     setInterval(function () {
         $("#time_meeting").load(window.location.href + " #time_meeting");
     }, 1000);
@@ -869,7 +924,7 @@ function toggleComponents() {
 }
 
 
-function handleSuccess(stream) {
+function NewSoundMeter(stream) {
     // Put variables in global scope to make them available to the
 
     try {
@@ -878,19 +933,24 @@ function handleSuccess(stream) {
     } catch (e) {
         alert('Web Audio API not supported.');
     }
-    // browser console.
-    console.log(stream)
-    window.stream = stream;
-    const soundMeter = window.soundMeter = new SoundMeter(window.audioContext);
-    soundMeter.connectToSource(stream, function (e) {
-        if (e) {
-            alert(e);
-            return;
+    const soundMeter = new SoundMeter(window.audioContext);
+    soundMeter.connectToSource(stream);
+    return soundMeter;
+}
+
+function SetVolume(video, userVideo) {
+    const soundMeter = NewSoundMeter(video.srcObject);
+    setInterval(() => {
+
+        if (userVideo) {
+            const volume = soundMeter.instant.toFixed(2); 
+            if (volume > 0.01) {
+                userVideo.style.borderStyle = "ridge";
+            } else {
+                userVideo.style.borderStyle = "none";
+            }
         }
-        meterRefresh = setInterval(() => {
-            //console.log(soundMeter.instant.toFixed(2));
-        }, 200);
-    });
+    }, 200);
 }
 
 function uuidv4() {
