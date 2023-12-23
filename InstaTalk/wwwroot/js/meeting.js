@@ -861,11 +861,13 @@ chatObs$.subscribe((val) => {
     }
     if (val.senderUserID == ObjClient.User.userId) {
         var chat = myChatClone.cloneNode(true);
+        chat.style.display = "block";
         var chat_message = chat.querySelector("#my_message");
         chat_message.innerHTML = val.content + '<span style="float:right;font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">' + h + ":" + m + "</span>";
         myChatDisplay.append(chat);
     } else {
         var chat = otherChatClone.cloneNode(true);
+        chat.style.display = "block";
         var chat_name = chat.querySelector("#other_name");
         chat_name.innerHTML = val.senderDisplayName;
         var chat_message = chat.querySelector("#other_message");
@@ -940,8 +942,7 @@ function SetVolume(video, userVideo) {
     setInterval(() => {
         
         if (userVideo) {
-            const volume = soundMeter.instant.toFixed(2);
-            console.log(volume);
+            const volume = soundMeter.instant.toFixed(2); 
             if (volume > 0.01) {
                 userVideo.style.borderStyle = "ridge";
             } else {
