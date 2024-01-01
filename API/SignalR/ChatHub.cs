@@ -239,7 +239,9 @@ namespace API.SignalR
             var connections = await _presenceTracker.GetConnectionsForUser(new UserConnectionInfo(userId, string.Empty, roomId));
             if (connections != null && connections.Count > 0)
             {
+                await Clients.Users(userId.ToString()).SendAsync("OnIsKicked", new { userId, roomId });
                 await Task.WhenAll(connections.Select(cid => Groups.RemoveFromGroupAsync(cid, roomId.ToString())));
+                var u = await _unitOfWork.UserRepository.UpdateLocked(userId);
                 var temp = await _unitOfWork.UserRepository.GetMemberAsync(userId);
                 await Clients.Group(roomId.ToString()).SendAsync("UserOfflineInGroup", temp);
 
