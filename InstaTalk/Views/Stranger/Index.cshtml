@@ -3,40 +3,58 @@
 }
 
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
-    <div style="max-width:550px">
+    <div style="max-width:550px; display:block; text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 0px 0px 20px 0px">
-        <form id="homepage_form" class="w-100" method="post" action="@Url.Action("FindOut", "Stranger")">
+        <form id="homepage_form" style="width:95%;display:inline-block;margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("FindOut", "Stranger")">
             <div class="textInputWrapper" style="margin: 0px 0px 20px 0px">
                 <input placeholder="Your display name" type="text" class="textInput">
             </div>
-            <div class="m-auto d-flex">
-                <select class="form-select mb-3 me-1" aria-label=".form-select-lg example" style="width:49%;">
-                    <option selected>Your gender</option>
-                    <option value="1">Male</option>
-                    <option value="2">Female</option>
-                    <option value="3">Gay</option>
-                    <option value="3">Lesbian</option>
-                    <option value="3">Other</option>
-                </select>
-                <select class="form-select mb-3 ms-1" aria-label=".form-select-lg example" style="width:49%;">
-                    <option selected>Your age</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
+            <div class="m-auto d-flex gap-2">
+                <div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
+                    <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
+                        Your gender
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+                        <li><a class="dropdown-item" href="#">Keep it secret</a></li>
+                        <li><a class="dropdown-item" href="#">Male</a></li>
+                        <li><a class="dropdown-item" href="#">Female</a></li>
+                        <li><a class="dropdown-item" href="#">Gay</a></li>
+                        <li><a class="dropdown-item" href="#">Lesbian</a></li>
+                        <li><a class="dropdown-item" href="#">Others</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group shadow-0 mb-3 ms-1" style="width:100%;" aria-label=".form-select-lg example">
+                    <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
+                        Your age
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+                        <li><a class="dropdown-item" href="#">Keep it secret</a></li>
+                        <li><a class="dropdown-item" href="#">Under 16</a></li>
+                        <li><a class="dropdown-item" href="#">From 16 to under 18</a></li>
+                        <li><a class="dropdown-item" href="#">From 18 to under 24</a></li>
+                        <li><a class="dropdown-item" href="#">From 24 to under 30</a></li>
+                        <li><a class="dropdown-item" href="#">Above 30</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="m-auto mb-3">
-                <select class="form-select mb-3" aria-label=".form-select-lg example">
-                    <option selected>Your come from</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
+            <div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
+                <button type="button"
+                        class="btn btn-secondary dropdown-toggle"
+                        data-mdb-toggle="dropdown"
+                        data-mdb-display="static"
+                        aria-expanded="false">
+                    Your come from
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
+                    <li><a class="dropdown-item" href="#">Keep it secret</a></li>
+                    <li><a class="dropdown-item" href="#">Country 1</a></li>
+                    <li><a class="dropdown-item" href="#">Country 2</a></li>
+                    <li><a class="dropdown-item" href="#">Country 3</a></li>
+                </ul>
             </div>
-            <center>
+            <center onclick="location.href='@Url.Action("FindOut", "Stranger")'">
                 <a class="custom-btn">
                     NEXT
-                    <span></span>
                 </a>
             </center>
         </form>

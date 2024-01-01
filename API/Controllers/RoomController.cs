@@ -60,7 +60,13 @@ namespace API.Controllers
 
             if (!fakeLogin.Succeeded) return BadRequest("Something wrong when create room");
 
-            var room = new Room { RoomName = register.RoomName, SecurityCode = register.SecurityCode, UserId = user.Id };
+            var room = new Room
+            {
+                RoomName = register.RoomName,
+                SecurityCode = register.SecurityCode,
+                UserId = user.Id,
+                CreatedDate = DateTime.Now
+            };
 
             _unitOfWork.RoomRepository.AddRoom(room);
 
@@ -123,7 +129,7 @@ namespace API.Controllers
         [Authorize(Roles = "Admin,Host")]
         public async Task<ActionResult> EditRoom(EditRoomDto edit)
         {
-            Room room = await _unitOfWork.RoomRepository.GetRoomById(edit.RoomId);
+            Room? room = await _unitOfWork.RoomRepository.GetRoomById(edit.RoomId);
             if (room == null) return NotFound();
             if (room.UserId != HttpContext.User.GetUserId())
                 return Unauthorized();
@@ -154,9 +160,9 @@ namespace API.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Host")]
-        public async Task<ActionResult> DeleteRoom(int id)
+        public async Task<ActionResult> DeleteRoom(Guid id)
         {
-            Room room = await _unitOfWork.RoomRepository.GetRoomById(id);
+            Room? room = await _unitOfWork.RoomRepository.GetRoomById(id);
             if (room == null) return NotFound();
             if (room.UserId != HttpContext.User.GetUserId())
                 return Unauthorized();

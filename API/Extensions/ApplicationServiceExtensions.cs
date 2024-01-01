@@ -4,8 +4,6 @@ using API.Interfaces;
 using API.Services;
 using API.SignalR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Extensions
 {
@@ -27,7 +25,7 @@ namespace API.Extensions
             services.AddDbContext<DataContext>(options =>
             {
                 //Install-Package Microsoft.EntityFrameworkCore.SqlServer || options.UseSqlServer
-                options.UseSqlServer(config.GetConnectionString(true ? "DevConnection" : "DefaultConnection"));
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
             return services;
         }

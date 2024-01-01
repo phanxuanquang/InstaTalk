@@ -1,15 +1,11 @@
-﻿using AutoMapper;
-using API.Data;
+﻿using API.Data;
 using API.Dtos;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Repository
 {
@@ -24,20 +20,20 @@ namespace API.Repository
             _mapper = mapper;
         }
 
-        public async Task<Room> GetRoomById(int roomId)
+        public Task<Room?> GetRoomById(Guid roomId)
         {
-            return await _context.Rooms.Include(x => x.Connections).FirstOrDefaultAsync(x => x.RoomId == roomId);
+            return _context.Rooms.Include(x => x.Connections).FirstOrDefaultAsync(x => x.RoomId == roomId);
         }
 
-        public async Task<RoomDto> GetRoomDtoById(int roomId)
+        public Task<RoomDto?> GetRoomDtoById(Guid roomId)
         {
-            return await _context.Rooms.Where(r => r.RoomId == roomId).ProjectTo<RoomDto>(_mapper.ConfigurationProvider)
+            return _context.Rooms.Where(r => r.RoomId == roomId).ProjectTo<RoomDto>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync();//using Microsoft.EntityFrameworkCore;
         }
 
-        public async Task<Room> GetRoomForConnection(string connectionId)
+        public Task<Room?> GetRoomForConnection(string connectionId)
         {
-            return await _context.Rooms.Include(x => x.Connections)
+            return _context.Rooms.Include(x => x.Connections)
                 .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
                 .FirstOrDefaultAsync();
         }
@@ -45,6 +41,11 @@ namespace API.Repository
         public void RemoveConnection(Connection connection)
         {
             _context.Connections.Remove(connection);
+        }
+
+        public void RemoveConnections(IEnumerable<Connection> connections)
+        {
+            _context.Connections.RemoveRange(connections);
         }
 
         public void AddRoom(Room room)
@@ -57,17 +58,17 @@ namespace API.Repository
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<Room> DeleteRoom(int id)
+        public async Task<Room?> DeleteRoom(Guid roomId)
         {
-            var room = await _context.Rooms.FindAsync(id);
-            if(room != null)
+            var room = await _context.Rooms.FindAsync(roomId);
+            if (room != null)
             {
                 _context.Rooms.Remove(room);
             }
             return room;
         }
 
-        public async Task<Room> EditRoom(EditRoomDto edit)
+        public async Task<Room?> EditRoom(EditRoomDto edit)
         {
             var room = await _context.Rooms.FindAsync(edit.RoomId);
             if (room != null)
@@ -91,12 +92,21 @@ namespace API.Repository
             return await PagedList<RoomDto>.CreateAsync(list.ProjectTo<RoomDto>(_mapper.ConfigurationProvider).AsNoTracking(), roomParams.PageNumber, roomParams.PageSize);
         }
 
-        public async Task UpdateCountMember(int roomId, int count)
+        public async Task UpdateCountMember(Guid roomId, int count)
         {
             var room = await _context.Rooms.FindAsync(roomId);
-            if(room != null)
+            if (room != null)
             {
                 room.CountMember = count;
+            }
+        }
+
+        public async Task UpdateBlockChat(Guid roomId, bool block)
+        {
+            var room = await _context.Rooms.FindAsync(roomId);
+            if (room != null)
+            {
+                room.BlockedChat = block;
             }
         }
     }

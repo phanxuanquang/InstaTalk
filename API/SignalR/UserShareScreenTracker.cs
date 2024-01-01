@@ -1,8 +1,4 @@
 ﻿using API.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace API.SignalR
 {
@@ -43,23 +39,23 @@ namespace API.SignalR
             return Task.FromResult(isOffline);
         }
 
-        public Task<UserConnectionInfo> GetUserIsSharing(int roomId)
+        public Task<UserConnectionInfo> GetUserIsSharing(Guid roomId)
         {
             UserConnectionInfo temp = null;
             lock (usersShareScreen)
             {
-                temp = usersShareScreen.FirstOrDefault(x => x.RoomId == roomId);                               
+                temp = usersShareScreen.FirstOrDefault(x => x.RoomId == roomId);
             }
             return Task.FromResult(temp);
         }
 
-        public Task<bool> DisconnectedByUser(Guid userId, int roomId)
+        public Task<bool> DisconnectedByUser(Guid userId, Guid roomId)
         {
             bool isOffline = false;
             lock (usersShareScreen)
             {
                 var temp = usersShareScreen.FirstOrDefault(x => x.UserID == userId && x.RoomId == roomId);
-                if(temp != null)
+                if (temp != null)
                 {
                     isOffline = true;
                     usersShareScreen.Remove(temp);

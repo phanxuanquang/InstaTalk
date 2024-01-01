@@ -1,10 +1,6 @@
-﻿using AutoMapper;
-using API.Dtos;
+﻿using API.Dtos;
 using API.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 
 namespace API.Helpers
 {
@@ -12,7 +8,8 @@ namespace API.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<AppUser, MemberDto>();
+            CreateMap<AppUser, MemberDto>()
+                .ForMember(s => s.Id, options => options.MapFrom(t => t.Id.ToString().ToLower()));
 
             CreateMap<RegisterDto, AppUser>();
 

@@ -19,13 +19,24 @@
 <body>
     <div class="shared_div_container">
         <main>
-           @RenderBody()
+            @RenderBody()
         </main>
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+            <div id="template-toast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div id="content-toast" class="toast-body">
+                        Hello, world! This is a toast message.
+                    </div>
+                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript"
             src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+    <script type="text/javascript" src="~/lib/rxjs/rxjs.umd.min.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("script", required: false)
 </body>

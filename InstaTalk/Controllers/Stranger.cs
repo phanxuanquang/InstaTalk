@@ -26,7 +26,7 @@ namespace InstaTalk.Controllers
 
         public IActionResult Success()
         {
-              return View();
+            return View();
         }
 
         public IActionResult Meeting2Peer()
