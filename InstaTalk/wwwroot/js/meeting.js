@@ -1,4 +1,5 @@
 ﻿var isMuted = true;
+var isMutedAll = false;
 var isStreamCam = false;
 var isSharingScreen = false;
 var isVisibile = true;
@@ -124,6 +125,20 @@ function openParticipants() {
     left_meeting.classList.add("col-8");
     participants.classList.add("d-flex");
     participants.classList.remove("d-none");
+}
+
+function muteAllMicro(item) {
+    if (item.id !== "btn_mic_participant") {
+        let index = item.id.indexOf("_mic");
+        let userId = item.id.slice(0, index);
+        if (!isMutedAll) {
+            chatService.muteAllMicro(userId, true);
+        }
+        else {
+            chatService.muteAllMicro(userId, false);
+        }
+        isMutedAll = !isMutedAll;
+    }
 }
 
 function closeParticipants() {
@@ -306,6 +321,8 @@ function addDivForUser(item) {
 function addParticipant(item) {
     var parentPart = participant.cloneNode(true);
     var name = parentPart.querySelector("#participant_name");
+    var mic = parentPart.querySelector("#btn_mic_participant");
+    mic.id = item.user.id + "_mic";
     name.innerHTML = item.user.displayName;
     divParticipants.append(parentPart);
 }
@@ -497,6 +514,12 @@ shareScreenObs$.subscribe(event => {
 });
 
 muteCamMicService.muteMicro$.subscribe(event => {
+    let video = document.getElementById(event.userId + '_video')
+    if (video)
+        video.muted = event.mute;
+});
+
+muteCamMicService.userIsMuteAllMicro$.subscribe(event => {
     let video = document.getElementById(event.userId + '_video')
     if (video)
         video.muted = event.mute;
