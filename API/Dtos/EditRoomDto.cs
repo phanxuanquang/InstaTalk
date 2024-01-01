@@ -6,9 +6,10 @@ namespace API.Dtos
     {
         [Required]
         public Guid RoomId { get; set; }
+
         [Required]
         public string RoomName { get; set; } = null!;
-        [Required]
-        public string SecurityCode { get; set; } = null!;
+
+        public string? SecurityCode { get; set; }
     }
 }
