@@ -17,6 +17,8 @@
 
         this.blockChatSource = new Subject();
         this.blockChat$ = this.blockChatSource.asObservable();
+
+
     }
 
     createHubConnection(user, roomId) {
@@ -79,6 +81,10 @@
         this.hubConnection.on('OnBlockChat', state => {
             this.blockChatSource.next(state);
         })
+
+        this, this.hubConnection.on('OnMuteAllMicro', ({ userId, mute }) => {
+            this.muteCamMicService.userIsMuteAllMicroSource.next({ userId, mute });
+        })
     }
 
     stopHubConnection() {
@@ -116,6 +122,11 @@
 
     async shareScreenToUser(roomId, username, isShareScreen) {
         return this.hubConnection.invoke('ShareScreenToUser', roomId, username, isShareScreen)
+            .catch(error => console.log(error));
+    }
+
+    async muteAllMicro(userId, mute) {
+        return this.hubConnection.invoke('MuteAllMicro', userId, mute)
             .catch(error => console.log(error));
     }
 

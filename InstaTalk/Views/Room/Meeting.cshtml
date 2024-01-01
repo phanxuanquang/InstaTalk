@@ -26,8 +26,8 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <div class="form-outline m-auto d-flex w-100 " style="max-width:450px;">
-                        <input type="text" id="link_meeting" class="rounded-0 form-control border-0 p-2 pb-1 bg-white" readonly value="https://instatalk.com/room/12345" />
-                        <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" style="color:darkgray;">Your mates can join via below URL</label>
+                        <input type="text" id="link_meeting" class="rounded-0 form-control border-0 p-2 pb-1 bg-light" readonly value="https://instatalk.com/room/12345" />
+                        <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" s>Your mates can join via below URL</label>
                     </div>
                     <span class="input-group-append col-1 d-flex justify-content-end input-custom" id="copy-btn">
                         <button id="btn_icon_visibility_modal_config" class="rounded border-0 py-2 d-flex justify-content-center" type="button" onclick="setCopyState()">
@@ -221,8 +221,8 @@
                 </span>
             </button>
         </div>
-        <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column">
-            <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;display:none">
+        <div id="div_chat_right_meeting" style="overflow:auto;" class="w-100 h-100 d-flex flex-column bg-light">
+            <div id="my_chat_message" style="max-width:75%;align-self:end;display:none" class="rounded-pill bg-secondary text-white px-3 py-1 mx-2 my-1">
                <p id="my_message" class="m-0">
 
                </p>
@@ -271,7 +271,7 @@
              <div id="participant_name" style="width:80%">
 
              </div>
-                <button id="btn_mic_participant" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1" type="button" onclick="closeChat()">
+            <button id="btn_mic_participant" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
                 <span class="material-icons" id="ic_mic_participant">
                     mic
                 </span>
