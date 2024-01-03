@@ -83,7 +83,7 @@
                 </div>
 
                 <div class="w-100 text-center">
-                    <button type="button" class="btn btn-primary me-2">Save Change</button>
+                    <button type="button" class="btn btn-primary me-2" onclick="changeRoomSercurityCode()">Save Change</button>
                 </div>
             </div>
         </div>
@@ -167,7 +167,7 @@
                 </button>
 
                 <div id="side_bar_control" style="display:none;" class="align-items-center justify-content-center">
-                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
+                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openParticipants()">
                         <span class="material-icons" id="icon_people_alt_meeting">
                             people_alt
                         </span>
@@ -205,8 +205,8 @@
     </div>
     <div id="div_right_meeting" style="min-width:250px;" class="col-3 flex-column align-items-center border border-2 rounded-3 bg-light">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2">
-            <div class="checkbox-wrapper-35 col-11 bg-light py-2">
-                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents(event)">
+            <div id="block_chat" class="checkbox-wrapper-35 col-11 bg-light py-2">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents()">
                 <label for="switch">
                     <span class="switch-x-text">Chat Area is </span>
                     <span class="switch-x-toggletext">
@@ -215,7 +215,7 @@
                     </span>
                 </label>
             </div>
-            <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeChat()">
+            <button id="btn_icon_close_chat" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeChat()">
                 <span class="material-icons" id="icon_clear_id">
                     close
                 </span>
@@ -244,15 +244,17 @@
             </button>
             <input type="file" id="file-input" style="display: none;" onchange="sendFileHandler(event)">
             <form class="form-outline d-flex" id="chat-input">
-                <input type="text" id="input_chat_meeting" class="form-control border-0" />
+                <input type="text" required name="content" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
-                <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="submit">
+                <button id="btn_icon_send_chat" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="submit">
                     <span class="material-icons" id="icon_clear_id">
                         send
                     </span>
                 </button>
             </form>
-
+        </div>
+        <div id="notification_block_chat" class="w-100 p-3 d-none justify-content-center">
+            <p>Chat has been blocked by host</p>
         </div>
     </div>
     <div id="div_participants" style="height:95%" class="d-none flex-column align-items-center border border-2 rounded-3 bg-light col-3">
@@ -260,7 +262,7 @@
             <div class="checkbox-wrapper-35 col-11 bg-light py-2">
                 <label>Participants</label>
             </div>
-            <button id="btn_close_participants" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeChat()">
+            <button id="btn_close_participants" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeParticipants()">
                 <span class="material-icons" id="ic_close_participants">
                     close
                 </span>
@@ -271,12 +273,12 @@
              <div id="participant_name" style="width:80%">
 
              </div>
-            <button id="btn_mic_participant" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
+             <button id="btn_mic_participant" style="border:none;display:none" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
                 <span class="material-icons" id="ic_mic_participant">
                     mic
                 </span>
             </button>
-            <button id="btn_volumn_participant" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1" type="button" onclick="closeChat()">
+            <button id="btn_kick" style="border:none;display:none;" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="kick(this)">
                 <span class="material-icons" id="ic_volumn_participant">
                     more_horiz
                 </span>
@@ -284,7 +286,7 @@
          </div>
     </div>
 </div>
-
+</div>
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
