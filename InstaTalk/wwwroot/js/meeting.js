@@ -6,6 +6,7 @@ var isVisibile = true;
 var isExpanded = true;
 var isChatOpening = false;
 var isOverrided = false;
+var isParticipantsOpening = false;
 var isBlockChat = false;
 let seconds = 0;
 let minutes = 0;
@@ -88,6 +89,10 @@ function closeChat() {
         var left_meeting = document.getElementById("div_left_meeting");
         left_meeting.classList.remove("col-8");
         left_meeting.classList.add("col-11");
+        if (isParticipantsOpening && isOverrided) {
+            openParticipants();
+            isOverrided = false;
+        }
         left_meeting.style.display = "block";
         chat.classList.remove("d-flex");
         chat.classList.remove("col-11");
@@ -99,12 +104,21 @@ function closeChat() {
         left_meeting.style.display = "block";
         left_meeting.classList.remove("col-8");
         left_meeting.classList.add("col-11");
+        if (isParticipantsOpening && isOverrided) {
+            openParticipants();
+            isOverrided = false;
+        }
         chat.classList.remove("d-flex");
         chat.classList.remove("col-11");
         chat.style.display = "none";
     }
 }
 function openChat() {
+    if (isParticipantsOpening) {
+        isOverrided = true;
+        closeParticipants();
+        isParticipantsOpening = true;
+    }
     isChatOpening = true;
     var windowWidth = document.body.clientWidth;
     if (windowWidth > 820) {
@@ -112,7 +126,6 @@ function openChat() {
         var left_meeting = document.getElementById("div_left_meeting");
         left_meeting.classList.remove("col-11");
         left_meeting.classList.add("col-8");
-        left_meeting.classList.remove();
         chat.classList.add("d-flex");
     }
     else {
@@ -127,27 +140,60 @@ function openChat() {
 function openParticipants() {
     if (isChatOpening) {
         closeChat();
+        isChatOpening = true;
         isOverrided = true;
     }
-    var participants = document.getElementById("div_participants");
-    var left_meeting = document.getElementById("div_left_meeting");
-    left_meeting.classList.remove("col-11");
-    left_meeting.classList.add("col-8");
-    participants.classList.add("d-flex");
-    participants.classList.remove("d-none");
+    isParticipantsOpening = true;
+    var windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.classList.remove("col-11");
+        left_meeting.classList.add("col-8");
+        participants.classList.add("d-flex");
+        participants.classList.remove("d-none");
+    }
+    else {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.style.display = "none";
+        participants.classList.add("d-flex");
+        participants.classList.add("col-11");
+        participants.classList.remove("d-none");
+    }
 }
 
 function closeParticipants() {
-    var left_meeting = document.getElementById("div_left_meeting");
-    left_meeting.classList.remove("col-8");
-    left_meeting.classList.add("col-11");
-    if (isOverrided) {
-        openChat();
-        isOverrided = false;
+    isParticipantsOpening = false;
+    var windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.classList.remove("col-8");
+        left_meeting.classList.add("col-11");
+        if (isChatOpening && isOverrided) {
+            openChat();
+            isOverrided = false;
+        }
+        participants.classList.remove("d-flex");
+        participants.classList.remove("col-11");
+        participants.style.display = "none";
+        left_meeting.style.display = "block";
     }
-    var participants = document.getElementById("div_participants");
-    participants.classList.add("d-none");   
-    participants.classList.remove("d-flex");
+    else {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.style.display = "block";
+        left_meeting.classList.remove("col-8");
+        left_meeting.classList.add("col-11");
+        if (isChatOpening && isOverrided) {
+            openChat();
+            isOverrided = false;
+        }
+        participants.classList.remove("d-flex");
+        participants.classList.remove("col-11");
+        participants.style.display = "none";
+    }
 }
 
 function muteAllMicro(item) {
@@ -423,52 +469,110 @@ function arrangeUser(currentViews) {
 }
 
 function arrangeUserWhenShare(currentViews) {
-    let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
-    divLeftVideoMeeting.classList.remove("row");
-    console.log("arrangeUserWhenShare");
-    let heightBase;
-    let widthBase = 100;
-    switch (currentViews.length) {
-        case 1:
-            heightBase = 100;
-            break;
-        case 2:
-            heightBase = 50;
-            break;
-        case 3:
-            heightBase = 100 / 3;
-            break;
-        case 4:
-            heightBase = 25;
-            break;
-        default:
-            console.log("so luong user > 4");
-            heightBase = 25;
-            var x = parent.cloneNode(true);
-            x.innerHTML = '';
-            x.id = "parent_count_remainder";
-            let divCountRemainder = document.getElementById("div_count_remainder");
-            let _divCountRemainder = divCountRemainder.cloneNode(true);
-            let countRemainder = _divCountRemainder.querySelector("#count_remainder");
-            countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
-            _divCountRemainder.style.display = "block";
-            x.append(_divCountRemainder);
-            $("#div_left_video_meeting").append(x);
-            currentViews = $("#div_left_video_meeting").children();
-            for (let i = 0; i < 3; i++) {
-                currentViews[i].style.height = heightBase + "%";
-                currentViews[i].style.width = widthBase + "%";
-            }
-            for (let i = 3; i < currentViews.length - 1; i++) {
-                currentViews[i].style.display = "none";
-            }
-            currentViews[currentViews.length - 1].style.height = heightBase + "%";
-            return;
+    let windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var div_header_left_meeting = document.getElementById("div_header_left_meeting");
+        div_header_left_meeting.style.flexDirection = "row";
+        var div_left_video_meeting = document.getElementById("div_left_video_meeting");
+        div_left_video_meeting.style.flexDirection = "column";
+        div_left_video_meeting.style.display = "unset";
+        console.log("arrangeUserWhenShare");
+        let heightBase;
+        let widthBase = 100;
+        switch (currentViews.length) {
+            case 1:
+                heightBase = 100;
+                break;
+            case 2:
+                heightBase = 50;
+                break;
+            case 3:
+                heightBase = 100 / 3;
+                break;
+            case 4:
+                heightBase = 25;
+                break;
+            default:
+                console.log("so luong user > 4");
+                heightBase = 25;
+                var x = parent.cloneNode(true);
+                x.innerHTML = '';
+                x.id = "parent_count_remainder";
+                let divCountRemainder = document.getElementById("div_count_remainder");
+                let _divCountRemainder = divCountRemainder.cloneNode(true);
+                let countRemainder = _divCountRemainder.querySelector("#count_remainder");
+                countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
+                _divCountRemainder.style.display = "block";
+                x.append(_divCountRemainder);
+                $("#div_left_video_meeting").append(x);
+                currentViews = $("#div_left_video_meeting").children();
+                for (let i = 0; i < 3; i++) {
+                    currentViews[i].style.height = heightBase + "%";
+                    currentViews[i].style.width = widthBase + "%";
+                }
+                for (let i = 3; i < currentViews.length - 1; i++) {
+                    currentViews[i].style.display = "none";
+                }
+                currentViews[currentViews.length - 1].style.height = heightBase + "%";
+                return;
 
+        }
+        for (let i = 0; i < currentViews.length; i++) {
+            currentViews[i].style.height = heightBase + "%";
+            currentViews[i].style.width = widthBase + "%";
+        }
     }
-    for (let i = 0; i < currentViews.length; i++) {
-        currentViews[i].style.height = heightBase + "%";
-        currentViews[i].style.width = widthBase + "%";
+    else {
+        var div_header_left_meeting = document.getElementById("div_header_left_meeting");
+        div_header_left_meeting.style.flexDirection = "column";
+        var div_left_video_meeting = document.getElementById("div_left_video_meeting");
+        div_left_video_meeting.style.flexDirection = "row";
+        div_left_video_meeting.style.display = "flex";
+        console.log("arrangeUserWhenShare");
+        let heightBase = 100;
+        let widthBase;
+        switch (currentViews.length) {
+            case 1:
+                widthBase = 100;
+                break;
+            case 2:
+                widthBase = 50;
+                break;
+            case 3:
+                widthBase = 100 / 3;
+                break;
+            case 4:
+                widthBase = 25;
+                break;
+            default:
+                console.log("so luong user > 4");
+                widthBase = 25;
+                var x = parent.cloneNode(true);
+                x.innerHTML = '';
+                x.id = "parent_count_remainder";
+                let divCountRemainder = document.getElementById("div_count_remainder");
+                let _divCountRemainder = divCountRemainder.cloneNode(true);
+                let countRemainder = _divCountRemainder.querySelector("#count_remainder");
+                countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
+                _divCountRemainder.style.display = "block";
+                x.append(_divCountRemainder);
+                $("#div_left_video_meeting").append(x);
+                currentViews = $("#div_left_video_meeting").children();
+                for (let i = 0; i < 3; i++) {
+                    currentViews[i].style.height = heightBase + "%";
+                    currentViews[i].style.width = widthBase + "%";
+                }
+                for (let i = 3; i < currentViews.length - 1; i++) {
+                    currentViews[i].style.display = "none";
+                }
+                currentViews[currentViews.length - 1].style.width = widthBase + "%";
+                return;
+
+        }
+        for (let i = 0; i < currentViews.length; i++) {
+            currentViews[i].style.height = heightBase + "%";
+            currentViews[i].style.width = widthBase + "%";
+        }
     }
 }
 
@@ -588,16 +692,16 @@ muteCamMicService.userIsMuteAllMicro$.subscribe(event => {
             else
                 CallToast("You have been unmuted by admin");
         }
-        else {
-            let video = document.getElementById(event.userId + '_video')
-            if (video) {
-                video.muted = event.mute;
-                let user = videos.find(video => video.user.id == event.userId).user;
-                if (event.mute)
-                    CallToast(user.displayName + " has been muted by admin");
-                else
-                    CallToast(user.displayName + " has been unmuted by admin");
-            }
+    }
+    else {
+        let video = document.getElementById(event.userId + '_video')
+        if (video) {
+            video.muted = event.mute;
+            let user = videos.find(video => video.user.id == event.userId).user;
+            if (event.mute)
+                CallToast(user.displayName + " has been muted by admin");
+            else
+                CallToast(user.displayName + " has been unmuted by admin");
         }
     }
 });
@@ -660,6 +764,8 @@ chatService.blockChat$.subscribe(state => {
         var chat = document.getElementById("div_footer_right_meeting");
         var btn_attach = document.getElementById("btn_attach_file");
         var btn_send = document.getElementById("btn_icon_send_chat");
+        var btn_icon_close_chat = document.getElementById("btn_icon_close_chat");
+        btn_icon_close_chat.disabled = false;
         btn_attach.disabled = false;
         btn_send.disabled = false;
         chat.classList.remove("d-none");
@@ -1139,3 +1245,51 @@ function changeRoomSercurityCode() {
         console.error('Fetch error:', error);
     });
 }
+
+function mediaHasChatFunc(x) {
+    if (x.matches) {
+        if (isChatOpening || isParticipantsOpening) {
+            let div_footer_left_meeting = document.getElementById("div_footer_left_meeting");
+            div_footer_left_meeting.style.flexFlow = "column";
+            let div_header_left_meeting = document.getElementById("div_header_left_meeting");
+            div_header_left_meeting.style.height = "85%";
+        }
+    }
+    else {
+        let div_footer_left_meeting = document.getElementById("div_footer_left_meeting");
+        div_footer_left_meeting.style.flexFlow = "unset";
+        let div_header_left_meeting = document.getElementById("div_header_left_meeting");
+        div_header_left_meeting.style.height = "90%";
+    }
+}
+
+function mediaNotHasChatFunc(x) {
+    if (isChatOpening) {
+        closeChat();
+        openChat();
+    }
+    else if (isParticipantsOpening) {
+        closeParticipants();
+        openParticipants();
+    }
+    if (isSharingScreen) {
+        arrangeUserWhenShare($("#div_left_video_meeting").children());
+    }
+}
+
+// Create a MediaQueryList object
+const mediaHasChat = window.matchMedia("(max-width: 960px)");
+const mediaNotHasChat = window.matchMedia("(max-width: 820px)");
+
+// Call the match function at run time
+mediaHasChatFunc(mediaHasChat);
+mediaNotHasChatFunc(mediaNotHasChat);
+
+// Add the match function as a listener for state changes
+mediaHasChat.addEventListener("change", function () {
+    mediaHasChatFunc(mediaHasChat);
+});
+
+mediaNotHasChat.addEventListener("change", function () {
+    mediaNotHasChatFunc(mediaNotHasChat);
+});
