@@ -1,6 +1,4 @@
-﻿@model RoomViewModel
-
-@{
+﻿@{
     ViewData["Title"] = "Home";
 }
 
@@ -15,15 +13,15 @@
         <div class="join-box modal-content">
             <form id="form_join_room" method="post" autocomplete="off">
                 <div class="user-box">
-                    <input type="text" name="JoinRoom.DisplayName" required autocomplete="nope" />
+                    <input type="text" name="JoinRoom.DisplayName" required autocomplete="off" />
                     <label>Your display name</label>
                 </div>
                 <div class="user-box">
-                    <input type="text" name="JoinRoom.RoomId" required autocomplete="nope" />
+                    <input id="input_room_id" type="text" name="JoinRoom.RoomId" required autocomplete="off" value="@ViewBag.RoomId"/>
                     <label>Room ID or URL</label>
                 </div>
                 <div class="user-box">
-                    <input type="text" name="JoinRoom.SecurityCode" required autocomplete="nope" />
+                    <input type="text" name="JoinRoom.SecurityCode" required autocomplete="off" />
                     <label>Password</label>
                 </div>
                 <center>
@@ -43,14 +41,10 @@
                     <div class="textInputWrapper" style="margin: 1rem 0rem 1rem 0rem;">
                         <input id="input_display_name" required placeholder="Your display name" type="text" name="CreateRoom.DisplayName" class="textInput" autocomplete="nope">
                     </div> 
-                   @*  <a class="custom-btn me-2" style="font-size: 12px; width: 13rem;" onclick="location.href='@Url.Action("Meeting","Room")';">
-                        Create a Room
-                        <span></span>
-                    </a> *@
                     <button type="submit" class="custom-btn me-2" style="font-size: 12px; width: 13rem;" asp-action="CreateRoom" asp-controller="Home">
                         Create a Room
                     </button>
-                    <button type="button" class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
+                    <button id="btn_join_room" type="button" class="custom-btn ms-2" style="font-size: 12px; width: 13rem;" data-bs-toggle="modal" data-bs-target="#ModalJoinRoom">
                         Join a Room
                     </button>
                 </center>
@@ -61,9 +55,7 @@
     </div>
 </div>
 @section script {
-    <script src="~/js/home_friendhub.js" asp-append-version="true">
-        
-    </script>
+    <script src="~/js/home_friendhub.js" asp-append-version="true"></script>
 }
 
 

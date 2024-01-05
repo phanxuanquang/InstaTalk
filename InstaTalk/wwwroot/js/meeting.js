@@ -303,16 +303,13 @@ function showModalConfig() {
 }
 
 function updateTimer() {
+   
+    var now = new Date();
+    var distance = now - new Date(ObjClient.Room.createdDate);
+    hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    seconds++;
-    if (seconds == 60) {
-        seconds = 0;
-        minutes++;
-        if (minutes == 60) {
-            minutes = 0;
-            hours++;
-        }
-    }
 
     const formattedTime =
         `${hours.toString().padStart(2, '0')}:
@@ -322,6 +319,7 @@ function updateTimer() {
     document.getElementById('time_meeting').textContent = formattedTime;
 }
 function setCopyState() {
+    navigator.clipboard.writeText(window.location.href);
     var icon = document.getElementById("icon_copy_url");
     icon.innerHTML = "done";
 }
@@ -461,7 +459,8 @@ function arrangeUser(currentViews) {
     }
     let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
     divLeftVideoMeeting.classList.add("row");
-    divLeftVideoMeeting.classList.add("row-cols-" + col);
+    divLeftVideoMeeting.style.display = "flex";
+    divLeftVideoMeeting.classList.add("rowb-cols-" + col);
     for (let i = 0; i < currentViews.length; i++) {
         currentViews[i].style.height = heightBase + "%";
         currentViews[i].style.width = widthBase + "%";
@@ -475,7 +474,7 @@ function arrangeUserWhenShare(currentViews) {
         div_header_left_meeting.style.flexDirection = "row";
         var div_left_video_meeting = document.getElementById("div_left_video_meeting");
         div_left_video_meeting.style.flexDirection = "column";
-        div_left_video_meeting.style.display = "unset";
+        div_left_video_meeting.style.display = "flex";
         console.log("arrangeUserWhenShare");
         let heightBase;
         let widthBase = 100;
@@ -914,6 +913,7 @@ function InitRTC() {
         call.answer(this.shareScreenStream);
         call.on('stream', (otherUserVideoStream) => {
             this.shareScreenSource.next(otherUserVideoStream);
+            CallToast(call.metadata.userId.id);
         });
 
         call.on('error', (err) => {
@@ -1041,8 +1041,16 @@ async function shareScreen() {
             this.isSharingScreenSource.next(true);
 
             this.videos.forEach(v => {
-                const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream);
-            })
+                const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream, {
+                    metadata: {
+                        userId: {
+                            id: ObjClient.User.userId,
+                            displayName: ObjClient.User.displayName,
+                            lastActive: ObjClient.User.lastActive,
+                        }
+                    },
+                });
+            });
             changeShareScreenState();
         } catch (e) {
             if (!e.name === 'NotAllowedError') {
@@ -1143,10 +1151,15 @@ $(document).ready(function () {
     changeMicState();
     changeCamState();
     changeShareScreenState();
-    setInterval(function () {
-        $("#time_meeting").load(window.location.href + " #time_meeting");
-    }, 1000);
+    addLinkMeeting();
+
+    setInterval(updateTimer, 1000);
 });
+
+function addLinkMeeting() {
+    let input_link = document.getElementById("link_meeting");
+    input_link.value = window.location.href ;
+}
 
 function hiddenForMembers() {
     var btnSettings = document.getElementById("btn_settings_meeting");
@@ -1239,11 +1252,14 @@ function changeRoomSercurityCode() {
     .then(data => {
         // Process the response data
         console.log(data);
-        hiddenModalConfig();
     })
     .catch(error => {
         console.error('Fetch error:', error);
+        return;
     });
+    let icon_config = document.getElementById("icon_close_config");
+    icon_config.click();
+    CallToast("Change room security code successfully");
 }
 
 function mediaHasChatFunc(x) {
