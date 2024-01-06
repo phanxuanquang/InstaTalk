@@ -21,11 +21,12 @@ namespace InstaTalk.Controllers
             return View();
         }
 
-        public IActionResult FriendHub(RoomViewModel obj)
+        public IActionResult FriendHub(Guid? roomId)
         {
-            obj = new RoomViewModel();
+            var obj = new RoomViewModel();
             obj.JoinRoom = new JoinRoomModel();
             obj.CreateRoom = new CreateRoomModel();
+            ViewBag.RoomId = roomId;
             return View(obj);
         }
 
@@ -35,7 +36,6 @@ namespace InstaTalk.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpPost]
         public async Task<IActionResult> CreateRoom(RoomViewModel obj)
         {
             /*if (ModelState.IsValid)
@@ -45,6 +45,7 @@ namespace InstaTalk.Controllers
             {
                 var model = obj.CreateRoom;
                 model.RoomName = "test123";
+                model.SecurityCode = "123456";
                 var response = await client.PostAsJsonAsync("/api/Room/add-room", model);
                 if (response.IsSuccessStatusCode)
                 {
@@ -53,12 +54,13 @@ namespace InstaTalk.Controllers
                         var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
                         HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
                         HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
-                        return RedirectToAction("Meeting", "Room", responseContent?.Room?.RoomId);
+                        if (responseContent?.Room?.RoomId != null)
+                            return RedirectToAction("Meeting", "Room", new { id = responseContent?.Room?.RoomId });
                     }
                 }
             }
             /*}*/
-            return RedirectToAction("FriendHub", obj);
+            return RedirectToAction("FriendHub");
         }
 
         public async Task<IActionResult> JoinRoom(RoomViewModel obj)
@@ -74,12 +76,12 @@ namespace InstaTalk.Controllers
                         var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
                         HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
                         HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
-                        return RedirectToAction("Meeting", "Room", responseContent?.Room?.RoomId);
+                        return RedirectToAction("Meeting", "Room", new { id = responseContent?.Room?.RoomId });
                     }
                 }
             }
 
-            return RedirectToAction("FriendHub", obj);
+            return RedirectToAction("FriendHub");
         }
     }
 }

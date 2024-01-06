@@ -19,10 +19,20 @@
     font-size: 14px;
 }
 
-@media (max-width: 1260px) {
+@media screen and (max-width: 1120px) {
     #div_control_meeting {
-        width: 100% !important;
+        width: 70% !important;
     }
+}
+
+@media screen and (max-width: 720px) {
+    #div_footer_left_meeting {
+        flex-flow:column !important;
+    }
+    #div_header_left_meeting {
+        height:85% !important;
+    }
+
 }
 
 @media (min-width: 450px) {

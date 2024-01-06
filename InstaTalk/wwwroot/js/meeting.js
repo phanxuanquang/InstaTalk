@@ -4,6 +4,10 @@ var isStreamCam = false;
 var isSharingScreen = false;
 var isVisibile = true;
 var isExpanded = true;
+var isChatOpening = false;
+var isOverrided = false;
+var isParticipantsOpening = false;
+var isBlockChat = false;
 let seconds = 0;
 let minutes = 0;
 let hours = 0;
@@ -46,7 +50,9 @@ const localView = document.getElementById("user_video");
 var localSoundMeter;
 const localUserCard = document.getElementById("div_user_card");
 const localTitle = document.getElementById("title_video");
-
+var chatMessage;
+var chatSource = new Subject();
+var chatObs$ = chatSource.asObservable();
 function expand() {
     var sideBar = document.getElementById("side_bar_control");
     var btnExpand = document.getElementById("btn-icon-expand");
@@ -76,13 +82,18 @@ function expand() {
 //}
 
 function closeChat() {
+    isChatOpening = false;
     var windowWidth = document.body.clientWidth;
     if (windowWidth > 820) {
         var chat = document.getElementById("div_right_meeting");
         var left_meeting = document.getElementById("div_left_meeting");
-        var meeting = document.getElementById("div_left_video_meeting");
         left_meeting.classList.remove("col-8");
         left_meeting.classList.add("col-11");
+        if (isParticipantsOpening && isOverrided) {
+            openParticipants();
+            isOverrided = false;
+        }
+        left_meeting.style.display = "block";
         chat.classList.remove("d-flex");
         chat.classList.remove("col-11");
         chat.style.display = "none";
@@ -93,20 +104,28 @@ function closeChat() {
         left_meeting.style.display = "block";
         left_meeting.classList.remove("col-8");
         left_meeting.classList.add("col-11");
+        if (isParticipantsOpening && isOverrided) {
+            openParticipants();
+            isOverrided = false;
+        }
         chat.classList.remove("d-flex");
         chat.classList.remove("col-11");
         chat.style.display = "none";
     }
 }
 function openChat() {
+    if (isParticipantsOpening) {
+        isOverrided = true;
+        closeParticipants();
+        isParticipantsOpening = true;
+    }
+    isChatOpening = true;
     var windowWidth = document.body.clientWidth;
     if (windowWidth > 820) {
         var chat = document.getElementById("div_right_meeting");
         var left_meeting = document.getElementById("div_left_meeting");
-        var meeting = document.getElementById("div_left_video_meeting");
         left_meeting.classList.remove("col-11");
         left_meeting.classList.add("col-8");
-        left_meeting.classList.remove();
         chat.classList.add("d-flex");
     }
     else {
@@ -119,33 +138,98 @@ function openChat() {
 }
 
 function openParticipants() {
-    var participants = document.getElementById("div_participants");
-    var left_meeting = document.getElementById("div_left_meeting");
-    left_meeting.classList.remove("col-11");
-    left_meeting.classList.add("col-8");
-    participants.classList.add("d-flex");
-    participants.classList.remove("d-none");
-}
-
-function muteAllMicro(item) {
-    if (item.id !== "btn_mic_participant") {
-        let index = item.id.indexOf("_mic");
-        let userId = item.id.slice(0, index);
-        if (!isMutedAll) {
-            chatService.muteAllMicro(userId, true);
-        }
-        else {
-            chatService.muteAllMicro(userId, false);
-        }
-        isMutedAll = !isMutedAll;
+    if (isChatOpening) {
+        closeChat();
+        isChatOpening = true;
+        isOverrided = true;
+    }
+    isParticipantsOpening = true;
+    var windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.classList.remove("col-11");
+        left_meeting.classList.add("col-8");
+        participants.classList.add("d-flex");
+        participants.classList.remove("d-none");
+    }
+    else {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.style.display = "none";
+        participants.classList.add("d-flex");
+        participants.classList.add("col-11");
+        participants.classList.remove("d-none");
     }
 }
 
 function closeParticipants() {
-    var participants = document.getElementById("div_participants");
-    participants.classList.add("d-none");
-    participants.classList.remove("d-flex");
+    isParticipantsOpening = false;
+    var windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.classList.remove("col-8");
+        left_meeting.classList.add("col-11");
+        if (isChatOpening && isOverrided) {
+            openChat();
+            isOverrided = false;
+        }
+        participants.classList.remove("d-flex");
+        participants.classList.remove("col-11");
+        participants.style.display = "none";
+        left_meeting.style.display = "block";
+    }
+    else {
+        var participants = document.getElementById("div_participants");
+        var left_meeting = document.getElementById("div_left_meeting");
+        left_meeting.style.display = "block";
+        left_meeting.classList.remove("col-8");
+        left_meeting.classList.add("col-11");
+        if (isChatOpening && isOverrided) {
+            openChat();
+            isOverrided = false;
+        }
+        participants.classList.remove("d-flex");
+        participants.classList.remove("col-11");
+        participants.style.display = "none";
+    }
 }
+
+function muteAllMicro(item) {
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member") {
+        CallToast("You don't have permission to do this action");
+    }
+    else {
+        if (item.id !== "btn_mic_participant") {
+            let index = item.id.indexOf("_mic");
+            let userId = item.id.slice(0, index);
+            let mic = document.getElementById(userId + "_icon_mic");
+            if (!isMutedAll) {
+                chatService.muteAllMicro(userId, true);
+                mic.innerHTML = "mic_off";
+            }
+            else {
+                chatService.muteAllMicro(userId, false);
+                mic.innerHTML = "mic";
+            }
+            isMutedAll = !isMutedAll;
+        }
+    }
+}
+
+function kick(item) {
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member") {
+        CallToast("You don't have permission to do this action");
+    }
+    else
+    if (item.id !== "btn_kick") {
+        let index = item.id.indexOf("_kick");
+        let userId = item.id.slice(0, index);
+        chatService.kickMember(ObjClient.Room.roomId, userId);
+    }
+}
+
 function changeMicState() {
     var icon = document.getElementById("icon_mic_meeting");
     var btn = document.getElementById("btn_mic_meeting");
@@ -194,7 +278,7 @@ function changeCamState() {
         div_user_card.style.display = "block";
         div_user_card.classList.add("d-flex");
         name_user_card.innerHTML = ObjClient.User.displayName.charAt(0).toUpperCase();
-        participant_name.innerHTML = ObjClient.User.displayName;
+        participant_name.innerHTML = "You";
         user_video.style.display = "none";
         title_video.style.display = "none";
     }
@@ -219,16 +303,13 @@ function showModalConfig() {
 }
 
 function updateTimer() {
+   
+    var now = new Date();
+    var distance = now - new Date(ObjClient.Room.createdDate);
+    hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    seconds++;
-    if (seconds == 60) {
-        seconds = 0;
-        minutes++;
-        if (minutes == 60) {
-            minutes = 0;
-            hours++;
-        }
-    }
 
     const formattedTime =
         `${hours.toString().padStart(2, '0')}:
@@ -238,6 +319,7 @@ function updateTimer() {
     document.getElementById('time_meeting').textContent = formattedTime;
 }
 function setCopyState() {
+    navigator.clipboard.writeText(window.location.href);
     var icon = document.getElementById("icon_copy_url");
     icon.innerHTML = "done";
 }
@@ -320,11 +402,25 @@ function addDivForUser(item) {
 
 function addParticipant(item) {
     var parentPart = participant.cloneNode(true);
+    parentPart.id =  item.user.id + "_participant";
     var name = parentPart.querySelector("#participant_name");
     var mic = parentPart.querySelector("#btn_mic_participant");
+    var icon_mic = mic.querySelector("#ic_mic_participant");
+    var kick = parentPart.querySelector("#btn_kick");
+    name.id = item.user.id + "_name";
     mic.id = item.user.id + "_mic";
+    mic.style.display = "block";
+    icon_mic.id = item.user.id + "_icon_mic";
+    kick.id = item.user.id + "_kick";
+    kick.style.display = "block";
     name.innerHTML = item.user.displayName;
     divParticipants.append(parentPart);
+}
+
+function removeParticipant(userId) {
+    var parentPart = document.getElementById(userId + "_participant");
+    if (parentPart)
+        divParticipants.removeChild(parentPart);
 }
 
 function arrangeUser(currentViews) {
@@ -363,7 +459,8 @@ function arrangeUser(currentViews) {
     }
     let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
     divLeftVideoMeeting.classList.add("row");
-    divLeftVideoMeeting.classList.add("row-cols-" + col);
+    divLeftVideoMeeting.style.display = "flex";
+    divLeftVideoMeeting.classList.add("rowb-cols-" + col);
     for (let i = 0; i < currentViews.length; i++) {
         currentViews[i].style.height = heightBase + "%";
         currentViews[i].style.width = widthBase + "%";
@@ -371,52 +468,110 @@ function arrangeUser(currentViews) {
 }
 
 function arrangeUserWhenShare(currentViews) {
-    let divLeftVideoMeeting = document.getElementById("div_left_video_meeting");
-    divLeftVideoMeeting.classList.remove("row");
-    console.log("arrangeUserWhenShare");
-    let heightBase;
-    let widthBase = 100;
-    switch (currentViews.length) {
-        case 1:
-            heightBase = 100;
-            break;
-        case 2:
-            heightBase = 50;
-            break;
-        case 3:
-            heightBase = 100 / 3;
-            break;
-        case 4:
-            heightBase = 25;
-            break;
-        default:
-            console.log("so luong user > 4");
-            heightBase = 25;
-            var x = parent.cloneNode(true);
-            x.innerHTML = '';
-            x.id = "parent_count_remainder";
-            let divCountRemainder = document.getElementById("div_count_remainder");
-            let _divCountRemainder = divCountRemainder.cloneNode(true);
-            let countRemainder = _divCountRemainder.querySelector("#count_remainder");
-            countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
-            _divCountRemainder.style.display = "block";
-            x.append(_divCountRemainder);
-            $("#div_left_video_meeting").append(x);
-            currentViews = $("#div_left_video_meeting").children();
-            for (let i = 0; i < 3; i++) {
-                currentViews[i].style.height = heightBase + "%";
-                currentViews[i].style.width = widthBase + "%";
-            }
-            for (let i = 3; i < currentViews.length - 1; i++) {
-                currentViews[i].style.display = "none";
-            }
-            currentViews[currentViews.length - 1].style.height = heightBase + "%";
-            return;
+    let windowWidth = document.body.clientWidth;
+    if (windowWidth > 820) {
+        var div_header_left_meeting = document.getElementById("div_header_left_meeting");
+        div_header_left_meeting.style.flexDirection = "row";
+        var div_left_video_meeting = document.getElementById("div_left_video_meeting");
+        div_left_video_meeting.style.flexDirection = "column";
+        div_left_video_meeting.style.display = "flex";
+        console.log("arrangeUserWhenShare");
+        let heightBase;
+        let widthBase = 100;
+        switch (currentViews.length) {
+            case 1:
+                heightBase = 100;
+                break;
+            case 2:
+                heightBase = 50;
+                break;
+            case 3:
+                heightBase = 100 / 3;
+                break;
+            case 4:
+                heightBase = 25;
+                break;
+            default:
+                console.log("so luong user > 4");
+                heightBase = 25;
+                var x = parent.cloneNode(true);
+                x.innerHTML = '';
+                x.id = "parent_count_remainder";
+                let divCountRemainder = document.getElementById("div_count_remainder");
+                let _divCountRemainder = divCountRemainder.cloneNode(true);
+                let countRemainder = _divCountRemainder.querySelector("#count_remainder");
+                countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
+                _divCountRemainder.style.display = "block";
+                x.append(_divCountRemainder);
+                $("#div_left_video_meeting").append(x);
+                currentViews = $("#div_left_video_meeting").children();
+                for (let i = 0; i < 3; i++) {
+                    currentViews[i].style.height = heightBase + "%";
+                    currentViews[i].style.width = widthBase + "%";
+                }
+                for (let i = 3; i < currentViews.length - 1; i++) {
+                    currentViews[i].style.display = "none";
+                }
+                currentViews[currentViews.length - 1].style.height = heightBase + "%";
+                return;
 
+        }
+        for (let i = 0; i < currentViews.length; i++) {
+            currentViews[i].style.height = heightBase + "%";
+            currentViews[i].style.width = widthBase + "%";
+        }
     }
-    for (let i = 0; i < currentViews.length; i++) {
-        currentViews[i].style.height = heightBase + "%";
-        currentViews[i].style.width = widthBase + "%";
+    else {
+        var div_header_left_meeting = document.getElementById("div_header_left_meeting");
+        div_header_left_meeting.style.flexDirection = "column";
+        var div_left_video_meeting = document.getElementById("div_left_video_meeting");
+        div_left_video_meeting.style.flexDirection = "row";
+        div_left_video_meeting.style.display = "flex";
+        console.log("arrangeUserWhenShare");
+        let heightBase = 100;
+        let widthBase;
+        switch (currentViews.length) {
+            case 1:
+                widthBase = 100;
+                break;
+            case 2:
+                widthBase = 50;
+                break;
+            case 3:
+                widthBase = 100 / 3;
+                break;
+            case 4:
+                widthBase = 25;
+                break;
+            default:
+                console.log("so luong user > 4");
+                widthBase = 25;
+                var x = parent.cloneNode(true);
+                x.innerHTML = '';
+                x.id = "parent_count_remainder";
+                let divCountRemainder = document.getElementById("div_count_remainder");
+                let _divCountRemainder = divCountRemainder.cloneNode(true);
+                let countRemainder = _divCountRemainder.querySelector("#count_remainder");
+                countRemainder.innerHTML = "+" + (currentViews.length - 3).toString();
+                _divCountRemainder.style.display = "block";
+                x.append(_divCountRemainder);
+                $("#div_left_video_meeting").append(x);
+                currentViews = $("#div_left_video_meeting").children();
+                for (let i = 0; i < 3; i++) {
+                    currentViews[i].style.height = heightBase + "%";
+                    currentViews[i].style.width = widthBase + "%";
+                }
+                for (let i = 3; i < currentViews.length - 1; i++) {
+                    currentViews[i].style.display = "none";
+                }
+                currentViews[currentViews.length - 1].style.width = widthBase + "%";
+                return;
+
+        }
+        for (let i = 0; i < currentViews.length; i++) {
+            currentViews[i].style.height = heightBase + "%";
+            currentViews[i].style.width = widthBase + "%";
+        }
     }
 }
 
@@ -483,11 +638,19 @@ shareScreenObs$.subscribe(event => {
     divShare.style.display = "none";
     shareView.pause();
 
+    if (shareScreenStream && event == undefined) {
+        var tracks = shareScreenStream.getTracks();
+        for (var i = 0; i < tracks.length; i++) {
+            tracks[i].stop();
+        }
+    }
     shareScreenStream = event;
-    shareScreenStream.getVideoTracks()[0].addEventListener('ended', () => {
-        chatService.shareScreen(ObjClient.Room.roomId, false);
-        isSharingScreenSource.next(false);
-    });
+    if (event != undefined) {
+        shareScreenStream.getVideoTracks()[0].addEventListener('ended', () => {
+            chatService.shareScreen(ObjClient.Room.roomId, false);
+            isSharingScreenSource.next(false);
+        });
+    }
 
     if (shareScreenStream && shareScreenStream.active) {
         shareView.srcObject = shareScreenStream;
@@ -510,6 +673,7 @@ shareScreenObs$.subscribe(event => {
         divLeftVideoMeeting.classList.remove("flex-fill");
         isSharingScreen = false;
         console.log("thay doi isSharingScreen: " + isSharingScreen);
+
     }
 });
 
@@ -520,9 +684,25 @@ muteCamMicService.muteMicro$.subscribe(event => {
 });
 
 muteCamMicService.userIsMuteAllMicro$.subscribe(event => {
-    let video = document.getElementById(event.userId + '_video')
-    if (video)
-        video.muted = event.mute;
+    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member") {
+        if (event.userId == ObjClient.User.userId) {
+            if (event.mute)
+                CallToast("You have been muted by admin");
+            else
+                CallToast("You have been unmuted by admin");
+        }
+    }
+    else {
+        let video = document.getElementById(event.userId + '_video')
+        if (video) {
+            video.muted = event.mute;
+            let user = videos.find(video => video.user.id == event.userId).user;
+            if (event.mute)
+                CallToast(user.displayName + " has been muted by admin");
+            else
+                CallToast(user.displayName + " has been unmuted by admin");
+        }
+    }
 });
 
 muteCamMicService.muteCamera$.subscribe(event => {
@@ -568,12 +748,44 @@ muteCamMicService.shareScreen$.subscribe(event => {
 });
 
 chatService.blockChat$.subscribe(state => {
-    if (JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member") {
-        if (state) {
-            $('#div_right_meeting').addClass("d-none");
+    if (state.block) {
+        var chat = document.getElementById("div_footer_right_meeting");
+        chat.classList.remove("d-flex");
+        chat.classList.add("d-none");
+        var notifi = document.getElementById("notification_block_chat");
+        if (!(JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member")) {
+            notifi.innerHTML = "You have been blocked chat"
         }
-        else {
-            $('#div_right_meeting').removeClass("d-none");
+        notifi.classList.remove("d-none");
+        notifi.classList.add("d-flex");
+    }
+    else {
+        var chat = document.getElementById("div_footer_right_meeting");
+        var btn_attach = document.getElementById("btn_attach_file");
+        var btn_send = document.getElementById("btn_icon_send_chat");
+        var btn_icon_close_chat = document.getElementById("btn_icon_close_chat");
+        btn_icon_close_chat.disabled = false;
+        btn_attach.disabled = false;
+        btn_send.disabled = false;
+        chat.classList.remove("d-none");
+        chat.classList.add("d-flex");
+        var notifi = document.getElementById("notification_block_chat");
+        notifi.classList.remove("d-flex");
+        notifi.classList.add("d-none");
+    }
+});
+
+chatService.kick$.subscribe(event => {
+    if (event.userId == ObjClient.User.userId) {
+        window.location.href = "/";
+    }
+    else {
+        let user_card = document.getElementById(event.userId);
+        if (user_card) {
+            let user = videos.find(video => video.user.id == event.userId).user;
+            let div_left_video_meeting = document.getElementById("div_left_video_meeting");
+            div_left_video_meeting.removeChild(user_card);
+            CallToast(user.displayName + " has been kicked by admin");
         }
     }
 });
@@ -668,6 +880,7 @@ function InitRTC() {
 
     this.subscriptions.add(chatService.oneOfflineUser$.subscribe(member => {
         CallToast(member.displayName + ' has left room!')
+        removeParticipant(member.id);
         console.log('call close');
         videos = videos.filter(video => video.user.id !== member.id);
         //xoa user nao offline tren man hinh hien thi current user
@@ -700,6 +913,7 @@ function InitRTC() {
         call.answer(this.shareScreenStream);
         call.on('stream', (otherUserVideoStream) => {
             this.shareScreenSource.next(otherUserVideoStream);
+            CallToast(call.metadata.userId.id);
         });
 
         call.on('error', (err) => {
@@ -747,6 +961,7 @@ function InitRTC() {
     /*this.subscriptions.add(this.shareScreenService.userIsSharing$.subscribe(val => {
         this.userIsSharing = val
     }))*/
+
     chatForm.addEventListener("submit", function (event) {
         // Prevent the default form submission behavior
         event.preventDefault();
@@ -818,28 +1033,48 @@ async function createLocalStream() {
 }
 
 async function shareScreen() {
-    try {
-        let mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
-        chatService.shareScreen(ObjClient.Room.roomId, true);
-        this.shareScreenSource.next(mediaStream);
-        this.isSharingScreenSource.next(true);
+    if (!isSharingScreen) {
+        try {
+            let mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+            chatService.shareScreen(ObjClient.Room.roomId, true);
+            this.shareScreenSource.next(mediaStream);
+            this.isSharingScreenSource.next(true);
 
-        this.videos.forEach(v => {
-            const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream);
-        })
-        changeShareScreenState();
-    } catch (e) {
-        console.log(e);
-        alert(e)
+            this.videos.forEach(v => {
+                const call = this.shareScreenPeer.call('share_' + v.user.id, mediaStream, {
+                    metadata: {
+                        userId: {
+                            id: ObjClient.User.userId,
+                            displayName: ObjClient.User.displayName,
+                            lastActive: ObjClient.User.lastActive,
+                        }
+                    },
+                });
+            });
+            changeShareScreenState();
+        } catch (e) {
+            if (!e.name === 'NotAllowedError') {
+                alert('Unable to share screen: ' + e.message);
+            }
+        }
+    }
+    else {
+        var icon_share_screen = document.getElementById("icon_sharing_screen");
+        if (icon_share_screen.innerHTML == "stop_screen_share") {
+            CallToast("Only one user can share screen at the same time");
+        }
+        else {
+            var tracks = shareScreenStream.getTracks();
+            for (var i = 0; i < tracks.length; i++) {
+                tracks[i].stop();
+            }
+            this.shareScreenSource.next(undefined);
+            this.isSharingScreenSource.next(false);
+            chatService.shareScreen(ObjClient.Room.roomId, false);
+            changeShareScreenState();
+        }
     }
 }
-
-var chatMessage;
-var chatSource = new Subject();
-var chatObs$ = chatSource.asObservable();
-
-
-
 
 var chatForm = document.getElementById("chat-input");
 
@@ -916,20 +1151,30 @@ $(document).ready(function () {
     changeMicState();
     changeCamState();
     changeShareScreenState();
-    setInterval(function () {
-        $("#time_meeting").load(window.location.href + " #time_meeting");
-    }, 1000);
+    addLinkMeeting();
+
+    setInterval(updateTimer, 1000);
 });
+
+function addLinkMeeting() {
+    let input_link = document.getElementById("link_meeting");
+    input_link.value = window.location.href ;
+}
 
 function hiddenForMembers() {
     var btnSettings = document.getElementById("btn_settings_meeting");
     var btnSettingsMobile = document.getElementById("btn_settings_normal");
+    var block_chat = document.getElementById("block_chat");
+    var header_right_meeting = document.getElementById("div_header_right_meeting");
+    header_right_meeting.classList.add("justify-content-end");
+    block_chat.style.display = "none";
     btnSettings.style.display = "none";
     btnSettingsMobile.style.display = "none";
     btnSettings.classList.remove("d-flex");
     btnSettingsMobile.classList.remove("d-flex");
 }
 function toggleComponents() {
+    isBlockChat = !isBlockChat;
     var checkbox = document.getElementById("switch");
 
     var parentDiv = document.getElementById("div_right_meeting");
@@ -938,8 +1183,7 @@ function toggleComponents() {
 
     var disable = !checkbox.checked;
 
-    let state = event.target.checked;
-    chatService.blockChat(state);
+    chatService.blockChat(isBlockChat);
 
     formElements.forEach(function (element) {
         element.disabled = disable;
@@ -984,3 +1228,84 @@ function uuidv4() {
             return v.toString(16);
         });
 }
+
+function changeRoomSercurityCode() {
+    var input = document.getElementById("input_pass_config");
+    var postData = {
+        RoomId: ObjClient.Room.roomId,
+        RoomName: ObjClient.Room.roomName,
+        SecurityCode: input.value
+    };
+    fetch('/Room/ChangeRoomSercurityCode', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Process the response data
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+        return;
+    });
+    let icon_config = document.getElementById("icon_close_config");
+    icon_config.click();
+    CallToast("Change room security code successfully");
+}
+
+function mediaHasChatFunc(x) {
+    if (x.matches) {
+        if (isChatOpening || isParticipantsOpening) {
+            let div_footer_left_meeting = document.getElementById("div_footer_left_meeting");
+            div_footer_left_meeting.style.flexFlow = "column";
+            let div_header_left_meeting = document.getElementById("div_header_left_meeting");
+            div_header_left_meeting.style.height = "85%";
+        }
+    }
+    else {
+        let div_footer_left_meeting = document.getElementById("div_footer_left_meeting");
+        div_footer_left_meeting.style.flexFlow = "unset";
+        let div_header_left_meeting = document.getElementById("div_header_left_meeting");
+        div_header_left_meeting.style.height = "90%";
+    }
+}
+
+function mediaNotHasChatFunc(x) {
+    if (isChatOpening) {
+        closeChat();
+        openChat();
+    }
+    else if (isParticipantsOpening) {
+        closeParticipants();
+        openParticipants();
+    }
+    if (isSharingScreen) {
+        arrangeUserWhenShare($("#div_left_video_meeting").children());
+    }
+}
+
+// Create a MediaQueryList object
+const mediaHasChat = window.matchMedia("(max-width: 960px)");
+const mediaNotHasChat = window.matchMedia("(max-width: 820px)");
+
+// Call the match function at run time
+mediaHasChatFunc(mediaHasChat);
+mediaNotHasChatFunc(mediaNotHasChat);
+
+// Add the match function as a listener for state changes
+mediaHasChat.addEventListener("change", function () {
+    mediaHasChatFunc(mediaHasChat);
+});
+
+mediaNotHasChat.addEventListener("change", function () {
+    mediaNotHasChatFunc(mediaNotHasChat);
+});
