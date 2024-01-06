@@ -28,11 +28,13 @@ namespace InstaTalk.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Meeting(Guid roomId)
+        public IActionResult Meeting(Guid? id)
         {
+            if (id == null)
+                return RedirectToAction("Index", "Home");
             var content = HttpContext.Session.GetString("sessionRoom");
             if (string.IsNullOrEmpty(content))
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("FriendHub", "Home", new { roomId = id});
 
             var model = JsonConvert.DeserializeObject<RoomInfo>(content);
 

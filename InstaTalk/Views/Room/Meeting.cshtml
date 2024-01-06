@@ -26,7 +26,7 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <div class="form-outline m-auto d-flex w-100 " style="max-width:450px;">
-                        <input type="text" id="link_meeting" class="rounded-0 form-control border-0 p-2 pb-1 bg-light" readonly value="https://instatalk.com/room/12345" />
+                        <input type="text" id="link_meeting" class="rounded-0 form-control border-0 p-2 pb-1 bg-light" readonly />
                         <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" s>Your mates can join via below URL</label>
                     </div>
                     <span class="input-group-append col-1 d-flex justify-content-end input-custom" id="copy-btn">
@@ -54,7 +54,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalSecurityConfigTitle">Room's Security Configuration</h5>
                 <button id="btn-icon-visibility" class="bg-white py-2 ps-0 d-flex justify-content-center border-0" type="button" onclick="hiddenModalConfig()">
-                    <span class="material-icons" id="icon_close_modal_join_room" data-bs-dismiss="modal">
+                    <span class="material-icons" id="icon_close_config" data-bs-dismiss="modal">
                         clear
                     </span>
                 </button>
@@ -246,7 +246,7 @@
             <form class="form-outline d-flex" id="chat-input">
                 <input type="text" required name="content" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
-                <button id="btn_icon_send_chat" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="submit">
+                <button id="btn_icon_send_chat" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="border:none;" type="submit">
                     <span class="material-icons" id="icon_clear_id">
                         send
                     </span>
