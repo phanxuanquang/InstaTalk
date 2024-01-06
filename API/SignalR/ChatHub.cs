@@ -67,7 +67,7 @@ namespace API.SignalR
             if (userIsSharing != null)
             {
                 var currentBeginConnectionsUser = await _presenceTracker.GetConnectionsForUser(userIsSharing);
-                if (currentBeginConnectionsUser.Count > 0)
+                if (currentBeginConnectionsUser?.Count > 0)
                     await Clients.Clients(currentBeginConnectionsUser).SendAsync("OnShareScreenLastUser", new { userIdTo = userId, isShare = true });
                 await Clients.Caller.SendAsync("OnUserIsSharing", userIsSharing.DisplayName);
             }
@@ -102,8 +102,8 @@ namespace API.SignalR
                 await _presenceHub.Clients.All.SendAsync("CountMemberInGroup",
                        new { roomId = group.RoomId, countMember = currentUsers.Length });
 
-                if (currentUsers.Length < 1 || Context.User.IsInRole("Host") || Context.User.IsInRole("Admin"))
-                    await LockdownRoom(group.RoomId);
+                /*if (currentUsers.Length < 1 || Context.User.IsInRole("Host") || Context.User.IsInRole("Admin"))
+                    await LockdownRoom(group.RoomId);*/
             }
             await base.OnDisconnectedAsync(exception);
         }
@@ -147,7 +147,7 @@ namespace API.SignalR
             if (group != null)
             {
                 await _unitOfWork.RoomRepository.UpdateBlockChat(group.RoomId, block);
-
+                await _unitOfWork.Complete();
                 await Clients.Group(group.RoomId.ToString()).SendAsync("OnBlockChat", new { block });
             }
         }
@@ -234,10 +234,33 @@ namespace API.SignalR
         public async Task ShareScreenToUser(Guid roomid, Guid userId, bool isShare)
         {
             var currentBeginConnectionsUser = await _presenceTracker.GetConnectionsForUser(new UserConnectionInfo(userId, string.Empty, roomid));
-            if (currentBeginConnectionsUser.Count > 0)
+            if (currentBeginConnectionsUser?.Count > 0)
                 await Clients.Clients(currentBeginConnectionsUser).SendAsync("OnShareScreen", isShare);
         }
 
+        [Authorize(Roles = "Admin,Host")]
+        public async Task KickMember(Guid roomId, Guid userId)
+        {
+            var connections = await _presenceTracker.GetConnectionsForUser(new UserConnectionInfo(userId, string.Empty, roomId));
+            if (connections != null && connections.Count > 0)
+            {
+                await Clients.Users(userId.ToString()).SendAsync("OnIsKicked", new { userId, roomId });
+                await Task.WhenAll(connections.Select(cid => Groups.RemoveFromGroupAsync(cid, roomId.ToString())));
+                var u = await _unitOfWork.UserRepository.UpdateLocked(userId);
+                var temp = await _unitOfWork.UserRepository.GetMemberAsync(userId);
+                await Clients.Group(roomId.ToString()).SendAsync("UserOfflineInGroup", temp);
+
+                var currentUsers = await _presenceTracker.GetOnlineUsers(roomId);
+
+                await _unitOfWork.RoomRepository.UpdateCountMember(roomId, currentUsers.Length);
+                await _unitOfWork.Complete();
+
+                await _presenceHub.Clients.All.SendAsync("CountMemberInGroup",
+                       new { roomId = roomId, countMember = currentUsers.Length });
+            }
+        }
+
+        #region Private
         private async Task<Room?> RemoveConnectionFromGroup()
         {
             var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
@@ -288,5 +311,6 @@ namespace API.SignalR
             }
             await _unitOfWork.Complete();
         }
+        #endregion
     }
 }

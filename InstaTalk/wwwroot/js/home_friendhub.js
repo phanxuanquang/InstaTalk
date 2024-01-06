@@ -20,3 +20,11 @@ function clearText() {
     input.focus();
     input.blur();
 }
+
+$(document).ready(function () {
+    let input_room_id = document.getElementById("input_room_id");
+    if (input_room_id.value != "") {
+        let btn_join_room = document.getElementById("btn_join_room");
+        btn_join_room.click();
+    }
+});

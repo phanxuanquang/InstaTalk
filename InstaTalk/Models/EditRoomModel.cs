@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
-namespace API.Dtos
+namespace InstaTalk.Models
 {
-    public class EditRoomDto
+    public class EditRoomModel
     {
         [Required]
         public Guid RoomId { get; set; }

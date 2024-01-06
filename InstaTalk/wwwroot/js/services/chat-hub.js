@@ -17,6 +17,9 @@
 
         this.blockChatSource = new Subject();
         this.blockChat$ = this.blockChatSource.asObservable();
+
+        this.kickSource = new Subject();
+        this.kick$ = this.kickSource.asObservable();
     }
 
     createHubConnection(user, roomId) {
@@ -36,7 +39,7 @@
                 this.messageCountService.MessageCount += 1
             }
 
-            this.messagesThreadSource.next([...this.messagesThreadSource.getValue(), message]);
+            this.messagesThreadSource.next(message);
             /*this.messagesThread$.pipe(take(1)).subscribe(messages => {
                 this.messagesThreadSource.next([...messages, message])
             })*/
@@ -79,6 +82,14 @@
         this.hubConnection.on('OnBlockChat', state => {
             this.blockChatSource.next(state);
         })
+
+        this.hubConnection.on('OnMuteAllMicro', ({ userId, mute }) => {
+            this.muteCamMicService.userIsMuteAllMicroSource.next({ userId, mute });
+        })
+
+        this.hubConnection.on('OnIsKicked', ({ userId, roomId }) => {
+            this.kickSource.next({ userId, roomId });
+        })
     }
 
     stopHubConnection() {
@@ -119,5 +130,14 @@
             .catch(error => console.log(error));
     }
 
+    async muteAllMicro(userId, mute) {
+        return this.hubConnection.invoke('MuteAllMicro', userId, mute)
+            .catch(error => console.log(error));
+    }
+
+    async kickMember(roomId, userId) {
+        return this.hubConnection.invoke('KickMember', roomId, userId)
+            .catch(error => console.log(error));
+    }
     // Implement other methods like muteMicroPhone, muteCamera, shareScreen, etc.
 }

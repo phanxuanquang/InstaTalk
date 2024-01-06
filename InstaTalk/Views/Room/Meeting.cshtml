@@ -26,8 +26,8 @@
             <div class="modal-body">
                 <div class="input-group mb-3">
                     <div class="form-outline m-auto d-flex w-100 " style="max-width:450px;">
-                        <input type="text" id="link_meeting" class="rounded-0 form-control border-0 p-2 pb-1 bg-white" readonly value="https://instatalk.com/room/12345" />
-                        <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" style="color:darkgray;">Your mates can join via below URL</label>
+                        <input type="text" id="link_meeting" class="rounded-0 form-control border-0 p-2 pb-1 bg-light" readonly />
+                        <label id="lb_link_meeting" class="form-label mb-2" for="link_meeting" s>Your mates can join via below URL</label>
                     </div>
                     <span class="input-group-append col-1 d-flex justify-content-end input-custom" id="copy-btn">
                         <button id="btn_icon_visibility_modal_config" class="rounded border-0 py-2 d-flex justify-content-center" type="button" onclick="setCopyState()">
@@ -54,7 +54,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalSecurityConfigTitle">Room's Security Configuration</h5>
                 <button id="btn-icon-visibility" class="bg-white py-2 ps-0 d-flex justify-content-center border-0" type="button" onclick="hiddenModalConfig()">
-                    <span class="material-icons" id="icon_close_modal_join_room" data-bs-dismiss="modal">
+                    <span class="material-icons" id="icon_close_config" data-bs-dismiss="modal">
                         clear
                     </span>
                 </button>
@@ -83,7 +83,7 @@
                 </div>
 
                 <div class="w-100 text-center">
-                    <button type="button" class="btn btn-primary me-2">Save Change</button>
+                    <button type="button" class="btn btn-primary me-2" onclick="changeRoomSercurityCode()">Save Change</button>
                 </div>
             </div>
         </div>
@@ -102,18 +102,18 @@
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
         <div id="div_header_left_meeting" class="d-flex" style="margin:0;padding:0;height:90%;">
             <div id="div_share_screen" style="display:none;position:relative;object-fit:cover;">
-                <video id="share-video" style="object-fit:contain;width:100%;height:100%"></video>
+                <video id="share-video" class="rounded-4 border-success" style="object-fit:contain;width:100%;height:100%"></video>
             </div>
             <div id="div_left_video_meeting" class="w-100 justify-content-center" style="margin:0;padding:0;height:100%;">
                 @*  Random rnd = new Random();
                 Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256)); *@
-                <div id="div_user_video" style="position:relative;object-fit:cover;height:100%;" class="p-2">
+                <div id="div_user_video" style="position:relative;object-fit:cover;height:100%;border:aqua" class="p-2 rounded">
                     <video id="user_video" class="rounded-4 border-success" style="object-fit:cover;width:100%;height:100%">
                     </video>
                     <div id="title_video" class="video-text rounded bg-opacity-75 bg-dark" style="padding:0.4rem;">
                         Hello
                     </div>
-                    <div id="div_user_card" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%">
+                    <div id="div_user_card" class="user-card align-items-center justify-content-center" style="display:none;object-fit:cover;width:100%;height:100%;">
                         <div id="div_background_user_card" class="d-flex flex-column align-items-center justify-content-center" style="object-fit:cover;width:100%;height:100%;background-color:black;border-radius:0.5rem;">
                             <div id="name_user_card" style="width:75px;height:75px;color:white;background-color:red;" class="rounded-circle d-flex align-items-center justify-content-center">
                                 OK
@@ -167,7 +167,7 @@
                 </button>
 
                 <div id="side_bar_control" style="display:none;" class="align-items-center justify-content-center">
-                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
+                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openParticipants()">
                         <span class="material-icons" id="icon_people_alt_meeting">
                             people_alt
                         </span>
@@ -184,7 +184,7 @@
                 </div>
 
                 <div id="side_bar_control_normal" class="align-items-center justify-content-center">
-                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openChat()">
+                    <button data-toggle="tooltip" data-placement="top" title="Member List" id="btn-icon-visibility" class="col-1 rounded-circle d-flex flex-column align-items-center justify-content-center mx-2 btn-light btn-floating" type="button" style="width:45px;height:45px;border-style:solid ; transition: .3s;" onclick="openParticipants()">
                         <span class="material-icons" id="icon_people_alt_normal">
                             people_alt
                         </span>
@@ -204,9 +204,9 @@
         </div>
     </div>
     <div id="div_right_meeting" style="min-width:250px;" class="col-3 flex-column align-items-center border border-2 rounded-3 bg-light">
-        <div id="div_header_right_meeting" class="w-100 d-flex p-2">
-            <div class="checkbox-wrapper-35 col-11 bg-light py-2">
-                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents(event)">
+        <div id="div_header_right_meeting" class="w-100 d-flex p-2" style="align-items:baseline;">
+            <div id="block_chat" class="checkbox-wrapper-35 col-11 bg-light py-2">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents()">
                 <label for="switch">
                     <span class="switch-x-text">Chat Area is </span>
                     <span class="switch-x-toggletext">
@@ -215,19 +215,19 @@
                     </span>
                 </label>
             </div>
-            <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeChat()">
+            <button id="btn_icon_close_chat" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" style="border:none;margin-left:auto;margin-right:0;" type="button" onclick="closeChat()">
                 <span class="material-icons" id="icon_clear_id">
                     close
                 </span>
             </button>
         </div>
-        <div id="div_chat_right_meeting" style="overflow:auto;background-color:#aebc8e  " class="w-100 h-100 d-flex flex-column-reverse">
-            <div id="my_chat_message" style="max-width:75%;align-self:end;background-color:#e5ffd2;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;">
+        <div id="div_chat_right_meeting" style="overflow:auto;" class="w-100 h-100 d-flex flex-column bg-light">
+            <div id="my_chat_message" style="max-width:75%;align-self:end;display:none" class="rounded-pill bg-secondary text-white px-3 py-1 mx-2 my-1">
                <p id="my_message" class="m-0">
 
                </p>
             </div>
-            <div id="other_chat_message" style="max-width:75%;width:fit-content;background-color:white;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;">
+            <div id="other_chat_message" style="max-width:75%;width:fit-content;background-color:white;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;display:none">
                 <div id="other_name" style="max-width:fit-content;color:deepskyblue;font-weight:bold">
 
                 </div>
@@ -244,19 +244,49 @@
             </button>
             <input type="file" id="file-input" style="display: none;" onchange="sendFileHandler(event)">
             <form class="form-outline d-flex" id="chat-input">
-                <input type="text" id="input_chat_meeting" class="form-control border-0" />
+                <input type="text" required name="content" id="input_chat_meeting" class="form-control border-0" />
                 <label id="lb_input_chat_meeting" class="form-label" for="input_chat_meeting" style="color:darkgray">Your message</label>
-                <button id="btn_icon_send" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="" type="submit">
+                <button id="btn_icon_send_chat" class="bg-transparent py-2 d-flex justify-content-center btn-ove" style="border:none;" type="submit">
                     <span class="material-icons" id="icon_clear_id">
                         send
                     </span>
                 </button>
             </form>
-
+        </div>
+        <div id="notification_block_chat" class="w-100 p-3 d-none justify-content-center">
+            <p>Chat has been blocked by host</p>
         </div>
     </div>
-</div>
+    <div id="div_participants" style="height:95%" class="d-none flex-column align-items-center border border-2 rounded-3 bg-light col-3">
+        <div id="div_header_participants" class="w-100 d-flex p-2">
+            <div class="checkbox-wrapper-35 col-11 bg-light py-2">
+                <label>Participants</label>
+            </div>
+            <button id="btn_close_participants" style="border:none" class="bg-transparent py-2 d-flex justify-content-center p-1 btn-ove" type="button" onclick="closeParticipants()">
+                <span class="material-icons" id="ic_close_participants">
+                    close
+                </span>
+            </button>
+        </div>
+    <div id="div_body_participants" style="overflow:auto;background-color:#aebc8e;width:100%">
+         <div id="participant" style="width:95%" class="d-flex align-items-center m-1">
+             <div id="participant_name" style="width:80%">
 
+             </div>
+             <button id="btn_mic_participant" style="border:none;display:none" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
+                <span class="material-icons" id="ic_mic_participant">
+                    mic
+                </span>
+            </button>
+            <button id="btn_kick" style="border:none;display:none;" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="kick(this)">
+                <span class="material-icons" id="ic_volumn_participant">
+                    more_horiz
+                </span>
+            </button>
+         </div>
+    </div>
+</div>
+</div>
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -286,5 +316,6 @@
     <script type="text/javascript" src="~/js/services/mute-cam-mic-service.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/services/chat-hub.js" asp-append-version="true"></script>
     <script type="text/javascript" src="~/js/config/webrtc-config.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/soundmeter.js" asp-append-version="true"></script>
     <script src="~/js/meeting.js" asp-append-version="true"></script>
 }

@@ -19,6 +19,9 @@
 
         this.userIsSharingSource = new Subject();
         this.userIsSharing$ = this.userIsSharingSource.asObservable();
+
+        this.userIsMuteAllMicroSource = new Subject();
+        this.userIsMuteAllMicro$ = this.userIsMuteAllMicroSource.asObservable();
     }
 
     set Microphone(value) {
