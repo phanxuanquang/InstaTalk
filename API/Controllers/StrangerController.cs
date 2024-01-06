@@ -59,7 +59,7 @@ namespace API.Controllers
                 Gender = register.Gender,
                 Age = register.Age,
                 Nationality = register.Nationality,
-                Type = register.Type,
+                //Type = register.Type,
                 Token = await _tokenService.CreateTokenAsync(user)
             };
 
@@ -115,7 +115,7 @@ namespace API.Controllers
                     Gender = user.Gender,
                     Age = user.Age,
                     Nationality = user.Nationality,
-                    Type = user.Type,
+                    //Type = user.Type,
                     Token = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme) ?? string.Empty
                 };
 
