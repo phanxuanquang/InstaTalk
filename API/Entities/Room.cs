@@ -58,9 +58,12 @@ namespace API.Entities
         [DefaultValue(100)]
         public int MaxAge { get; set; }
 
-        public ICollection<string> FindRegion { get; set; } = new List<string>();
+        [NotMapped]
+        public ICollection<string> FindRegion { get => _FindRegion.Split(','); set => string.Join(',', value); }
 
-        public ICollection<string> FindType { get; set; } = new List<string>();
+        public string _FindRegion { get; set; } = string.Empty;
+
+        //public ICollection<string> FindType { get; set; } = new List<string>();
 
         public Room? CurrentRoom { get; set; }
     }

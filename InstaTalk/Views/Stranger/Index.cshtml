@@ -1,4 +1,5 @@
-﻿@{
+﻿@model InstaTalk.Models.StrangerModel
+@{
     ViewData["Title"] = "Stranger";
 }
 @section customHead {
@@ -9,9 +10,9 @@
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
     <div style="max-width:550px; display:block; text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 0px 0px 20px 0px">
-        <form id="homepage_form" style="width:95%;display:inline-block;margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("FindOut", "Stranger")">
+        <form id="stranger_index_form" style="width:95%;display:inline-block;margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("FindOut", "Stranger")">
             <div class="textInputWrapper" style="margin: 0px 0px 20px 0px">
-                <input placeholder="Your display name" type="text" class="textInput">
+                <input placeholder="Your display name" required name="DisplayName" type="text" class="textInput">
             </div>
             <!-- There are two dropdowns to show multi-menu support -->
 
@@ -109,7 +110,24 @@
                     <li><a class="dropdown-item" href="#">Country 3</a></li>
                 </ul>
             </div>*@
-            <center onclick="location.href='@Url.Action("FindOut", "Stranger")'">
+                <div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
+                    <select id="select_gender" name="Gender" required>
+                        <option selected>Choose gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="btn-group shadow-0 mb-3 ms-1" style="width:100%;" aria-label=".form-select-lg example">
+                   <input type="number" required name="Age" />
+                </div>
+            </div>
+            <div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
+                <select id="select_country" name="Nationality" required>
+                    <option selected>Choose country</option>
+                </select>
+            </div>
+            <center onclick="submitForm()">
                 <a class="custom-btn">
                     NEXT
                 </a>
@@ -120,4 +138,25 @@
 
 @section script {
     <script src="~/js/stranger_index.js" asp-append-version="true"></script>
+    <script>
+        $.ajax({
+            url: "https://gist.githubusercontent.com/ssskip/5a94bfcd2835bf1dea52/raw/3b2e5355eb49336f0c6bc0060c05d927c2d1e004/ISO3166-1.alpha2.json",
+            type: "get",
+            success: function(data) {
+                var countries = JSON.parse(data);
+                var select = document.getElementById("select_country");
+                Object.keys(countries).forEach(key => {
+                    var el = document.createElement("option");
+                    el.textContent = countries[key];
+                    el.value = key;
+                    select.appendChild(el);
+                })
+            }
+        })
+
+        function submitForm() {
+            var form = document.getElementById("stranger_index_form");
+            form.submit();
+        }
+    </script>
 }

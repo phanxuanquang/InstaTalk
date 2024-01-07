@@ -12,6 +12,6 @@
         public string? Gender { get; set; }
         public int? Age { get; set; }
         public string? Nationality { get; set; }
-        public ICollection<string> Type { get; set; } = new List<string>();
+        //public ICollection<string> Type { get; set; } = new List<string>();
     }
 }

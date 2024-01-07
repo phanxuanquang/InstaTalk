@@ -17,6 +17,10 @@
     {
       "library": "multi-select@0.9.12",
       "destination": "wwwroot/lib/multi-select/"
+    },
+    {
+      "library": "bootstrap-tagsinput@0.8.0",
+      "destination": "wwwroot/lib/bootstrap-tagsinput/"
     }
   ]
 }

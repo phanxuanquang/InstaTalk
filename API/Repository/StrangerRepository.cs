@@ -27,7 +27,7 @@ namespace API.Repository
             {
                 var listUserMatch = queryUser.Where(item => user.Id != user.Id &&
                     user.StrangerFilter != null &&
-                    user.StrangerFilter.FindType.Any(subItem => item.Type.Contains(subItem)) &&
+                    //user.StrangerFilter.FindType.Any(subItem => item.Type.Contains(subItem)) &&
                     user.StrangerFilter.MinAge >= item.Age &&
                     user.StrangerFilter.MaxAge <= item.Age &&
                     user.StrangerFilter.FindGener.Contains(item.Gender ?? string.Empty) &&
