@@ -1,7 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Stranger";
 }
-
+@section customHead {
+    <link rel="stylesheet" href="~/css/stranger_index.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+}
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
     <div style="max-width:550px; display:block; text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 0px 0px 20px 0px">
@@ -9,8 +13,45 @@
             <div class="textInputWrapper" style="margin: 0px 0px 20px 0px">
                 <input placeholder="Your display name" type="text" class="textInput">
             </div>
+            <!-- There are two dropdowns to show multi-menu support -->
+
+
             <div class="m-auto d-flex gap-2">
-                <div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
+
+                <div class="" style="width:100%;">
+
+                    <div class="wrapper-dropdown" id="dropdown">
+                        <span class="selected-display" id="destination">Your gender</span>
+                        <svg class="arrow" id="drp-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-all ml-auto rotate-180">
+                            <path d="M7 14.5l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <ul class="dropdown">
+                            <li class="item">Male</li>
+                            <li class="item">Female</li>
+                            <li class="item">Other</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <br>
+                <div class="" style="width:100%;">
+                    <div class="wrapper-dropdown" id="dropdown">
+                        <span class="selected-display" id="destination">Your age</span>
+                        <svg id="drp-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow transition-all ml-auto rotate-180">
+                            <path d="M7 14.5l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <ul class="dropdown">
+                            <li class="item">Keep it secret</li>
+                            <li class="item">Under 16</li>
+                            <li class="item">From 16 to under 18</li>
+                            <li class="item">From 18 to under 24</li>
+                            <li class="item">From 24 to under 30</li>
+                            <li class="item">Above 30</li>
+                        </ul>
+                    </div>
+                </div>
+
+                @*<div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
                     <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
                         Your gender
                     </button>
@@ -35,9 +76,25 @@
                         <li><a class="dropdown-item" href="#">From 24 to under 30</a></li>
                         <li><a class="dropdown-item" href="#">Above 30</a></li>
                     </ul>
+                </div>*@
+            </div>
+            <div class="rounded" style="width:100%;">
+                <div class="wrapper-dropdown" id="dropdown">
+                    <span class="selected-display" id="destination">Your country</span>
+                    <svg id="drp-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="arrow transition-all ml-auto rotate-180">
+                        <path d="M7 14.5l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                    <ul class="dropdown">
+                        <li class="item">Keep it secret</li>
+                        <li class="item">Under 16</li>
+                        <li class="item">From 16 to under 18</li>
+                        <li class="item">From 18 to under 24</li>
+                        <li class="item">From 24 to under 30</li>
+                        <li class="item">Above 30</li>
+                    </ul>
                 </div>
             </div>
-            <div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
+            @*<div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
                 <button type="button"
                         class="btn btn-secondary dropdown-toggle"
                         data-mdb-toggle="dropdown"
@@ -51,7 +108,7 @@
                     <li><a class="dropdown-item" href="#">Country 2</a></li>
                     <li><a class="dropdown-item" href="#">Country 3</a></li>
                 </ul>
-            </div>
+            </div>*@
             <center onclick="location.href='@Url.Action("FindOut", "Stranger")'">
                 <a class="custom-btn">
                     NEXT
@@ -60,3 +117,7 @@
         </form>
     </div>
 </div>
+
+@section script {
+    <script src="~/js/stranger_index.js" asp-append-version="true"></script>
+}

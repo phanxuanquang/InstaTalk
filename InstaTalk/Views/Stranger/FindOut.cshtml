@@ -2,30 +2,84 @@
     ViewData["Title"] = "Stranger";
 }
 
+@section customHead {
+    <link rel="stylesheet" href="~/lib/multi-select/css/multi-select.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/stranger_index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+}
+
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
     <div style="max-width:550px;text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 1rem 0rem 1rem 0rem;">
         <div id="homepage_form" style="width:95%; display:inline-block; margin-left:auto; margin-right:auto;">
             <div class="m-auto" style="max-width:550px;">
-                <select class="form-select mb-3" aria-label=".form-select-lg example">
+                
+            </div>
+            <div class="m-auto d-flex gap-2" style="max-width:550px;">
+                <div class="" style="width:100%;">
+                    <div class="wrapper-dropdown" id="dropdown-gender">
+                        <span class="selected-display" id="destination">Your gender</span>
+                        <svg class="arrow" id="drp-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-all ml-auto rotate-180">
+                            <path d="M7 14.5l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <ul class="dropdown">
+                            <li class="item">Male</li>
+                            <li class="item">Female</li>
+                            <li class="item">Other</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="" style="width:100%;">
+                    <div class="wrapper-dropdown" id="dropdown-age">
+                        <span class="selected-display" id="destination">Your gender</span>
+                        <svg class="arrow" id="drp-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="transition-all ml-auto rotate-180">
+                            <path d="M7 14.5l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <ul class="dropdown">
+                            <li class="item">Male</li>
+                            <li class="item">Female</li>
+                            <li class="item">Other</li>
+                        </ul>
+                    </div>
+                </div>
+                @*<select class="form-select mb-3" aria-label=".form-select-lg example">
                     <option selected>You want to find</option>
                     <option value="1">One</option>
                     <option value="2">Two</option>
                     <option value="3">Three</option>
                 </select>
-            </div>
-            <div class="m-auto d-flex" style="max-width:550px;">
-                <select class="form-select mb-3 me-1" aria-label=".form-select-lg example" style="width:49%;">
+                <select class="form-select mb-3" aria-label=".form-select-lg example" style="width:100%;">
                     <option selected>Whose age is</option>
                     <option value="1">One</option>
                     <option value="2">Two</option>
                     <option value="3">Three</option>
-                </select>
-                <select class="form-select mb-3 ms-1" aria-label=".form-select-lg example" style="width:49%;">
-                    <option selected>And come from</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                </select>*@
+                
+                @*                <select multiple="multiple" id="contry-select" name="contry-select[]"
+                class="form-select mb-3 ms-1" aria-label=".form-select-lg example" style="width:49%;">
+                <option selected>And come from</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+                </select>*@
+            </div>
+            <div style="width:100%;" class="mb-3">
+                <select id="choices-multiple-remove-button" placeholder="Select Country up to 5 tags" multiple>
+                    <option value="HTML">HTML</option>
+                    <option value="Jquery">Jquery</option>
+                    <option value="CSS">CSS</option>
+                    <option value="Bootstrap 3">Bootstrap 3</option>
+                    <option value="Bootstrap 4">Bootstrap 4</option>
+                    <option value="Java">Java</option>
+                    <option value="Javascript">Javascript</option>
+                    <option value="Angular">Angular</option>
+                    <option value="Python">Python</option>
+                    <option value="Hybris">Hybris</option>
+                    <option value="SQL">SQL</option>
+                    <option value="NOSQL">NOSQL</option>
+                    <option value="NodeJS">NodeJS</option>
                 </select>
             </div>
             <a class="custom-btn me-2" style="width: 16rem;" href="#" onclick="location.href='@Url.Action("Waiting", "Stranger")'">
@@ -35,3 +89,9 @@
         </div>
     </div>
 </div>
+
+@section script {
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
+    <script src="~/js/stranger_index.js" asp-append-version="true"></script>
+
+}
