@@ -25,11 +25,11 @@ namespace API.Repository
 
             foreach (var user in queryUser)
             {
-                var listUserMatch = queryUser.Where(item => user.Id != user.Id &&
+                var listUserMatch = queryUser.Where(item => user.Id != item.Id &&
                     user.StrangerFilter != null &&
                     //user.StrangerFilter.FindType.Any(subItem => item.Type.Contains(subItem)) &&
-                    user.StrangerFilter.MinAge >= item.Age &&
-                    user.StrangerFilter.MaxAge <= item.Age &&
+                    user.StrangerFilter.MinAge <= item.Age &&
+                    user.StrangerFilter.MaxAge >= item.Age &&
                     user.StrangerFilter.FindGener.Contains(item.Gender ?? string.Empty) &&
                     user.StrangerFilter.FindRegion.Contains(item.Nationality ?? string.Empty))
                     .ToList();
@@ -66,7 +66,7 @@ namespace API.Repository
             {
                 foreach (var n in vList)
                 {
-                    if (!visited[n])
+                    if (visited.TryGetValue(n, out bool status) && !status)
                         DFSUtil(n, visited, component);
                 }
             }
@@ -82,7 +82,7 @@ namespace API.Repository
 
             foreach (var v in adjList.Keys)
             {
-                if (!visited[v])
+                if (visited.TryGetValue(v, out bool status) && !status)
                 {
                     List<AppUser> component = new List<AppUser>();
                     DFSUtil(v, visited, component);
