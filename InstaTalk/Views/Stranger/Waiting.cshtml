@@ -1,9 +1,11 @@
-﻿@{
+﻿@model RoomInfo
+@{
     ViewData["Title"] = "Stranger";
 }
 
 @section customHead {
     <link rel="stylesheet" href="~/css/stranger_waiting.css" asp-append-version="true" />
+
 }
 
 <div class="min-vh-100 d-flex align-items-center justify-content-center w-100">
@@ -33,20 +35,13 @@
 </div>
 
 @section script {
-    <script asp-append-version="true">
-        document.addEventListener('DOMContentLoaded', function () {
-            var timer = setTimeout(function () {
-                var win = window.open('@Url.Action("Success", "Stranger")', '_self');
-                if (win) {
-                    win.focus();
-                } else {
-                    alert('Please allow popups for this website, and then refresh this page.');
-                }
-            }, 3200);
-        }, false);
+    <script>
+        var ObjClient = {};
+        ObjClient.Room = @Html.Raw(Json.Serialize(Model.Room));
+        ObjClient.User = @Html.Raw(Json.Serialize(Model.User));
+        ObjClient.HostHub = @Html.Raw(Json.Serialize(ViewBag.API));
     </script>
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
             const spanElement = document.getElementById("stranger_display_name");
             const humanNames = [
@@ -63,5 +58,7 @@
             }, 100);
         }, false);
     </script>
-
+    <script type="text/javascript" src="~/lib/microsoft-signalr/signalr.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/services/stranger_hub.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/waiting.js" asp-append-version="true"></script>
 }

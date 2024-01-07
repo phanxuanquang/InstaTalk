@@ -1,58 +1,34 @@
-﻿@{
+﻿@model InstaTalk.Models.StrangerModel
+@{
     ViewData["Title"] = "Stranger";
 }
 
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
     <div style="max-width:550px; display:block; text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 0px 0px 20px 0px">
-        <form id="homepage_form" style="width:95%;display:inline-block;margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("FindOut", "Stranger")">
+        <form id="stranger_index_form" style="width:95%;display:inline-block;margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("FindOut", "Stranger")">
             <div class="textInputWrapper" style="margin: 0px 0px 20px 0px">
-                <input placeholder="Your display name" type="text" class="textInput">
+                <input placeholder="Your display name" required name="DisplayName" type="text" class="textInput">
             </div>
             <div class="m-auto d-flex gap-2">
                 <div class="btn-group shadow-0 mb-3 me-1" style="width:100%;" aria-label=".form-select-lg example">
-                    <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
-                        Your gender
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-                        <li><a class="dropdown-item" href="#">Keep it secret</a></li>
-                        <li><a class="dropdown-item" href="#">Male</a></li>
-                        <li><a class="dropdown-item" href="#">Female</a></li>
-                        <li><a class="dropdown-item" href="#">Gay</a></li>
-                        <li><a class="dropdown-item" href="#">Lesbian</a></li>
-                        <li><a class="dropdown-item" href="#">Others</a></li>
-                    </ul>
+                    <select id="select_gender" name="Gender" required>
+                        <option selected>Choose gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Others">Others</option>
+                    </select>
                 </div>
                 <div class="btn-group shadow-0 mb-3 ms-1" style="width:100%;" aria-label=".form-select-lg example">
-                    <button type="button" class="btn btn-secondary dropdown-toggle w-100" data-mdb-toggle="dropdown" data-mdb-display="static" aria-expanded="false">
-                        Your age
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-                        <li><a class="dropdown-item" href="#">Keep it secret</a></li>
-                        <li><a class="dropdown-item" href="#">Under 16</a></li>
-                        <li><a class="dropdown-item" href="#">From 16 to under 18</a></li>
-                        <li><a class="dropdown-item" href="#">From 18 to under 24</a></li>
-                        <li><a class="dropdown-item" href="#">From 24 to under 30</a></li>
-                        <li><a class="dropdown-item" href="#">Above 30</a></li>
-                    </ul>
+                   <input type="number" required name="Age" />
                 </div>
             </div>
             <div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
-                <button type="button"
-                        class="btn btn-secondary dropdown-toggle"
-                        data-mdb-toggle="dropdown"
-                        data-mdb-display="static"
-                        aria-expanded="false">
-                    Your come from
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start">
-                    <li><a class="dropdown-item" href="#">Keep it secret</a></li>
-                    <li><a class="dropdown-item" href="#">Country 1</a></li>
-                    <li><a class="dropdown-item" href="#">Country 2</a></li>
-                    <li><a class="dropdown-item" href="#">Country 3</a></li>
-                </ul>
+                <select id="select_country" name="Nationality" required>
+                    <option selected>Choose country</option>
+                </select>
             </div>
-            <center onclick="location.href='@Url.Action("FindOut", "Stranger")'">
+            <center onclick="submitForm()">
                 <a class="custom-btn">
                     NEXT
                 </a>
@@ -60,3 +36,27 @@
         </form>
     </div>
 </div>
+
+@section script {
+    <script>
+        $.ajax({
+            url: "https://gist.githubusercontent.com/ssskip/5a94bfcd2835bf1dea52/raw/3b2e5355eb49336f0c6bc0060c05d927c2d1e004/ISO3166-1.alpha2.json",
+            type: "get",
+            success: function(data) {
+                var countries = JSON.parse(data);
+                var select = document.getElementById("select_country");
+                Object.keys(countries).forEach(key => {
+                    var el = document.createElement("option");
+                    el.textContent = countries[key];
+                    el.value = key;
+                    select.appendChild(el);
+                })
+            }
+        })
+
+        function submitForm() {
+            var form = document.getElementById("stranger_index_form");
+            form.submit();
+        }
+    </script>
+}

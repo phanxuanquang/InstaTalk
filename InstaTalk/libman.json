@@ -13,6 +13,10 @@
     {
       "library": "rxjs@7.8.1",
       "destination": "wwwroot/lib/rxjs/"
+    },
+    {
+      "library": "bootstrap-tagsinput@0.8.0",
+      "destination": "wwwroot/lib/bootstrap-tagsinput/"
     }
   ]
 }
