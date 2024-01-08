@@ -47,10 +47,9 @@ namespace InstaTalk.Controllers
         [HttpPost]
         public async Task<IActionResult> ChangeRoomSercurityCode([FromBody] EditRoomModel editRoomModel)
         {
-            var baseUrl = _configuration.GetValue<string>("APIUrl");
-
             using (HttpClient client = _httpClientFactory.CreateClient("API"))
             {
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
                 var response = await client.PutAsJsonAsync("api/Room", editRoomModel);
 
                 if (response.IsSuccessStatusCode)

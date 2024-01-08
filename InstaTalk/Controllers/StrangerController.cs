@@ -102,8 +102,8 @@ namespace InstaTalk.Controllers
                 return RedirectToAction("Index");
             using (var client = _httpClientFactory.CreateClient("API"))
             {
-                var model = obj;
-                var response = await client.PostAsJsonAsync("/api/Stranger/join-stranger", model);
+                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var response = await client.PostAsJsonAsync("/api/Stranger/join-stranger", obj);
                 if (response.IsSuccessStatusCode)
                 {
                     using (var content = response.Content)
@@ -111,7 +111,7 @@ namespace InstaTalk.Controllers
                         var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
                         HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
                         HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
-                        return RedirectToAction("Meeting", "Home", new { id = responseContent?.Room?.RoomId });
+                        return RedirectToAction("Meeting", "Room", new { id = responseContent?.Room?.RoomId });
                     }
                 }
             }
