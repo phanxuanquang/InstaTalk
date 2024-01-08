@@ -16,9 +16,8 @@
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 1rem 0rem 1rem 0rem;">
         <form id="stranger_index_form" style="width:95%; display:inline-block; margin-left:auto; margin-right:auto;" method="post" action="@Url.Action("CallAddStranger", "Stranger")">
             <div class="m-auto" style="max-width:550px;">
-                
             </div>
-            <div  style="max-width:550px;">
+            <div style="max-width:550px;">
                 <select class="select-t" id="select_gender" name="StrangerFilter.FindGener">
                     <option selected>You want to find</option>
                     <option value="Male">Male</option>
@@ -26,24 +25,7 @@
                     <option value="Others">Others</option>
                 </select>
             </div>
-            @*<div style="width:100%;" class="mb-3">
-                <select id="choices-multiple-remove-button" placeholder="Select Country up to 5 tags" multiple>
-                    <option value="HTML">HTML</option>
-                    <option value="Jquery">Jquery</option>
-                    <option value="CSS">CSS</option>
-                    <option value="Bootstrap 3">Bootstrap 3</option>
-                    <option value="Bootstrap 4">Bootstrap 4</option>
-                    <option value="Java">Java</option>
-                    <option value="Javascript">Javascript</option>
-                    <option value="Angular">Angular</option>
-                    <option value="Python">Python</option>
-                    <option value="Hybris">Hybris</option>
-                    <option value="SQL">SQL</option>
-                    <option value="NOSQL">NOSQL</option>
-                    <option value="NodeJS">NodeJS</option>
-                </select>
-            </div>*@
-            <div class="m-auto d-flex gap-2" style="max-width:550px;">
+            <div class="m-auto d-flex gap-2 mb-2" style="max-width:550px;">
                 <select class="select-t" id="select_age" name="StrangerFilter.MinAge">
                     <option selected>Whose age is</option>
                     <option value="1">From 15 to under 18</option>
@@ -51,10 +33,15 @@
                     <option value="3">From 24 to under 30</option>
                     <option value="4">Above 30</option>
                 </select>
-                <select class="select-t" id="select_country" name="StrangerFilter.FindRegion[]">
-                    <option selected>And come from</option>
+                @*<select class="select-t" id="select_country" name="StrangerFilter.FindRegion[]">
+                <option selected>And come from</option>
+                </select>*@
+            </div>
+            <div style="width:100%;" class="mb-3">
+                <select id="select_country" name="StrangerFilter.FindRegion[]" placeholder="And come from" multiple>
                 </select>
             </div>
+
             <a class="custom-btn me-2" style="width: 16rem;" href="#" onclick="submitForm()">
                 Let's Find Out
                 <span></span>
