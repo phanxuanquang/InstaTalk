@@ -14,7 +14,7 @@
 <div class="min-vh-100 d-flex align-items-center justify-content-center flex-column w-100">
     <div style="max-width:550px;text-align:center;">
         <img class="img-fluid" id="homepage_logo" src="~/asset/image/logo.png" alt="logo" style="margin: 1rem 0rem 1rem 0rem;">
-        <form id="stranger_index_form" style="width:95%; display:inline-block; margin-left:auto; margin-right:auto;" action="@Url.Action("Waiting", "Stranger")">
+        <form id="stranger_index_form" style="width:95%; display:inline-block; margin-left:auto; margin-right:auto;" action="@Url.Action("CallAddStranger", "Stranger")">
             <div class="m-auto" style="max-width:550px;">
                 
             </div>
@@ -51,7 +51,7 @@
                     <option value="3">From 24 to under 30</option>
                     <option value="4">Above 30</option>
                 </select>
-                <select class="select-t" id="select_country" name="StrangerFilter.FindRegion">
+                <select class="select-t" id="select_country" name="StrangerFilter.FindRegion[]">
                     <option selected>And come from</option>
                 </select>
             </div>
