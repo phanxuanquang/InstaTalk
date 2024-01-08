@@ -1,7 +1,6 @@
 ﻿using InstaTalk.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Net.Http;
 using System.Text;
 
 namespace InstaTalk.Controllers
@@ -9,10 +8,12 @@ namespace InstaTalk.Controllers
     public class RoomController : Controller
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public RoomController(IConfiguration configuration)
+        public RoomController(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
             _configuration = configuration;
+            _httpClientFactory = httpClientFactory;
         }
 
         public IActionResult Index(int roomId)
@@ -48,26 +49,12 @@ namespace InstaTalk.Controllers
         {
             var baseUrl = _configuration.GetValue<string>("APIUrl");
 
-            using (HttpClient client = new HttpClient())
+            using (HttpClient client = _httpClientFactory.CreateClient("API"))
             {
-                client.BaseAddress = new Uri(baseUrl);
-
-                EditRoomModel editRoom = new EditRoomModel
-                {
-                    RoomId = editRoomModel.RoomId,
-                    RoomName = editRoomModel.RoomName,
-                    SecurityCode = editRoomModel.SecurityCode
-                };
-
-                var endpoint = "api/Room";
-                client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
-                var response = await client.PutAsJsonAsync(endpoint, editRoom);
+                var response = await client.PutAsJsonAsync("api/Room", editRoomModel);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadAsStringAsync();
-                    RoomModel room = JsonConvert.DeserializeObject<RoomModel>(result);
-                    Console.WriteLine("Success change sercurity of room with roomID is: ", room.RoomId);
                     return Json(new { message = "OK" });
                 }
                 else
