@@ -116,7 +116,7 @@ namespace API.Controllers
                     Age = user.Age,
                     Nationality = user.Nationality,
                     //Type = user.Type,
-                    Token = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme) ?? string.Empty
+                    Token = await HttpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, "access_token") ?? string.Empty
                 };
 
                 return Ok(new
