@@ -34,7 +34,7 @@ namespace API.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost("add-strager")]
+        [HttpPost("add-stranger")]
         [AllowAnonymous]
         public async Task<ActionResult> AddStranger(RegisterStrangerDto register)
         {
