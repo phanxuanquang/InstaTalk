@@ -59,7 +59,7 @@ namespace API.Entities
         public int MaxAge { get; set; }
 
         [NotMapped]
-        public ICollection<string> FindRegion { get => _FindRegion.Split(','); set => string.Join(',', value); }
+        public ICollection<string> FindRegion { get => _FindRegion.Split(','); set => _FindRegion = string.Join(',', value); }
 
         public string _FindRegion { get; set; } = string.Empty;
 

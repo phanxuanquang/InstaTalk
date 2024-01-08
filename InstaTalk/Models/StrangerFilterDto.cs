@@ -10,6 +10,6 @@
 
         public ICollection<string> FindRegion { get; set; } = new List<string>();
 
-        public ICollection<string> FindType { get; set; } = new List<string>();
+        //public ICollection<string> FindType { get; set; } = new List<string>();
     }
 }

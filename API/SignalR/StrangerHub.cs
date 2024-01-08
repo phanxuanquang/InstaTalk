@@ -40,18 +40,23 @@ namespace API.SignalR
                 if (joinToRoom == null)
                 {
                     var clients = await Task.WhenAll(group.Select(item => _tracker.GetConnectionsForUserID(item.Id)));
-                    await Clients.Clients(clients.SelectMany(item => item)).SendAsync("JoinStrangerRoom", new
-                    {
-                        RoomID = group.FirstOrDefault()?.Rooms.FirstOrDefault()?.RoomId
-                    });
+                    var callClient = clients.SelectMany(item => item);
+                    if (callClient != null && callClient.Any())
+                        await Clients.Clients(callClient).SendAsync("JoinStrangerRoom", new
+                        {
+                            roomId = group.FirstOrDefault()?.Rooms?.FirstOrDefault()?.RoomId
+                        });
                 }
                 else
                 {
                     var clients = await Task.WhenAll(group.Where(item => item.StrangerFilter?.CurrentRoom == null).Select(item => _tracker.GetConnectionsForUserID(item.Id)));
-                    await Clients.Clients(clients.SelectMany(item => item)).SendAsync("JoinStrangerRoom", new
-                    {
-                        RoomID = joinToRoom.StrangerFilter?.CurrentRoom?.RoomId
-                    });
+
+                    var callClient = clients.SelectMany(item => item);
+                    if (callClient != null && callClient.Any())
+                        await Clients.Clients(callClient).SendAsync("JoinStrangerRoom", new
+                        {
+                            roomId = joinToRoom.StrangerFilter?.CurrentRoom?.RoomId
+                        });
                 }
             }
 

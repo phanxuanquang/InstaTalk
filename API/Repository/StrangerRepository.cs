@@ -19,7 +19,7 @@ namespace API.Repository
 
         public async Task<List<List<AppUser>>> StrangerFindMatch()
         {
-            var queryUser = await _context.Users.Include(x => x.StrangerFilter).ThenInclude(x => x.CurrentRoom).AsNoTracking().ToListAsync();
+            var queryUser = await _context.Users.Include(x => x.Rooms).Include(x => x.StrangerFilter).ThenInclude(x => x.CurrentRoom).AsNoTracking().ToListAsync();
 
             Graph g = new Graph();
 

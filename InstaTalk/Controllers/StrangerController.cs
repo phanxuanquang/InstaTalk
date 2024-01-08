@@ -9,8 +9,6 @@ namespace InstaTalk.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
 
-        private static StrangerModel _strangerModel = new StrangerModel();
-
         public StrangerController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
@@ -22,70 +20,72 @@ namespace InstaTalk.Controllers
             return View();
         }
 
-        public IActionResult FindOut(StrangerModel obj)
+        public async Task<IActionResult> FindOut(StrangerModel obj)
         { 
             if (obj.DisplayName == null)
             {
                 return RedirectToAction("Index", "Stranger");
             }
-            _strangerModel = obj;
-            return View(obj);
-        }
-
-        public async Task<IActionResult> Waiting(StrangerModel obj)
-        {
-            obj.DisplayName = _strangerModel.DisplayName;
-            obj.Age = _strangerModel.Age;
-            obj.Gender = _strangerModel.Gender;
-            obj.Nationality = _strangerModel.Nationality;
-            switch(obj.StrangerFilter.MinAge)
+            else
             {
-                case 1:
-                    obj.StrangerFilter.MinAge = 15;
-                    obj.StrangerFilter.MaxAge = 18;
-                    break;
-                case 2:
-                    obj.StrangerFilter.MinAge = 18;
-                    obj.StrangerFilter.MaxAge = 24;
-                    break;
-                case 3:
-                    obj.StrangerFilter.MinAge = 24;
-                    obj.StrangerFilter.MaxAge = 30;
-                    break;
-                case 4:
-                    obj.StrangerFilter.MinAge = 30;
-                    obj.StrangerFilter.MaxAge = 100;
-                    break;
-            }
-            RoomInfo? responseContent = null;
-            using (var client = _httpClientFactory.CreateClient("API"))
-            {
-                var model = obj;
-                model.RoomName = "test123";
-                model.SecurityCode = "123456";
-                var response = await client.PostAsJsonAsync("/api/Stranger/add-strager", model);
-                if (response.IsSuccessStatusCode)
+                switch (obj.StrangerFilter?.MinAge)
                 {
-                    using (var content = response.Content)
+                    case 1:
+                        obj.StrangerFilter.MinAge = 15;
+                        obj.StrangerFilter.MaxAge = 18;
+                        break;
+                    case 2:
+                        obj.StrangerFilter.MinAge = 18;
+                        obj.StrangerFilter.MaxAge = 24;
+                        break;
+                    case 3:
+                        obj.StrangerFilter.MinAge = 24;
+                        obj.StrangerFilter.MaxAge = 30;
+                        break;
+                    case 4:
+                        obj.StrangerFilter.MinAge = 30;
+                        obj.StrangerFilter.MaxAge = 100;
+                        break;
+                }
+
+                using (var client = _httpClientFactory.CreateClient("API"))
+                {
+                    var model = obj;
+                    model.RoomName = "test123";
+                    var response = await client.PostAsJsonAsync("/api/Stranger/add-strager", model);
+                    if (response.IsSuccessStatusCode)
                     {
-                        responseContent = await content.ReadFromJsonAsync<RoomInfo>();
-                        HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
-                        HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
+                        using (var content = response.Content)
+                        {
+                            var responseContent = await content.ReadFromJsonAsync<RoomInfo>();
+                            HttpContext.Session.SetString("token", responseContent?.User?.Token ?? string.Empty);
+                            HttpContext.Session.SetString("sessionRoom", JsonConvert.SerializeObject(responseContent));
+                            if (responseContent?.Room?.RoomId != null)
+                                return RedirectToAction("Waiting");
+                        }
                     }
                 }
             }
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Waiting()
+        {
+            var content = HttpContext.Session.GetString("sessionRoom");
+            if (string.IsNullOrEmpty(content))
+                return RedirectToAction("Index");
+
+            var model = JsonConvert.DeserializeObject<RoomInfo>(content);
+
             ViewBag.API = new { API = _configuration.GetValue<string>("APIUrl") };
 
-            if (responseContent == null)
-                return RedirectToAction("Index", "Stranger");
-
-            return View(responseContent);
+            return View(model);
         }
 
         public async Task<IActionResult> Matching(JoinStrangerModel obj)
         {
             if (obj.RoomId == Guid.Empty)
-                return RedirectToAction("Index", "Stranger");
+                return RedirectToAction("Index");
             using (var client = _httpClientFactory.CreateClient("API"))
             {
                 var model = obj;
