@@ -126,11 +126,7 @@
         <div id="div_footer_left_meeting" class="text-light d-flex align-items-center justify-content-center" style="height:auto;">
             <div id="div_title_meeting">
                 <span id="time_meeting" class="me-2">
-                    @{
-                        var timer = (DateTime.Now - Model?.Room?.CreatedDate);
-                        var StartTime = new DateTime(timer.Value.Ticks);
-                    }
-                    @StartTime.ToString("HH:mm:ss")
+
 
                 </span>
                 |
