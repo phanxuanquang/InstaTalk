@@ -324,6 +324,10 @@ function setCopyState() {
     icon.innerHTML = "done";
 }
 
+function idClick() {
+    navigator.clipboard.writeText(window.location.href);
+}
+
 $(function () {
     $('[data-toggle="tooltip"]').tooltip()
 })
@@ -755,11 +759,15 @@ chatService.blockChat$.subscribe(state => {
         var notifi = document.getElementById("notification_block_chat");
         if (!(JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member")) {
             notifi.innerHTML = "You have been blocked chat"
+            let switch = document.getElementById("switch");
+            switch.checked = true;
         }
         notifi.classList.remove("d-none");
         notifi.classList.add("d-flex");
     }
     else {
+        let switch = document.getElementById("switch");
+        switch.checked = true;
         var chat = document.getElementById("div_footer_right_meeting");
         var btn_attach = document.getElementById("btn_attach_file");
         var btn_send = document.getElementById("btn_icon_send_chat");
@@ -1158,6 +1166,9 @@ $(document).ready(function () {
 
 function addLinkMeeting() {
     let input_link = document.getElementById("link_meeting");
+    let id_room_meeting = document.getElementById("id_room_meeting");
+    var roomId = ObjClient.Room.roomId;
+    id_room_meeting.innerHTML = roomId.slice(0, 8);
     input_link.value = window.location.href ;
 }
 

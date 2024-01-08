@@ -37,6 +37,7 @@ namespace InstaTalk.Controllers
             var json = JsonConvert.DeserializeObject<StrangerModel>(shareModel);
             if (shareModel == null)
             {
+
                 return RedirectToAction("Index");
             }
             obj.DisplayName = json.DisplayName;
