@@ -30,6 +30,7 @@ namespace InstaTalk.Controllers
             return View(obj);
         }
 
+        [HttpPost]
         public async Task<IActionResult> CallAddStranger(StrangerModel obj)
         {
             var shareModel = HttpContext.Session.GetString("ShareStranger");
