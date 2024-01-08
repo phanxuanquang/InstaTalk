@@ -223,13 +223,12 @@
         </div>
         <div id="div_chat_right_meeting" style="overflow:auto;" class="w-100 h-100 d-flex flex-column bg-light">
             <div id="my_chat_message" style="max-width:75%;align-self:end;display:none" class="rounded-pill bg-secondary text-white px-3 py-1 mx-2 my-1">
-               <p id="my_message" class="m-0">
+                <p id="my_message" class="m-0">
 
-               </p>
+                </p>
             </div>
             <div id="other_chat_message" style="max-width:75%;width:fit-content;background-color:white;border-radius:0.75rem;padding:0.3rem;margin:0.2rem;display:none">
                 <div id="other_name" style="max-width:fit-content;color:deepskyblue;font-weight:bold">
-
                 </div>
                 <p id="other_message" class="m-0">
 
@@ -268,24 +267,23 @@
                 </span>
             </button>
         </div>
-    <div id="div_body_participants" style="overflow:auto;background-color:#aebc8e;width:100%">
-         <div id="participant" style="width:95%" class="d-flex align-items-center m-1">
-             <div id="participant_name" style="width:80%">
-
-             </div>
-             <button id="btn_mic_participant" style="border:none;display:none" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
-                <span class="material-icons" id="ic_mic_participant">
-                    mic
-                </span>
-            </button>
-            <button id="btn_kick" style="border:none;display:none;" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="kick(this)">
-                <span class="material-icons" id="ic_volumn_participant">
-                    more_horiz
-                </span>
-            </button>
-         </div>
+        <div id="div_body_participants" class="rounded px-3 my-2 bg-secondary" style="overflow:auto;width:95%">
+            <div id="participant" style="width:95%" class="d-flex align-items-center m-1">
+                <div id="participant_name" style="width:80%">
+                </div>
+                <button id="btn_mic_participant" style="border:none;display:none" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
+                    <span class="material-icons" id="ic_mic_participant">
+                        mic
+                    </span>
+                </button>
+                <button id="btn_kick" style="border:none;display:none;" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="kick(this)">
+                    <span class="material-icons" id="ic_volumn_participant">
+                        more_horiz
+                    </span>
+                </button>
+            </div>
+        </div>
     </div>
-</div>
 </div>
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
