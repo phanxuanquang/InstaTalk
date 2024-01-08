@@ -303,8 +303,8 @@ function showModalConfig() {
 }
 
 function updateTimer() {
-   
     var now = new Date();
+    now.setMinutes(now.getMinutes() + now.getTimezoneOffset());
     var distance = now - new Date(ObjClient.Room.createdDate);
     hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
