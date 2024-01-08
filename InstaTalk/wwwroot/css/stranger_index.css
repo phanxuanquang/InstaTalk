@@ -108,6 +108,7 @@ h10 {
     color: white;
     background-color: #1a1a1d !important;
     border-color: #7ad5a6 !important;
+    padding: 0.65em;
 }
 
     .choices__item:hover {

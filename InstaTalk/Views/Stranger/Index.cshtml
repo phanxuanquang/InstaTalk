@@ -4,6 +4,7 @@
 }
 @section customHead {
     <link rel="stylesheet" href="~/css/stranger_index.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
 }
@@ -30,11 +31,10 @@
                     <input placeholder="Your age" class="textInput" type="number" required name="Age" />
                 </div>
             </div>
-            
 
-            <div class="btn-group shadow-0 mb-3" style="width:100%;" aria-label=".form-select-lg example">
-                <select class="select-t" id="select_country" name="Nationality" required>
-                    <option selected>Choose country</option>
+
+            <div style="width:100%;" aria-label=".form-select-lg example">
+                <select placeholder="Your country" id="select_country" name="Nationality" required>
                 </select>
             </div>
             <center onclick="submitForm()">
@@ -47,6 +47,7 @@
 </div>
 
 @section script {
+    <script src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/choices.min.js"></script>
     <script src="~/js/stranger_index.js" asp-append-version="true"></script>
     <script>
         $.ajax({
@@ -107,6 +108,17 @@
                 });
 
             });
+            var multipleCancelButton = new Choices('#select_country', {
+                removeItemButton: true,
+                maxItemCount: 1,
+                searchResultLimit: 5,
+                renderChoiceLimit: 5,
+                placeholderValue: 'Your country',
+                noChoicesText: 'No country found',
+                searchPlaceholderValue: 'Select your country',
+
+            });
+
         },
             function () {/*I fail*/ })
 
