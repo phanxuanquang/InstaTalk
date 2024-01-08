@@ -65,7 +65,7 @@ namespace API.Controllers
                 RoomName = register.RoomName,
                 SecurityCode = register.SecurityCode,
                 UserId = user.Id,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.UtcNow
             };
 
             _unitOfWork.RoomRepository.AddRoom(room);
