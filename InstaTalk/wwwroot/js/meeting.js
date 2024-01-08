@@ -753,21 +753,20 @@ muteCamMicService.shareScreen$.subscribe(event => {
 
 chatService.blockChat$.subscribe(state => {
     if (state.block) {
+        var switch_chat = document.getElementById("switch");
         var chat = document.getElementById("div_footer_right_meeting");
         chat.classList.remove("d-flex");
         chat.classList.add("d-none");
         var notifi = document.getElementById("notification_block_chat");
         if (!(JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member")) {
-            notifi.innerHTML = "You have been blocked chat"
-            let switch = document.getElementById("switch");
-            switch.checked = true;
+            notifi.innerHTML = "You have been blocked chat";
+            switch_chat.checked = true;
         }
         notifi.classList.remove("d-none");
         notifi.classList.add("d-flex");
     }
     else {
-        let switch = document.getElementById("switch");
-        switch.checked = true;
+        switch_chat.checked = false;
         var chat = document.getElementById("div_footer_right_meeting");
         var btn_attach = document.getElementById("btn_attach_file");
         var btn_send = document.getElementById("btn_icon_send_chat");
