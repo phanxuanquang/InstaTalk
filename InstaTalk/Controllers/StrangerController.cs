@@ -37,6 +37,7 @@ namespace InstaTalk.Controllers
             var json = JsonConvert.DeserializeObject<StrangerModel>(shareModel);
             if (shareModel == null)
             {
+
                 return RedirectToAction("Index");
             }
             obj.DisplayName = json.DisplayName;
@@ -67,7 +68,7 @@ namespace InstaTalk.Controllers
             {
                 var model = obj;
                 model.RoomName = "test123";
-                var response = await client.PostAsJsonAsync("/api/Stranger/add-strager", model);
+                var response = await client.PostAsJsonAsync("/api/Stranger/add-stranger", model);
                 if (response.IsSuccessStatusCode)
                 {
                     using (var content = response.Content)

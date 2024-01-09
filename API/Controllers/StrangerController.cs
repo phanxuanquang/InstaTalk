@@ -34,7 +34,7 @@ namespace API.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost("add-strager")]
+        [HttpPost("add-stranger")]
         [AllowAnonymous]
         public async Task<ActionResult> AddStranger(RegisterStrangerDto register)
         {
@@ -72,7 +72,7 @@ namespace API.Controllers
                 RoomName = register.RoomName,
                 SecurityCode = register.SecurityCode,
                 UserId = user.Id,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.UtcNow
             };
 
             _unitOfWork.RoomRepository.AddRoom(room);

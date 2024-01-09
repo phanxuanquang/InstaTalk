@@ -126,15 +126,11 @@
         <div id="div_footer_left_meeting" class="text-light d-flex align-items-center justify-content-center" style="height:auto;">
             <div id="div_title_meeting">
                 <span id="time_meeting" class="me-2">
-                    @{
-                        var timer = (DateTime.Now - Model?.Room?.CreatedDate);
-                        var StartTime = new DateTime(timer.Value.Ticks);
-                    }
-                    @StartTime.ToString("HH:mm:ss")
+
 
                 </span>
                 |
-                <span id="id_room_meeting" class="ms-2" data-toggle="tooltip" data-placement="top" title="Click to copy room URL" style="cursor: pointer;">
+                <span id="id_room_meeting" class="ms-2" data-toggle="tooltip" data-placement="top" title="Click to copy room URL" style="cursor: pointer;" onclick="idClick()">
                     12345
                 </span>
             </div>
@@ -206,7 +202,7 @@
     <div id="div_right_meeting" style="min-width:250px;" class="col-3 flex-column align-items-center border border-2 rounded-3 bg-light">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2" style="align-items:baseline;">
             <div id="block_chat" class="checkbox-wrapper-35 col-11 bg-light py-2">
-                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents()">
+                <input value="private" name="switch" id="switch_chat" type="checkbox" class="switch" onclick="toggleComponents()">
                 <label for="switch">
                     <span class="switch-x-text">Chat Area is </span>
                     <span class="switch-x-toggletext">
