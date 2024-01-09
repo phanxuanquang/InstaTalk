@@ -86,7 +86,7 @@ h10 {
     font-size: 12px;
     margin-left: 5px !important;
     letter-spacing: 0.8px;
-    font-family: Arial !important;
+    font-family: 'Roboto', sans-serif;
     color: white;
     width: 100%;
     background-color: #1a1a1d !important;
@@ -100,15 +100,15 @@ h10 {
 }
 
 .choices__item {
-    font-size: 12px;
+    font-size: 16px;
     margin-left: 5px !important;
     margin-right: 5px !important;
     letter-spacing: 0.8px;
-    font-family: Arial !important;
+    font-family: 'Roboto', sans-serif;
     color: white;
     background-color: #1a1a1d !important;
     border-color: #7ad5a6 !important;
-    padding: 0.65em;
+    padding: 0.1em 0.65em 0.1em 0;
 }
 
     .choices__item:hover {
