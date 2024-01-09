@@ -354,25 +354,42 @@ function sendFileHandler(event) {
     var fileReader = new FileReader();
     fileReader.onload = function () {
         arrayBuffer = this.result;
+        let metadata = {
+            id: idFile,
+            name: file.name,
+            fileSize: file.size,
+            sentBy: {
+                userId: ObjClient.User.userId,
+                displayName: ObjClient.User.displayName
+            }
+        };
         Object.keys(myPeer.connections).forEach(peerId => {
             const conn = myPeer.connect(peerId);
             if (conn) {
                 conn.on('open', () => {
                     conn.send({
                         file: arrayBuffer,
-                        metadata: {
-                            id: idFile,
-                            name: file.name,
-                            fileSize: file.size,
-                            sentBy: {
-                                userId: ObjClient.User.userId,
-                                displayName: ObjClient.User.displayName
-                            }
-                        }
+                        metadata: metadata
                     });
                 })
             }
         })
+
+        if (arrayBuffer) {
+            var blob = new Blob([arrayBuffer]);
+            var url = URL.createObjectURL(blob);
+
+            // Create a link to download the file
+            var downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = metadata.name;
+            downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
+            var chat = myChatClone.cloneNode(true);
+            chat.style.display = "block";
+            var chat_message = chat.querySelector("#my_message");
+            chat_message.append(downloadLink)
+            myChatDisplay.append(chat);
+        }
     };
     fileReader.readAsArrayBuffer(file);
 }
@@ -821,8 +838,11 @@ function InitRTC() {
                 downloadLink.href = url;
                 downloadLink.download = metadata.name;
                 downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
-                var chat = myChatClone.cloneNode(true);
-                var chat_message = chat.querySelector("#my_message");
+                var chat = otherChatClone.cloneNode(true);
+                chat.style.display = "block";
+                var chat_name = chat.querySelector("#other_name");
+                chat_name.innerHTML = metadata.sentBy.displayName;
+                var chat_message = chat.querySelector("#other_message");
                 chat_message.append(downloadLink)
                 myChatDisplay.append(chat);
             }
@@ -880,7 +900,7 @@ function InitRTC() {
                         videoSource.next(videos);
 
                     });
-                }, 10000);
+                }, 3000);
             }
         })
     );
@@ -1022,7 +1042,8 @@ async function createLocalStream() {
         stream.getAudioTracks()[0].enabled = myVideo.muted;
         SetVolume(myVideo, parent);
     } catch (error) {
-        stream = new webkitMediaStream();
+        let canvas = document.getElementById('blank_video');
+        stream = canvas.captureStream(25);
         handleError(error);
     }
 
@@ -1207,27 +1228,31 @@ function NewSoundMeter(stream) {
     try {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.audioContext = new AudioContext();
+        const soundMeter = new SoundMeter(window.audioContext);
+        soundMeter.connectToSource(stream);
+        return soundMeter;
     } catch (e) {
         alert('Web Audio API not supported.');
     }
-    const soundMeter = new SoundMeter(window.audioContext);
-    soundMeter.connectToSource(stream);
-    return soundMeter;
 }
 
 function SetVolume(video, userVideo) {
-    const soundMeter = NewSoundMeter(video.srcObject);
-    setInterval(() => {
+    if (video.srcObject.getAudioTracks().length > 0) {
+        const soundMeter = NewSoundMeter(video.srcObject);
+        if (soundMeter) {
+            setInterval(() => {
 
-        if (userVideo) {
-            const volume = soundMeter.instant.toFixed(2); 
-            if (volume > 0.01) {
-                userVideo.style.borderStyle = "ridge";
-            } else {
-                userVideo.style.borderStyle = "none";
-            }
+                if (userVideo) {
+                    const volume = soundMeter.instant.toFixed(2);
+                    if (volume > 0.01) {
+                        userVideo.style.borderStyle = "ridge";
+                    } else {
+                        userVideo.style.borderStyle = "none";
+                    }
+                }
+            }, 200);
         }
-    }, 200);
+    }
 }
 
 function uuidv4() {
