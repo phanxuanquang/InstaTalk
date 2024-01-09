@@ -303,8 +303,8 @@ function showModalConfig() {
 }
 
 function updateTimer() {
-   
     var now = new Date();
+    now.setMinutes(now.getMinutes() + now.getTimezoneOffset());
     var distance = now - new Date(ObjClient.Room.createdDate);
     hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -322,6 +322,10 @@ function setCopyState() {
     navigator.clipboard.writeText(window.location.href);
     var icon = document.getElementById("icon_copy_url");
     icon.innerHTML = "done";
+}
+
+function idClick() {
+    navigator.clipboard.writeText(window.location.href);
 }
 
 $(function () {
@@ -749,17 +753,20 @@ muteCamMicService.shareScreen$.subscribe(event => {
 
 chatService.blockChat$.subscribe(state => {
     if (state.block) {
+        var switch_chat = document.getElementById("switch");
         var chat = document.getElementById("div_footer_right_meeting");
         chat.classList.remove("d-flex");
         chat.classList.add("d-none");
         var notifi = document.getElementById("notification_block_chat");
         if (!(JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member")) {
-            notifi.innerHTML = "You have been blocked chat"
+            notifi.innerHTML = "You have been blocked chat";
+            switch_chat.checked = true;
         }
         notifi.classList.remove("d-none");
         notifi.classList.add("d-flex");
     }
     else {
+        switch_chat.checked = false;
         var chat = document.getElementById("div_footer_right_meeting");
         var btn_attach = document.getElementById("btn_attach_file");
         var btn_send = document.getElementById("btn_icon_send_chat");
@@ -1158,6 +1165,9 @@ $(document).ready(function () {
 
 function addLinkMeeting() {
     let input_link = document.getElementById("link_meeting");
+    let id_room_meeting = document.getElementById("id_room_meeting");
+    var roomId = ObjClient.Room.roomId;
+    id_room_meeting.innerHTML = roomId.slice(0, 8);
     input_link.value = window.location.href ;
 }
 
