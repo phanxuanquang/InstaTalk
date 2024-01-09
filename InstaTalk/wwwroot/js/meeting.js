@@ -322,10 +322,12 @@ function setCopyState() {
     navigator.clipboard.writeText(window.location.href);
     var icon = document.getElementById("icon_copy_url");
     icon.innerHTML = "done";
+    CallToast("Room ID is copied to clipboard.");
 }
 
 function idClick() {
     navigator.clipboard.writeText(window.location.href);
+    CallToast("Room ID is copied to clipboard.");
 }
 
 $(function () {
@@ -430,10 +432,10 @@ function addParticipant(item) {
     var kick = parentPart.querySelector("#btn_kick");
     name.id = item.user.id + "_name";
     mic.id = item.user.id + "_mic";
-    mic.style.display = "block";
+    mic.style.display = "flex";
     icon_mic.id = item.user.id + "_icon_mic";
     kick.id = item.user.id + "_kick";
-    kick.style.display = "block";
+    kick.style.display = "flex";
     name.innerHTML = item.user.displayName;
     divParticipants.append(parentPart);
 }
