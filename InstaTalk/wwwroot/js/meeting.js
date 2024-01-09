@@ -769,21 +769,21 @@ muteCamMicService.shareScreen$.subscribe(event => {
 });
 
 chatService.blockChat$.subscribe(state => {
+    var checkbox_chat = document.getElementById("switch");
     if (state.block) {
-        var switch_chat = document.getElementById("switch");
         var chat = document.getElementById("div_footer_right_meeting");
         chat.classList.remove("d-flex");
         chat.classList.add("d-none");
         var notifi = document.getElementById("notification_block_chat");
         if (!(JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member")) {
             notifi.innerHTML = "You have been blocked chat";
-            switch_chat.checked = true;
+            checkbox_chat.checked = true;
         }
         notifi.classList.remove("d-none");
         notifi.classList.add("d-flex");
     }
     else {
-        switch_chat.checked = false;
+        checkbox_chat.checked = false;
         var chat = document.getElementById("div_footer_right_meeting");
         var btn_attach = document.getElementById("btn_attach_file");
         var btn_send = document.getElementById("btn_icon_send_chat");
@@ -1206,13 +1206,13 @@ function hiddenForMembers() {
 }
 function toggleComponents() {
     isBlockChat = !isBlockChat;
-    var checkbox = document.getElementById("switch");
+    var checkbox_chat = document.getElementById("switch");
 
     var parentDiv = document.getElementById("div_right_meeting");
 
     var formElements = parentDiv.querySelectorAll("select, textarea, button");
 
-    var disable = !checkbox.checked;
+    var disable = !checkbox_chat.checked;
 
     chatService.blockChat(isBlockChat);
 
