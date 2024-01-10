@@ -35,7 +35,7 @@ namespace API.Repository
                     //user.StrangerFilter.FindType.Any(subItem => item.Type.Contains(subItem)) &&
                     user.StrangerFilter.MinAge <= item.Age &&
                     user.StrangerFilter.MaxAge >= item.Age &&
-                    user.StrangerFilter.FindGener.Contains(item.Gender ?? string.Empty) &&
+                    user.StrangerFilter.FindGender.Contains(item.Gender ?? string.Empty) &&
                     user.StrangerFilter.FindRegion.Contains(item.Nationality ?? string.Empty))
                     .ToList();
                 foreach (var item in listUserMatch)

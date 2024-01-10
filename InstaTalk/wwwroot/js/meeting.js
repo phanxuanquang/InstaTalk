@@ -322,10 +322,12 @@ function setCopyState() {
     navigator.clipboard.writeText(window.location.href);
     var icon = document.getElementById("icon_copy_url");
     icon.innerHTML = "done";
+    CallToast("Room ID is copied to clipboard.");
 }
 
 function idClick() {
     navigator.clipboard.writeText(window.location.href);
+    CallToast("Room ID is copied to clipboard.");
 }
 
 $(function () {
@@ -354,25 +356,42 @@ function sendFileHandler(event) {
     var fileReader = new FileReader();
     fileReader.onload = function () {
         arrayBuffer = this.result;
+        let metadata = {
+            id: idFile,
+            name: file.name,
+            fileSize: file.size,
+            sentBy: {
+                userId: ObjClient.User.userId,
+                displayName: ObjClient.User.displayName
+            }
+        };
         Object.keys(myPeer.connections).forEach(peerId => {
             const conn = myPeer.connect(peerId);
             if (conn) {
                 conn.on('open', () => {
                     conn.send({
                         file: arrayBuffer,
-                        metadata: {
-                            id: idFile,
-                            name: file.name,
-                            fileSize: file.size,
-                            sentBy: {
-                                userId: ObjClient.User.userId,
-                                displayName: ObjClient.User.displayName
-                            }
-                        }
+                        metadata: metadata
                     });
                 })
             }
         })
+
+        if (arrayBuffer) {
+            var blob = new Blob([arrayBuffer]);
+            var url = URL.createObjectURL(blob);
+
+            // Create a link to download the file
+            var downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = metadata.name;
+            downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
+            var chat = myChatClone.cloneNode(true);
+            chat.style.display = "block";
+            var chat_message = chat.querySelector("#my_message");
+            chat_message.append(downloadLink)
+            myChatDisplay.append(chat);
+        }
     };
     fileReader.readAsArrayBuffer(file);
 }
@@ -413,10 +432,10 @@ function addParticipant(item) {
     var kick = parentPart.querySelector("#btn_kick");
     name.id = item.user.id + "_name";
     mic.id = item.user.id + "_mic";
-    mic.style.display = "block";
+    mic.style.display = "flex";
     icon_mic.id = item.user.id + "_icon_mic";
     kick.id = item.user.id + "_kick";
-    kick.style.display = "block";
+    kick.style.display = "flex";
     name.innerHTML = item.user.displayName;
     divParticipants.append(parentPart);
 }
@@ -752,21 +771,21 @@ muteCamMicService.shareScreen$.subscribe(event => {
 });
 
 chatService.blockChat$.subscribe(state => {
+    var checkbox_chat = document.getElementById("switch");
     if (state.block) {
-        var switch_chat = document.getElementById("switch");
         var chat = document.getElementById("div_footer_right_meeting");
         chat.classList.remove("d-flex");
         chat.classList.add("d-none");
         var notifi = document.getElementById("notification_block_chat");
         if (!(JSON.parse(window.atob(ObjClient.User.token.split('.')[1])).role == "Member")) {
             notifi.innerHTML = "You have been blocked chat";
-            switch_chat.checked = true;
+            checkbox_chat.checked = true;
         }
         notifi.classList.remove("d-none");
         notifi.classList.add("d-flex");
     }
     else {
-        switch_chat.checked = false;
+        checkbox_chat.checked = false;
         var chat = document.getElementById("div_footer_right_meeting");
         var btn_attach = document.getElementById("btn_attach_file");
         var btn_send = document.getElementById("btn_icon_send_chat");
@@ -821,8 +840,11 @@ function InitRTC() {
                 downloadLink.href = url;
                 downloadLink.download = metadata.name;
                 downloadLink.innerText = `${metadata.name} (${Math.round((metadata.fileSize / 1024 / 1024 + Number.EPSILON) * 100) / 100} MB)`
-                var chat = myChatClone.cloneNode(true);
-                var chat_message = chat.querySelector("#my_message");
+                var chat = otherChatClone.cloneNode(true);
+                chat.style.display = "block";
+                var chat_name = chat.querySelector("#other_name");
+                chat_name.innerHTML = metadata.sentBy.displayName;
+                var chat_message = chat.querySelector("#other_message");
                 chat_message.append(downloadLink)
                 myChatDisplay.append(chat);
             }
@@ -880,7 +902,7 @@ function InitRTC() {
                         videoSource.next(videos);
 
                     });
-                }, 10000);
+                }, 3000);
             }
         })
     );
@@ -1022,7 +1044,8 @@ async function createLocalStream() {
         stream.getAudioTracks()[0].enabled = myVideo.muted;
         SetVolume(myVideo, parent);
     } catch (error) {
-        stream = new webkitMediaStream();
+        let canvas = document.getElementById('blank_video');
+        stream = canvas.captureStream(25);
         handleError(error);
     }
 
@@ -1185,13 +1208,13 @@ function hiddenForMembers() {
 }
 function toggleComponents() {
     isBlockChat = !isBlockChat;
-    var checkbox = document.getElementById("switch");
+    var checkbox_chat = document.getElementById("switch");
 
     var parentDiv = document.getElementById("div_right_meeting");
 
     var formElements = parentDiv.querySelectorAll("select, textarea, button");
 
-    var disable = !checkbox.checked;
+    var disable = !checkbox_chat.checked;
 
     chatService.blockChat(isBlockChat);
 
@@ -1207,27 +1230,31 @@ function NewSoundMeter(stream) {
     try {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.audioContext = new AudioContext();
+        const soundMeter = new SoundMeter(window.audioContext);
+        soundMeter.connectToSource(stream);
+        return soundMeter;
     } catch (e) {
         alert('Web Audio API not supported.');
     }
-    const soundMeter = new SoundMeter(window.audioContext);
-    soundMeter.connectToSource(stream);
-    return soundMeter;
 }
 
 function SetVolume(video, userVideo) {
-    const soundMeter = NewSoundMeter(video.srcObject);
-    setInterval(() => {
+    if (video.srcObject.getAudioTracks().length > 0) {
+        const soundMeter = NewSoundMeter(video.srcObject);
+        if (soundMeter) {
+            setInterval(() => {
 
-        if (userVideo) {
-            const volume = soundMeter.instant.toFixed(2); 
-            if (volume > 0.01) {
-                userVideo.style.borderStyle = "ridge";
-            } else {
-                userVideo.style.borderStyle = "none";
-            }
+                if (userVideo) {
+                    const volume = soundMeter.instant.toFixed(2);
+                    if (volume > 0.01) {
+                        userVideo.style.borderStyle = "ridge";
+                    } else {
+                        userVideo.style.borderStyle = "none";
+                    }
+                }
+            }, 200);
         }
-    }, 200);
+    }
 }
 
 function uuidv4() {

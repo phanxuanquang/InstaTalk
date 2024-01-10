@@ -12,6 +12,7 @@
 }
 
 <div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" style="display: none;" aria-hidden="true">
+    <canvas id="blank_video"></canvas>
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -202,9 +203,9 @@
     <div id="div_right_meeting" style="min-width:250px;" class="col-3 flex-column align-items-center border border-2 rounded-3 bg-light">
         <div id="div_header_right_meeting" class="w-100 d-flex p-2" style="align-items:baseline;">
             <div id="block_chat" class="checkbox-wrapper-35 col-11 bg-light py-2">
-                <input value="private" name="switch" id="switch_chat" type="checkbox" class="switch" onclick="toggleComponents()">
+                <input value="private" name="switch" id="switch" type="checkbox" class="switch" onclick="toggleComponents()">
                 <label for="switch">
-                    <span class="switch-x-text">Chat Area is </span>
+                    <span class="switch-x-text">Block chat is </span>
                     <span class="switch-x-toggletext">
                         <span class="switch-x-unchecked"><span class="switch-x-hiddenlabel">Unchecked: </span>Off</span>
                         <span class="switch-x-checked"><span class="switch-x-hiddenlabel">Checked: </span>On</span>
@@ -263,8 +264,8 @@
                 </span>
             </button>
         </div>
-        <div id="div_body_participants" class="rounded px-3 my-2 bg-secondary" style="overflow:auto;width:95%">
-            <div id="participant" style="width:95%" class="d-flex align-items-center m-1">
+        <div id="div_body_participants" class="rounded px-3 my-2" style="overflow:auto;width:95%">
+            <div id="participant" style="width:95%;height:2.3rem" class="d-flex align-items-center m-1 my-2 bg-secondary">
                 <div id="participant_name" style="width:80%">
                 </div>
                 <button id="btn_mic_participant" style="border:none;display:none" class="bg-transparent py-2 justify-content-center p-1" type="button" onclick="muteAllMicro(this)">
