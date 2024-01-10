@@ -50,7 +50,10 @@ namespace API.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid FilterID { get; set; }
 
-        public string FindGener { get; set; }
+        [NotMapped]
+        public ICollection<string> FindGender { get => _FindGender.Split(','); set => _FindGender = string.Join(',', value); }
+
+        public string _FindGender { get; set; } = string.Empty;
 
         [DefaultValue(0)]
         public int MinAge { get; set; }
@@ -62,8 +65,6 @@ namespace API.Entities
         public ICollection<string> FindRegion { get => _FindRegion.Split(','); set => _FindRegion = string.Join(',', value); }
 
         public string _FindRegion { get; set; } = string.Empty;
-
-        //public ICollection<string> FindType { get; set; } = new List<string>();
 
         public Room? CurrentRoom { get; set; }
     }
