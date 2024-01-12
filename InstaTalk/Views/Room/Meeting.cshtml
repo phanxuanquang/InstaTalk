@@ -13,7 +13,7 @@
 
 <div class="modal fade" id="ModalMeetingRoom" tabindex="-1" aria-labelledby="ModalMeetingRoomTitle" style="display: none;" aria-hidden="true">
     <canvas id="blank_video"></canvas>
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" style="min-height:auto">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ModalMeetingRoomTitle">Welcome to your own room!</h5>
@@ -103,7 +103,7 @@
     <div id="div_left_meeting" class="col-11 rounded-3 border border-2">
         <div id="div_header_left_meeting" class="d-flex" style="margin:0;padding:0;height:90%;">
             <div id="div_share_screen" style="display:none;position:relative;object-fit:cover;">
-                <video id="share-video" class="rounded-4 border-success" style="object-fit:contain;width:100%;height:100%"></video>
+                <video id="share-video" class="rounded-4 border-success" controls style="object-fit:contain;width:100%;height:100%"></video>
             </div>
             <div id="div_left_video_meeting" class="w-100 justify-content-center" style="margin:0;padding:0;height:100%;">
                 @*  Random rnd = new Random();
