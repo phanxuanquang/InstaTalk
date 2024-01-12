@@ -100,8 +100,16 @@ namespace API.Controllers
 
                 if (!result.Succeeded) return BadRequest(result.Errors);
 
-                var roleResult = await _userManager.AddToRoleAsync(user, "Member");
-                if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+                if (room.Connections.Any())
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Host");
+                    if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+                }
+                else
+                {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Host");
+                    if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
+                }
 
                 var userDto = new UserDto
                 {
