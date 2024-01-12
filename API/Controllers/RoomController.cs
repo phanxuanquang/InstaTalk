@@ -102,7 +102,7 @@ namespace API.Controllers
 
                 if (room.Connections.Any())
                 {
-                    var roleResult = await _userManager.AddToRoleAsync(user, "Host");
+                    var roleResult = await _userManager.AddToRoleAsync(user, "Member");
                     if (!roleResult.Succeeded) return BadRequest(roleResult.Errors);
                 }
                 else
