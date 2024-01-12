@@ -732,7 +732,7 @@ muteCamMicService.userIsMuteAllMicro$.subscribe(event => {
 muteCamMicService.muteCamera$.subscribe(event => {
     if (event.userId !== ObjClient.User.userId) {
         let div_user_video = document.getElementById(event.userId);
-        let div_user_card = div_user_video.querySelector("#" + event.userId + "_card");
+        let div_user_card = document.getElementById(event.userId + "_card");
         let user_video = document.getElementById(event.userId + '_video')
         console.log("Tim thay roi nha" + event.userId);
         let title_video = div_user_video.querySelector("#title_video");
