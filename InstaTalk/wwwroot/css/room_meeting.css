@@ -11,6 +11,29 @@
     }
 }*/
 
+video::-webkit-media-controls-play-button {
+    display: none;
+}
+
+video::-webkit-media-controls-volume-slider {
+    display: none;
+}
+
+video::-webkit-media-controls-mute-button {
+    display: none;
+}
+
+video::-webkit-media-controls-timeline {
+    display: none;
+}
+
+video::-webkit-media-controls-current-time-display {
+    display: none;
+}
+
+/*video::-webkit-media-controls-fullscreen-button {
+}*/
+
 .video-text {
     position: absolute;
     z-index: 10;
@@ -61,7 +84,7 @@
 
 .side_bar_control {
     position: absolute;
-    right: 1.95rem;
+    right: -2.5rem;
     bottom: 3.2rem;
 }
 
