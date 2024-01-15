@@ -11,5 +11,10 @@ namespace API.Entities
         public string? PhotoUrl { get; set; }//Nullable<string>
         public ICollection<AppUserRole> UserRoles { get; set; }
         public ICollection<Room> Rooms { get; set; }
+        public StrangerFilter? StrangerFilter { get; set; } = null;
+        public string? Gender { get; set; }
+        public int? Age { get; set; }
+        public string? Nationality { get; set; }
+        //public ICollection<string> Type { get; set; } = new List<string>();
     }
 }

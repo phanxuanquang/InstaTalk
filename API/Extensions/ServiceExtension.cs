@@ -36,6 +36,7 @@ namespace API.Extensions
         public static void ConfigRegister(this IServiceCollection services)
         {
             services.AddSingleton<PresenceTracker>();
+            services.AddSingleton<StrangerTracker>();
             services.AddSingleton<UserShareScreenTracker>();
 
             services.AddScoped<ITokenService, TokenService>();

@@ -36,7 +36,7 @@ namespace API.Repository
             return _context.Rooms.Include(x => x.Connections)
                 .Where(x => x.Connections.Any(c => c.ConnectionId == connectionId))
                 .FirstOrDefaultAsync();
-        }
+        } 
 
         public void RemoveConnection(Connection connection)
         {
@@ -88,7 +88,6 @@ namespace API.Repository
         public async Task<PagedList<RoomDto>> GetAllRoomAsync(RoomParams roomParams)
         {
             var list = _context.Rooms.AsQueryable();
-            //using AutoMapper.QueryableExtensions; list.ProjectTo<RoomDto>
             return await PagedList<RoomDto>.CreateAsync(list.ProjectTo<RoomDto>(_mapper.ConfigurationProvider).AsNoTracking(), roomParams.PageNumber, roomParams.PageSize);
         }
 

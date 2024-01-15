@@ -10,9 +10,9 @@ namespace API.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid RoomId { get; set; }
 
-        public string RoomName { get; set; }
+        public string? RoomName { get; set; }
 
-        public string SecurityCode { get; set; }
+        public string? SecurityCode { get; set; }
 
         public int CountMember { get; set; }
 
@@ -42,5 +42,30 @@ namespace API.Entities
         public string ConnectionId { get; set; }
 
         public Guid UserID { get; set; }
+    }
+
+    public class StrangerFilter
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public Guid FilterID { get; set; }
+
+        [NotMapped]
+        public ICollection<string> FindGender { get => _FindGender.Split(','); set => _FindGender = string.Join(',', value); }
+
+        public string _FindGender { get; set; } = string.Empty;
+
+        [DefaultValue(0)]
+        public int MinAge { get; set; }
+
+        [DefaultValue(100)]
+        public int MaxAge { get; set; }
+
+        [NotMapped]
+        public ICollection<string> FindRegion { get => _FindRegion.Split(','); set => _FindRegion = string.Join(',', value); }
+
+        public string _FindRegion { get; set; } = string.Empty;
+
+        public Room? CurrentRoom { get; set; }
     }
 }

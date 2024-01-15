@@ -21,7 +21,8 @@ namespace API.Repository
 
         public async Task<AppUser?> GetUserByIdAsync(Guid id)
         {
-            return await _context.Users.FindAsync(id);
+            return await _context.Users.Include(x => x.StrangerFilter)
+                .SingleOrDefaultAsync(item => item.Id == id);
         }
 
         public async Task<AppUser?> GetUserByUsernameAsync(string username)

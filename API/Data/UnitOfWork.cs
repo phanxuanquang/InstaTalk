@@ -17,6 +17,7 @@ namespace API.Data
 
         public IUserRepository UserRepository => new UserRepository(_context, _mapper);
         public IRoomRepository RoomRepository => new RoomRepository(_context, _mapper);
+        public IStrangerRepository StrangerRepository => new StrangerRepository(_context, _mapper);
 
         public async Task<bool> Complete()
         {

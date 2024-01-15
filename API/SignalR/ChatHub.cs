@@ -3,6 +3,7 @@ using API.Entities;
 using API.Extensions;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
@@ -10,18 +11,23 @@ namespace API.SignalR
     [Authorize]
     public class ChatHub : Hub
     {
-        private IHubContext<PresenceHub> _presenceHub;
-        private PresenceTracker _presenceTracker;
-        private IUnitOfWork _unitOfWork;
-        private UserShareScreenTracker _shareScreenTracker;
+        private readonly IHubContext<PresenceHub> _presenceHub;
+        private readonly PresenceTracker _presenceTracker;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly UserShareScreenTracker _shareScreenTracker;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ChatHub(IUnitOfWork unitOfWork, UserShareScreenTracker shareScreenTracker, PresenceTracker presenceTracker, IHubContext<PresenceHub> presenceHub)
+        public ChatHub(IUnitOfWork unitOfWork,
+            UserShareScreenTracker shareScreenTracker,
+            PresenceTracker presenceTracker,
+            IHubContext<PresenceHub> presenceHub,
+            UserManager<AppUser> userManager)
         {
-            //_mapper = mapper;
             _unitOfWork = unitOfWork;
             _presenceTracker = presenceTracker;
             _presenceHub = presenceHub;
             _shareScreenTracker = shareScreenTracker;
+            _userManager = userManager;
         }
 
         public override async Task OnConnectedAsync()
@@ -223,7 +229,6 @@ namespace API.SignalR
                 await _shareScreenTracker.UserDisconnectedShareScreen(userConnection);
             }
             await Clients.Group(roomid.ToString()).SendAsync("OnShareScreen", isShareScreen);
-            //var group = await _unitOfWork.RoomRepository.GetRoomForConnection(Context.ConnectionId);
         }
 
         public async Task ShareScreenToUser(Guid roomid, Guid userId, bool isShare)
@@ -300,7 +305,8 @@ namespace API.SignalR
                 await _unitOfWork.RoomRepository.DeleteRoom(roomId);
                 foreach (var user in connectionsInRoom.Connections)
                 {
-                    await _unitOfWork.UserRepository.UpdateLocked(user.UserID);
+                    var dbUser = await _unitOfWork.UserRepository.GetUserByIdAsync(user.UserID);
+                    if (dbUser != null) await _userManager.DeleteAsync(dbUser);
                 }
             }
             await _unitOfWork.Complete();
